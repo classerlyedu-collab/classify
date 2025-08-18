@@ -1,0 +1,1 @@
+export {default as StudentPayment} from './StudentPayment'
