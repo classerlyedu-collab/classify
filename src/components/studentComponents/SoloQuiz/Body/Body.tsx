@@ -8,7 +8,7 @@ type BodyProps = {
         correctAnswer: string;
         image: string;
     };
-    quizQuestionsData:any,
+    quizQuestionsData: any,
     currentQuestion: number;
     selectedAnswer: string | null;
     handleSelectAnswer: (answer: string) => void;
@@ -51,7 +51,7 @@ const Body = ({
 
             {/* image */}
             <div className="col-span-2 sm:col-span-1 row-start-1 sm:row-start-auto h-fit">
-                <img src={quizQuestionsData[currentQuestion%quizQuestionsData?.length]?.image} className="w-full h-44 sm:h-96 md:h-96 lg:h-96 xl:h-96 2xl:h-[450px] object-cover" />
+                <img src={quizQuestionsData[currentQuestion % quizQuestionsData?.length]?.image} alt="Question" className="w-full h-44 sm:h-96 md:h-96 lg:h-96 xl:h-96 2xl:h-[450px] object-cover" />
             </div>
 
             {/* next question button */}

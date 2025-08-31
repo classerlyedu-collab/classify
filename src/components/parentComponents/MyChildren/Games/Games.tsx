@@ -1,28 +1,26 @@
-import { gamesPositionHolders, gamesResult } from "../../../../constants/parent/myChildren";
-import { bestScoredData } from "../../../../constants/parent/myChildren";
-import { BarChart } from '@mui/x-charts/BarChart';
 import { getRandomColor } from "../../../../utils/randomColorGenerator";
 import { useEffect, useState } from "react";
 import { Get } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
 
-const Games = ({ch}:any) => {
-    const [games,setGames] = useState <any[]>([])
-    let user = JSON.parse(localStorage.getItem("user") || "");
-    useEffect(()=>{
-        if(ch){
-            
-Get(`/game?grade=${ch?.grade?._id}`).then((d)=>{
-if(d.success){
+const Games = ({ ch }: any) => {
+    const [games, setGames] = useState<any[]>([])
 
-    setGames(d.data)
-}else{
-    displayMessage(d.message)
-}
-}).catch((err)=>{
-    displayMessage(err.message,"error")
-})}
-    },[])
+    useEffect(() => {
+        if (ch) {
+
+            Get(`/game?grade=${ch?.grade?._id}`).then((d) => {
+                if (d.success) {
+
+                    setGames(d.data)
+                } else {
+                    displayMessage(d.message)
+                }
+            }).catch((err) => {
+                displayMessage(err.message, "error")
+            })
+        }
+    }, [ch])
 
     return (
         <div className="w-full px-7">
@@ -33,12 +31,12 @@ if(d.success){
                 {
                     games?.map((item, index) => (
 
-                        <div 
-                        // onClick={()=> navigate(RouteName.PLAY_GAME,{state:item})}
-                        id={index?.toString()} className={`text-lg min-w-[10rem] sm:min-w-[12rem] md:min-w-[14rem] lg:min-w-[12rem] 2xl:min-w-[15rem] rounded-3xl flex flex-col justify-center items-center p-2 md:p-3 cursor-pointer group hover:px-1 transition-all delay-50`}
+                        <div
+                            // onClick={()=> navigate(RouteName.PLAY_GAME,{state:item})}
+                            id={index?.toString()} className={`text-lg min-w-[10rem] sm:min-w-[12rem] md:min-w-[14rem] lg:min-w-[12rem] 2xl:min-w-[15rem] rounded-3xl flex flex-col justify-center items-center p-2 md:p-3 cursor-pointer group hover:px-1 transition-all delay-50`}
                             style={{ backgroundColor: getRandomColor('dark', index) }} >
                             <div className="border border-white rounded-3xl w-full">
-                                <img className="rounded-3xl h-16 sm:h-20 w-full md:h-24 lg:h-20 2xl:h-24 object-cover" src={item.image} />
+                                <img className="rounded-3xl h-16 sm:h-20 w-full md:h-24 lg:h-20 2xl:h-24 object-cover" src={item.image} alt={item.title} />
                             </div>
                             <div className="flex flex-col justify-center items-center mt-2">
                                 <h5 className="text-white text-xs md:text-sm font-semibold">{item.title}</h5>

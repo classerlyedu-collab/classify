@@ -8,6 +8,7 @@ const Games = () => {
             loading="lazy"
             className='w-full h-screen'
             src={`https://kids.poki.com/`}
+            title="Games Platform"
             allow="fullscreen">
 
         </iframe>

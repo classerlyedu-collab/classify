@@ -62,7 +62,7 @@ const QuizzessDetails = () => {
 
     useEffect(() => {
         Get(`/quiz/student/myquiz?result=${state.title}`).then((d) => {
-            
+
             if (d.success) {
                 setMyResult(d.data)
 
@@ -84,7 +84,7 @@ const QuizzessDetails = () => {
 
                 {/* 1st Navbar*/}
                 <div className="w-full h-fit bg-mainBg mb-2 md:mb-6" >
-                    <Navbar title={state?.title=="pass"?"Quizzes Completed Successfully":"Quizzes Need Improvement"} hideSearchBar={true} />
+                    <Navbar title={state?.title === "pass" ? "Quizzes Completed Successfully" : "Quizzes Need Improvement"} hideSearchBar={true} />
                 </div>
 
                 {/* center */}
@@ -106,7 +106,7 @@ const QuizzessDetails = () => {
                         </div>
 
                         <div className="w-full flex flex-col gap-2">
-                            {myresult?.map((item:any, index:any) => (
+                            {myresult?.map((item: any, index: any) => (
                                 <div className="w-full flex-row grid grid-cols-12 items-center justify-between">
                                     <h6 className="text-xs sm:text-sm text-greyBlack col-span-1 font-ubuntu font-light">
                                         {index + 1}
@@ -127,20 +127,21 @@ const QuizzessDetails = () => {
 
                                     </h6>
                                     <h6 className="text-xs sm:text-sm text-greyBlack col-span-1 font-ubuntu font-light">
-                                        {item?.score} 
+                                        {item?.score}
                                         {/* total score of quiz */}
                                     </h6>
                                     <div className="bg-primary px-2 py-1 col-span-2 max-w-24 rounded-md hover:opacity-80 cursor-pointer"
                                         onClick={() => {
-                                            
-                                                Post(`/quiz/student/${item?.quiz?._id}?status=start`).then((d)=>{
-                                                  
-                                                  if(d.success){
-                                                  
-                                                    navigate(RouteName?.SOLO_QUIZ,{state:item?.quiz})
-                                                  }else{
-                                                  displayMessage(d.message,"error")}
-                                                })
+
+                                            Post(`/quiz/student/${item?.quiz?._id}?status=start`).then((d) => {
+
+                                                if (d.success) {
+
+                                                    navigate(RouteName?.SOLO_QUIZ, { state: item?.quiz })
+                                                } else {
+                                                    displayMessage(d.message, "error")
+                                                }
+                                            })
                                         }}
                                     >
                                         <p className="text-xs sm:text-sm font-semibold text-white">Start Again</p>

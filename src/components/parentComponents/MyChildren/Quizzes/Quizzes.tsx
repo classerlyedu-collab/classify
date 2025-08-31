@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react';
-import { coursesDropdown, QuizzesArray, TopStudents, upcomingQuizData } from "../../../../constants/parent/myChildren";
 import { Progress, Container } from 'rsuite';
 import { buildStyles, CircularProgressbarWithChildren } from 'react-circular-progressbar';
-import { FaCircleExclamation } from "react-icons/fa6";
-import { RoundedDropDown } from '../../../../components';
 import { getRandomColor } from '../../../../utils/randomColorGenerator';
 
 const Quizzes = ({ quiz }: any) => {
 
-    const [confusion, setConfusion] = useState<string>('');
-    const [selectedCourse, setSelectedCourse] = useState<number>(0);
+
     const [quizData, setQuizdata] = useState<any[]>([]);
     const [averageProgress, setAverageProgress] = useState<number>(0);
 
@@ -32,23 +28,24 @@ const Quizzes = ({ quiz }: any) => {
         }, {});
         const keys = Object.keys(groupedData)
         const values = Object.values(groupedData)
-        
+
         setQuizdata(values.map((j: any, index: any) => {
             let marks = 0, score = 0;
             return (j.map((k: any, index2: any) => {
                 marks += k.marks
                 score += k.score
                 if (!j[index2 + 1]) {
-                    
+
                     return {
                         name: keys[index],
                         count: j?.length,
                         per: marks / score * 100
                     }
                 }
+                return null;
             }))[0]
         }));
-    }, []);
+    }, [quiz]);
 
     useEffect(() => {
         let totalObtained = 0;
@@ -56,6 +53,7 @@ const Quizzes = ({ quiz }: any) => {
         quizData?.map((item) => {
             totalObtained += item?.per;
             count += 100;
+            return null;
         });
 
         setAverageProgress((totalObtained / count) * 100);

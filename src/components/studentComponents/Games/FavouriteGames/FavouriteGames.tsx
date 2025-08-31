@@ -19,7 +19,7 @@ const FavouriteGames = () => {
 
                                 <div className="-translate-x-3 transition-all delay-200 group-hover:-translate-x-0 flex w-2/5 border-4 bg-[#7000FF] border-[#DBBFFF] rounded-3xl h-20 justify-center items-center">
 
-                                    <img src={item?.imageUrl} className="w-4/5 h-4/5 rounded-3xl" />
+                                    <img src={item?.imageUrl} alt={item.title} className="w-4/5 h-4/5 rounded-3xl" />
 
                                 </div>
                                 <div className="flex flex-col w-3/5 h-full rounded-3xl justify-center items-start pl-4">

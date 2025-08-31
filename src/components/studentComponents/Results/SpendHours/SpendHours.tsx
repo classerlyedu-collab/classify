@@ -34,7 +34,6 @@ const SpendHours = () => {
                 <BarChart
                     xAxis={[{ scaleType: 'band', data: ['Mon', 'Tues', 'Wed', 'Thur', 'Fri', 'Sat', 'Sun'] }]}
                     series={[{ data: [4, 3, 5, 5, 3, 6, 5] }, { data: [1, 6, 3, 5, 3, 6, 5] }]}
-                    borderRadius={100}
                 />
             </div >
 

@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { TeaherRemarksobj } from "../../../../constants/parent/myChildren";
+// import { TeaherRemarksobj } from "../../../../constants/parent/myChildren";
 import { Get } from "../../../../config/apiMethods";
 import { FaStar } from "react-icons/fa";
 
-const TeacherRemarks = ({childernValue}:any) => {
+const TeacherRemarks = ({ childernValue }: any) => {
     const [remarks, setRemarks] = useState<any[]>([]);
     const [feedback, setFeedback] = useState<any[]>([]);
-    
+
     useEffect(() => {
         // Get current logged in user (parent)
         const currentUser = JSON.parse(localStorage.getItem("user") || "{}");
-        
+
         // Fetch teacher remarks
         Get(`/parent/feedback/${childernValue}`).then((d) => {
             if (d.success) {
@@ -40,15 +40,15 @@ const TeacherRemarks = ({childernValue}:any) => {
                         <div key={index} className="flex flex-row flex-wrap w-full justify-between items-center mb-3 md:mb-3 bg-white shadow-md shadow-gray-500 py-2 md:py-6 rounded-md px-2 md:px-4">
                             <div className="flex flex-row justify-start items-center">
                                 <div className="flex justify-center justify-items-center mr-2 md:mr-4">
-                                    <img 
-                                        src={item?.from?.auth?.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOv_u8GVtyFUAmcyf-CYkzQLm1F8eLCAZpEw&s"} 
-                                        className="w-20 rounded-full" 
+                                    <img
+                                        src={item?.from?.auth?.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOv_u8GVtyFUAmcyf-CYkzQLm1F8eLCAZpEw&s"}
+                                        className="w-20 rounded-full"
                                         alt="teacher"
                                     />
                                 </div>
                                 <div className="flex flex-col justify-center justify-items-center">
                                     <h1 className="font-ubuntu font-medium text-purple-600 text-base md:text-lg text-purple">
-                                        {item?.from?.auth?.userName?.slice(0,12)}
+                                        {item?.from?.auth?.userName?.slice(0, 12)}
                                     </h1>
                                     <h1 className="font-medium text-xs md:text-sm">
                                         {item?.createdAt.split(".")[0].split("T").join(" ")}
@@ -85,15 +85,15 @@ const TeacherRemarks = ({childernValue}:any) => {
                         <div key={index} className="flex flex-row flex-wrap w-full justify-between items-center mb-3 md:mb-3 bg-white shadow-md shadow-gray-500 py-2 md:py-6 rounded-md px-2 md:px-4">
                             <div className="flex flex-row justify-start items-center">
                                 <div className="flex justify-center justify-items-center mr-2 md:mr-4">
-                                    <img 
-                                        src={item?.teacherId?.auth?.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOv_u8GVtyFUAmcyf-CYkzQLm1F8eLCAZpEw&s"} 
-                                        className="w-20 rounded-full" 
+                                    <img
+                                        src={item?.teacherId?.auth?.image || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOv_u8GVtyFUAmcyf-CYkzQLm1F8eLCAZpEw&s"}
+                                        className="w-20 rounded-full"
                                         alt="teacher"
                                     />
                                 </div>
                                 <div className="flex flex-col justify-center justify-items-center">
                                     <h1 className="font-ubuntu font-medium text-purple-600 text-base md:text-lg text-purple">
-                                        {item?.teacherId?.auth?.userName?.slice(0,12)}
+                                        {item?.teacherId?.auth?.userName?.slice(0, 12)}
                                     </h1>
                                     <h1 className="font-medium text-xs md:text-sm">
                                         {new Date(item?.createdAt).toLocaleDateString()}

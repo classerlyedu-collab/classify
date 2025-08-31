@@ -1,4 +1,4 @@
-import { assessmentResultData } from "../../../../constants/parent/myChildren";
+// import { assessmentResultData } from "../../../../constants/parent/myChildren";
 // import { LuPenSquare } from "react-icons/lu";
 import { buildStyles, CircularProgressbarWithChildren } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -12,20 +12,20 @@ import { useNavigate } from "react-router-dom";
 const Grades = ({ mystd }: any) => {
 
     const navigate = useNavigate();
-const [subjects,setSubjects] = useState([])
+    const [subjects, setSubjects] = useState([])
 
-useEffect(()=>{
-    Get(`/getMyChildsubjectdata/${mystd._id}`).then((d)=>{
-      if(d.success){
-        setSubjects(d.data)
-      }
-    })
-},[mystd])
+    useEffect(() => {
+        Get(`/getMyChildsubjectdata/${mystd._id}`).then((d) => {
+            if (d.success) {
+                setSubjects(d.data)
+            }
+        })
+    }, [mystd])
     const handleSubjectClick = (id: string) => {
         Get(`/mychildbysubject/${mystd._id}?subject=${id}`)
             .then((d) => {
                 if (d?.success) {
-                    
+
                     localStorage.setItem('childResult', JSON.stringify(d.data));
                     localStorage.setItem('resultHeaderTitle', `${mystd?.auth?.fullName ?? 'Child'} Result`);
                     navigate(RouteName.CHILD_RESULT_SCREEN);
@@ -37,7 +37,7 @@ useEffect(()=>{
                 displayMessage(e.message);
             });
     };
-    
+
 
     return (
         <div className="w-full px-5">
@@ -49,7 +49,7 @@ useEffect(()=>{
                         // mystd?.
                         subjects?.map((item: any, index: any) => (
                             <div
-                            key={index}
+                                key={index}
                                 onClick={() => handleSubjectClick(item?._id)}
                                 id={index?.toString()}
                                 className="col-span-1 px-5 pt-5 pb-2 bg-white flex flex-col rounded-md md:rounded-lg shadow-md shadow-purple hover:shadow-greyBlack flex-wrap cursor-pointer"
@@ -77,7 +77,7 @@ useEffect(()=>{
                                                     backgroundColor: '#3e98c7',
                                                 })}
                                             >
-                                                <h1 className="font-ubuntu text-sm md:text-base lg:text-xl font-medium text-greyBlack" >{ `${item.progress}%`}</h1>
+                                                <h1 className="font-ubuntu text-sm md:text-base lg:text-xl font-medium text-greyBlack" >{`${item.progress}%`}</h1>
                                             </CircularProgressbarWithChildren>
                                         </div>
                                     </div>

@@ -14,7 +14,7 @@ const Notification = () => {
   const [notifications, setNotifications] = useState<boolean>(user?.notifications);
   const [profileImage, setProfileImage] = useState(user?.image);
   useEffect(() => {
-  
+
     if (
       notifications != user?.notifications
     ) {
@@ -51,13 +51,13 @@ const Notification = () => {
       <div className="py-4 lg:py-7 w-full flex items-center justify-between border-b border-[#B1B7B9]">
         <div>
           <h6 className="text-sm md:text-md font-ubuntu text-greyBlack font-medium">
-          Enable or disable notifications
+            Enable or disable notifications
           </h6>
         </div>
         <FormControlLabel
-          control={<IOSSwitch sx={{ m: 1 }} 
-          // defaultChecked
-          checked={notifications}
+          control={<IOSSwitch sx={{ m: 1 }}
+            // defaultChecked
+            checked={notifications}
           />
           }
           label=""

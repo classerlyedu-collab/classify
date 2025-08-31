@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoIosNotificationsOutline } from 'react-icons/io';
 import { IoMenuOutline } from 'react-icons/io5';
 import { UseStateContext } from '../../../context/ContextProvider';
-import { NavBarPropsType } from '../../../types/globalTypes';
+// import { NavBarPropsType } from '../../../types/globalTypes';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RouteName } from '../../../routes/RouteNames';
-import { RoundedDropDown } from '../../roundedDropDown';
-import { coursesDropdown } from '../../../constants/parent/myChildren';
-import { returnMatchingLabel } from '../../../constants/register';
+// import { RoundedDropDown } from '../../roundedDropDown';
+// import { coursesDropdown } from '../../../constants/parent/myChildren';
+// import { returnMatchingLabel } from '../../../constants/register';
 import { NotificationsModal } from '../NotificationsModal';
 import { MyChildernsModal } from '../MyChildernModal';
 import { Get } from '../../../config/apiMethods';
@@ -19,7 +19,7 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
 
     const { showSideBar, setShowSideBar, hasChanges, setIsModalOpen, setHasChanges } = UseStateContext();
     const navigate = useNavigate()
-    const [selectedCourse, setSelectedCourse] = useState<number>(0);
+    // const [selectedCourse, setSelectedCourse] = useState<number>(0);
     const [subjects, setSubjects] = useState<any[]>([]);
     // const [mystd, setMyStd] = useState<any>({});
     const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
@@ -37,7 +37,7 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
         } catch (error) {
             navigate(route);
             setHasChanges(false);
-            
+
         }
     }
 
@@ -53,13 +53,13 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
         })
 
     }, []);
-    const [childData, setChildData] = useState<any[]>([]);
+    // const [childData, setChildData] = useState<any[]>([]);
     // useEffect(()=>{
     //     navigate(RouteName.MYCHILDREN_SCREEN+`?childern=${selectedCourse}`)
 
     // },[selectedCourse])
     useEffect(() => {
-        if (user.userType == "Parent") {
+        if (user.userType === "Parent") {
             Get("/mychilds")
                 .then((d) => {
 
@@ -190,7 +190,7 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
                     {/* 2nd */}
                     <div className={`flex justify-between items-center md:w-auto flex-wrap`}>
                         {/* Notifications Icon */}
-                        {title == "Feedback" && user.userType == "Teacher" &&
+                        {title === "Feedback" && user.userType === "Teacher" &&
                             <button
                                 onClick={() => handleNavigate(RouteName.TEACHER_FEEDBACK)}
                                 className="border border-greyBlack mr-2 rounded-md hover:border-none hover:bg-secondary px-1.5 py-1.5 hover:text-white transition-all delay-100 ml-10"

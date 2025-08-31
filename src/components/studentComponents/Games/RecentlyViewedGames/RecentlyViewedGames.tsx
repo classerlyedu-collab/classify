@@ -22,9 +22,9 @@ const RecentlyViewedGames = () => {
                                         background: getRandomColor('dark', index, 0.8)
                                     }} >
                                     <div className="translate-x-1.5 translate-y-1.5 rounded-2xl border border-greyBlack p-1 lg:p-1.5" style={{
-                                        background: getRandomColor('dark', index+1, 0.8)
+                                        background: getRandomColor('dark', index + 1, 0.8)
                                     }} >
-                                        <img src={item?.imageUrl} className="w-12 h-12 rounded-2xl object-contain" />
+                                        <img src={item?.imageUrl} alt={item?.title} className="w-12 h-12 rounded-2xl object-contain" />
                                     </div>
                                 </div>
 

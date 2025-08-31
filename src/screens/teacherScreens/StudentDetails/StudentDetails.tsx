@@ -102,7 +102,7 @@ const StudentDetails = () => {
 
   const fetchExistingFeedback = async () => {
     if (!std?.parent?._id || !std?._id) return;
-    
+
     try {
       const response = await Get(`/teacher/parent-feedback/${std._id}/${std.parent._id}`);
       if (response.success) {
@@ -176,6 +176,7 @@ const StudentDetails = () => {
             <img
               className="w-24 h-24 lg:w-32 lg:h-32  rounded-full self-center mb-2"
               src={std?.auth?.image}
+              alt={std?.auth?.fullName || "Student"}
             />
 
             <div className="w-full flex flex-row items-center justify-between px-4 border-b border-gray-400 py-2">

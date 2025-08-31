@@ -12,6 +12,7 @@ const ImageSection = () => {
                 <img
                     className="w-full"
                     src="https://s3-alpha-sig.figma.com/img/42d5/055b/e1f6925068dced36e436a53527255942?Expires=1723420800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=StpCF61o07h2mNDB19l8DkJ~qyIo~o9kGta716Uzx9X3Qc~OoR1dfh6SEvd6PUmF9zM86uyWcN34GR31aIP7mb17LEgMFnkmxaWGLUrraYkWAcQ4H~8lPSOSV0vCdLvFFOM4LCafqudoJqwDxniBV58bXKbXKL8ToqfWLHe8TkSJviF1U6-ZVClJ50HVIVdr8EyTQYTDSnNg9l-o8N1Pxs-KmtlFP-n2KjoBDT2SiNEKuDxPM3XTuHDfQJTnOQZL~8P10aKoLttchPh0FgFn~b6rfBOpwQ7gvZ65Dfs2U6UVlUkBLJheEqJPNlGCnYOaLXsrat3epjV6tmE1BWTNmQ__"
+                    alt="Ralph Edwar"
                 />
 
                 {/* decision & answers */}
@@ -64,7 +65,8 @@ const ImageSection = () => {
 
                 <img
                     className="w-full"
-                    src="https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06e78b4720cca?Expires=1723420800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Tjf6UeXhCCiSCTDkAKbiX9Bi~k4qvmBSOhBCI0j6dRE5nH6zawI8sNsqMLQdq5G4A1mgOdmqequtvKSDgR025ehwh03rGCOUKvQHRx22BKTa9ylwV0faqGfUfMFfafV8wEZfnMa1oUjQuAmELqlE-~qpsWnK1hVVCHRDdt7MoQablytPQCZKcNz6-~ujAbRBqJWYFlNOSiWNv6dJHIr-OsnfNv5tMO3KXdrW2qMe~BHulfusjul11vtIM-u7gN7hutIOGY5ufVn9CA6fffIL6llOpyvSVpprkahMyaRl0hzRVy4ungVvD0F47wKdxlOxBQyE7OFWCvv-v7xyhwcG0A__" />
+                    src="https://s3-alpha-sig.figma.com/img/c13c/1e24/1e6baeeb9f8d7582f9d06e78b4720cca?Expires=1723420800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=Tjf6UeXhCCiSCTDkAKbiX9Bi~k4qvmBSOhBCI0j6dRE5nH6zawI8sNsqMLQdq5G4A1mgOdmqequtvKSDgR025ehwh03rGCOUKvQHRx22BKTa9ylwV0faqGfUfMFfafV8wEZfnMa1oUjQuAmELqlE-~qpsWnK1hVVCHRDdt7MoQablytPQCZKcNz6-~ujAbRBqJWYFlNOSiWNv6dJHIr-OsnfNv5tMO3KXdrW2qMe~BHulfusjul11vtIM-u7gN7hutIOGY5ufVn9CA6fffIL6llOpyvSVpprkahMyaRl0hzRVy4ungVvD0F47wKdxlOxBQyE7OFWCvv-v7xyhwcG0A__"
+                    alt="Jacob Jones" />
 
                 {/* decision & answers */}
                 <div className="flex flex-col gap-5 items-center justify-center w-full" >

@@ -137,21 +137,8 @@ const Register = () => {
                     break;
                 }
               } else {
-                switch (res.data.userType) {
-                  case "Parent":
-                    navigate(RouteName?.PARENTS_PAYMENT);
-                    break;
-                  case "Student":
-                    navigate(RouteName?.STUDENT_PAYMENT);
-                    break;
-                  case "Teacher":
-                    navigate(RouteName?.TEACHER_PAYMENT);
-                    break;
-
-                  default:
-                    navigate(RouteName?.DASHBOARD_SCREEN);
-                    break;
-                }
+                // For non-subscribed users, redirect to subscription page
+                navigate(RouteName?.SUBSCRIPTION);
               }
             } else {
               displayMessage(res.message, "error");
@@ -226,13 +213,13 @@ const Register = () => {
                 //     navigate(RouteName?.DASHBOARD_SCREEN);
                 //     break;
                 case "Parent":
-                  navigate(RouteName?.PARENTS_PAYMENT);
+                  navigate(RouteName?.SUBSCRIPTION);
                   break;
                 case "Student":
-                  navigate(RouteName?.STUDENT_PAYMENT);
+                  navigate(RouteName?.SUBSCRIPTION);
                   break;
                 case "Teacher":
-                  navigate(RouteName?.TEACHER_PAYMENT);
+                  navigate(RouteName?.SUBSCRIPTION);
                   break;
 
                 default:
@@ -314,7 +301,7 @@ const Register = () => {
             break;
         }
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleDialog = () => {
@@ -341,6 +328,7 @@ const Register = () => {
                   src={require("../../../images/settings/sm-Logo-Transparent-PNG-942x1024 (1).png")}
                   width="100px"
                   height="100px"
+                  alt="Classerly Logo"
                 />
               </div>
               <div
@@ -466,21 +454,20 @@ const Register = () => {
                 </div>
 
                 <div>
-                  {}
+                  { }
                   <div
                     onClick={handleClick}
-                    className={`w-11/13 h-8 md:h-10  bg-gradient-to-r  from-primary to-secondary flex justify-center items-center rounded-md cursor-pointer ${
-                      forgotPasswordState === "Done" && "hidden"
-                    }`}
+                    className={`w-11/13 h-8 md:h-10  bg-gradient-to-r  from-primary to-secondary flex justify-center items-center rounded-md cursor-pointer ${forgotPasswordState === "Done" && "hidden"
+                      }`}
                   >
                     <p className="text-white text-sm md:text-base font-normal">
                       {screenStatus === "Signin"
                         ? "Sign In"
                         : screenStatus === "Forgot"
-                        ? forgotPasswordState === "Pin"
-                          ? "Continue"
-                          : "Reset Password"
-                        : "Create Account"}
+                          ? forgotPasswordState === "Pin"
+                            ? "Continue"
+                            : "Reset Password"
+                          : "Create Account"}
                     </p>
                   </div>
 
@@ -488,69 +475,61 @@ const Register = () => {
                   {screenStatus === "Forgot" && (
                     <div className="flex mt-4 md:mt-5 flex-row justify-center items-center ">
                       <div
-                        className={`w-7 h-7 mx-1 flex justify-center items-center rounded-full border ${
-                          forgotPasswordState === "Email"
-                            ? "border-black"
-                            : "border-inputBorder"
-                        }`}
+                        className={`w-7 h-7 mx-1 flex justify-center items-center rounded-full border ${forgotPasswordState === "Email"
+                          ? "border-black"
+                          : "border-inputBorder"
+                          }`}
                       >
                         <p
-                          className={`text-xs md:text-sm ${
-                            forgotPasswordState === "Email"
-                              ? "text-black"
-                              : "text-inputBorder"
-                          } `}
+                          className={`text-xs md:text-sm ${forgotPasswordState === "Email"
+                            ? "text-black"
+                            : "text-inputBorder"
+                            } `}
                         >
                           1
                         </p>
                       </div>
                       <div
-                        className={`w-7 h-7 mx-1 flex justify-center items-center rounded-full border ${
-                          forgotPasswordState === "Pin"
-                            ? "border-black"
-                            : "border-inputBorder"
-                        }`}
+                        className={`w-7 h-7 mx-1 flex justify-center items-center rounded-full border ${forgotPasswordState === "Pin"
+                          ? "border-black"
+                          : "border-inputBorder"
+                          }`}
                       >
                         <p
-                          className={`text-xs md:text-sm ${
-                            forgotPasswordState === "Pin"
-                              ? "text-black"
-                              : "text-inputBorder"
-                          } `}
+                          className={`text-xs md:text-sm ${forgotPasswordState === "Pin"
+                            ? "text-black"
+                            : "text-inputBorder"
+                            } `}
                         >
                           2
                         </p>
                       </div>
                       <div
-                        className={`w-7 h-7 mx-1 flex justify-center items-center rounded-full border ${
-                          forgotPasswordState === "Password"
-                            ? "border-black"
-                            : "border-inputBorder"
-                        }`}
+                        className={`w-7 h-7 mx-1 flex justify-center items-center rounded-full border ${forgotPasswordState === "Password"
+                          ? "border-black"
+                          : "border-inputBorder"
+                          }`}
                       >
                         <p
-                          className={`text-xs md:text-sm ${
-                            forgotPasswordState === "Password"
-                              ? "text-black"
-                              : "text-inputBorder"
-                          } `}
+                          className={`text-xs md:text-sm ${forgotPasswordState === "Password"
+                            ? "text-black"
+                            : "text-inputBorder"
+                            } `}
                         >
                           3
                         </p>
                       </div>
                       <div
-                        className={`w-7 h-7 mx-1 flex justify-center items-center rounded-full border ${
-                          forgotPasswordState === "Done"
-                            ? "border-black"
-                            : "border-inputBorder"
-                        }`}
+                        className={`w-7 h-7 mx-1 flex justify-center items-center rounded-full border ${forgotPasswordState === "Done"
+                          ? "border-black"
+                          : "border-inputBorder"
+                          }`}
                       >
                         <p
-                          className={`text-xs md:text-sm ${
-                            forgotPasswordState === "Done"
-                              ? "text-black"
-                              : "text-inputBorder"
-                          } `}
+                          className={`text-xs md:text-sm ${forgotPasswordState === "Done"
+                            ? "text-black"
+                            : "text-inputBorder"
+                            } `}
                         >
                           {forgotPasswordState === "Done" ? (
                             <FaArrowRightLong className="text-xs md:text-sm" />
@@ -574,6 +553,7 @@ const Register = () => {
               <img
                 onClick={handleDialog}
                 src={require("../../../images/register/created.png")}
+                alt="Success"
                 className="cursor-pointer w-4/5 md:w-1/3 h-auto"
               />
             </div>

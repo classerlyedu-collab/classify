@@ -50,7 +50,7 @@ export const TimeLimitScreen = () => {
   return (
     <>
       <BoardContainer>
-        <h1 style={{ color: "white" }}></h1>
+        <h1 style={{ color: "white" }}>Time Limit Game</h1>
         <div className="w-full px-4" >
           <NavbarGames title={`Time Limit: ${formatTime(timeLeft)}`} route="/difficulty-level" />
         </div>
@@ -65,7 +65,7 @@ export const TimeLimitScreen = () => {
           <>
             <h1 style={{ color: "green" }}>Woah! You're a Pro😃👍</h1>
             <Link to={RouteName.DIFFICULTY_LEVEL}>
-              
+
               <Button>New Game</Button>
             </Link>
           </>

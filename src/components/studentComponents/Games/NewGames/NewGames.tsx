@@ -37,7 +37,7 @@ const NewGames = () => {
                             <div className="col-span-3  h-fit translate-x-7 -translate-y-2 rounded-3xl border-2 z-10 border-red-600" style={{
                                 borderRadius: '32px'
                             }} >
-                                <img src={item?.imageUrl} className="w-full h-20 rounded-2xl z-2 object-cover" style={{
+                                <img src={item?.imageUrl} alt={item?.title} className="w-full h-20 rounded-2xl z-2 object-cover" style={{
                                     borderRadius: '30px'
                                 }} />
                             </div>

@@ -23,7 +23,7 @@ export const ContextProvider: React.FC<{ children: React.ReactNode }> = (props) 
     const [loading, setLoading] = useState(false);
     let user: any = localStorage.getItem("user")
     user = JSON.parse(user)
-    
+
     //    const [userRole, setUserRole] = useState<"Parent" | "Student" | "Teacher" | null>(user.userType||"Student");
     const [role, setRole] = useState<'Parent' | 'Student' | 'Teacher' | null>(user?.userType || null);
 

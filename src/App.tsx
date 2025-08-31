@@ -20,8 +20,9 @@ import { TimeLimitScreen } from './screens/studentScreens/GamesExtra/time-limit.
 import { Provider } from 'react-redux';
 import store from './store';
 import { TeacherFeedback } from './screens/teacherScreens/TeacherFeedback';
-import { ParentPayment, StudentPayment, TeacherPayment } from './screens/payment';
 import Coupon from './screens/coupon/Coupon';
+import SubscriptionPage from './screens/SubscriptionPage';
+import SubscriptionGuard from './components/SubscriptionGuard';
 // import Coupon from './screens/parentScreens/Calendar/Coupon';
 
 
@@ -48,64 +49,137 @@ function App() {
                       element={<Register />}
                     />
                     <Route
+                      path={RouteName.SUBSCRIPTION}
+                      element={<SubscriptionPage />}
+                    />
+                    <Route
+                      path={RouteName.COUPON}
+                      element={<Coupon />}
+                    />
+                    <Route
+                      path={RouteName.CREATE_COUPON}
+                      element={<Coupon />}
+                    />
+                    <Route
+                      path={RouteName.GET_COUPON}
+                      element={<Coupon />}
+                    />
+                    <Route
+                      path={RouteName.DELETE_COUPON}
+                      element={<Coupon />}
+                    />
+                    <Route
+                      path={RouteName.USE_COUPON}
+                      element={<Coupon />}
+                    />
+                    <Route
                       path={RouteName.DASHBOARD_SCREEN}
-                      element={<Dashboard />}
+                      element={
+                        <SubscriptionGuard>
+                          <Dashboard />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.MYCHILDREN_SCREEN}
-                      element={<MyChildren />}
+                      element={
+                        <SubscriptionGuard>
+                          <MyChildren />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.CHILD_RESULT_SCREEN}
-                      element={<ChildResult />}
+                      element={
+                        <SubscriptionGuard>
+                          <ChildResult />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.CALENDAR_SCREEN}
-                      element={<Calendar />}
+                      element={
+                        <SubscriptionGuard>
+                          <Calendar />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.SETTING_SCREEN}
-                      element={<Settings />}
+                      element={
+                        <SubscriptionGuard>
+                          <Settings />
+                        </SubscriptionGuard>
+                      }
                     />
                     {/* Teacher */}
                     <Route
                       path={RouteName.DASHBOARD_SCREEN_TEACHER}
-                      element={<DashboardTeacher />}
+                      element={
+                        <SubscriptionGuard>
+                          <DashboardTeacher />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.MY_QUIZZESS}
-                      element={<MyQuizzess />}
+                      element={
+                        <SubscriptionGuard>
+                          <MyQuizzess />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.ADD_QUIZ}
-                      element={<AddQuiz />}
+                      element={
+                        <SubscriptionGuard>
+                          <AddQuiz />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.UPDATE_QUIZ}
-                      element={<UpdateQuiz />}
+                      element={
+                        <SubscriptionGuard>
+                          <UpdateQuiz />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.STUDENT_DETAILS_SCREEN}
-                      element={<StudentDetails />}
+                      element={
+                        <SubscriptionGuard>
+                          <StudentDetails />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.COURSES_SCREEN}
-                      element={<Courses />}
+                      element={
+                        <SubscriptionGuard>
+                          <Courses />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.STUDENTS_SCREEN}
-                      element={<Students />}
+                      element={
+                        <SubscriptionGuard>
+                          <Students />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.FEEDBACK_SCREEN}
-                      element={<Feedback />}
+                      element={
+                        <SubscriptionGuard>
+                          <Feedback />
+                        </SubscriptionGuard>
+                      }
                     />
 
                     {/* Student */}
                     <Route path={RouteName.DASHBOARD_SCREEN_STUDENT} element={<StudentDashboard />} />
-                    <Route path={RouteName.COUPON} element={<Coupon />} />
-                    
-
 
                     {/* games start */}
                     <Route path={RouteName.PLAY_GAME} element={<MainMenuScreen />} />
@@ -140,10 +214,6 @@ function App() {
 
                     <Route path={RouteName.RESULTS_SCREEN} element={<StudentResult />} />
                     <Route path={RouteName.QUIZZESS_DETAILS} element={<QuizzessDetails />} />
-                    {/* Payment routes */}
-                    <Route path={RouteName.PARENTS_PAYMENT} element={<ParentPayment/>} />
-                    <Route path={RouteName.TEACHER_PAYMENT} element={<TeacherPayment/>} />
-                    <Route path={RouteName.STUDENT_PAYMENT} element={<StudentPayment/>} />
 
 
 

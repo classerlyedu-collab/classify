@@ -6,8 +6,8 @@ const UpcomingEvents = () => {
             <div className="w-full h-full flex flex-row items-center justify-start flex-wrap">
                 {
                     UpcomingEventsArray?.map((item, index) => (
-                        <div id={index?.toString()}>
-                            <img src={item} className="w-30 h-20 md:w-36 md:h-24 lg:w-48 lg:h-28 xl:h-36 xl:w-56 md:mt-3 mt-2 mx-2 rounded-md " />
+                        <div key={index?.toString()}>
+                            <img src={item} alt="Upcoming event" className="w-30 h-20 md:w-36 md:h-24 lg:w-48 lg:h-28 xl:h-36 xl:w-56 md:mt-3 mt-2 mx-2 rounded-md " />
                         </div>
 
                     ))

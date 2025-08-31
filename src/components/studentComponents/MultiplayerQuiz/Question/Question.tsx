@@ -48,10 +48,10 @@ const Question = ({
 
             {/* image */}
             <div className="col-span-2 sm:col-start-1 sm:col-span-1 row-start-1 h-fit">
-                <img alt="In case Image is not displayed, please continue your quiz." src={currentQuestionData?.image ? currentQuestionData?.image : require('../../../../images/register/slider1.png')} className="w-full h-44 sm:h-72 md:h-72 lg:h-72 xl:h-80 2xl:h-[400px] object-cover" />
+                <img alt="Question" src={currentQuestionData?.image ? currentQuestionData?.image : require('../../../../images/register/slider1.png')} className="w-full h-44 sm:h-72 md:h-72 lg:h-72 xl:h-80 2xl:h-[400px] object-cover" />
             </div>
 
-            
+
         </div>
     );
 };

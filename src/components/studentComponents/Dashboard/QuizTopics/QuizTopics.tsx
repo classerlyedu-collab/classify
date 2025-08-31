@@ -11,7 +11,7 @@ interface quiztypeORM {
   createdBy: any;
   endsAt: String;
   grade: any;
-  image:string,
+  image: string,
   questions: any;
   score: String;
   startsAt: String;
@@ -19,7 +19,7 @@ interface quiztypeORM {
   subject: any;
   topic: any;
   updatedAt: any;
-  _id:String
+  _id: String
 }
 
 const QuizTopics = () => {
@@ -32,14 +32,14 @@ const QuizTopics = () => {
   useEffect(() => {
     setLoading(true);
     Get("/quiz", null, {
-        grade:user?.profile?.grade?._id,
-    
-    limit:3,
-    page:0
+      grade: user?.profile?.grade?._id,
 
-    //   grade: "666b510e00af65249616e24a",
+      limit: 3,
+      page: 0
+
+      //   grade: "666b510e00af65249616e24a",
     }).then((d) => {
-      
+
       if (d.success) {
         setQuizes(d.data);
         setLoading(false);
@@ -58,9 +58,8 @@ const QuizTopics = () => {
           <div
             key={index}
             onClick={
-              ()=>
-              {
-              
+              () => {
+
                 navigate(`${RouteName?.QUIZ_CONFIRMATION}?quiz=${items._id}`)
               }
             }
@@ -69,7 +68,7 @@ const QuizTopics = () => {
               background: getRandomColor("dark", index),
             }}
           >
-            <img className="w-1/3 mb-4" src={items.image||QuizTopicsData[index%QuizTopicsData?.length]?.image} alt="image" />
+            <img className="w-1/3 mb-4" src={items.image || QuizTopicsData[index % QuizTopicsData?.length]?.image} alt={items?.subject?.name} />
 
             <h1 className="font-ubuntu font-medium md:text-sm text-sm text-center px-2 text-white">
               {items?.subject?.name} ({items?.topic?.name})

@@ -1,9 +1,6 @@
-import { WidthFull } from "@mui/icons-material";
-import { CoursesArray } from "../../../../constants/Teacher/MyStudents";
-import { NewCoursesData } from "../../../../constants/Teacher/courses";
 import { getRandomColor } from "../../../../utils/randomColorGenerator";
 
-const MyCourses = ({myCourses}:any) => {
+const MyCourses = ({ myCourses }: any) => {
   return (
 
     <div className="flex flex-col bg-white px-3 w-full rounded-xl py-3">
@@ -36,14 +33,14 @@ const MyCourses = ({myCourses}:any) => {
         </div> */}
 
         {
-          myCourses?.map((item:any, index:any) => (
+          myCourses?.map((item: any, index: any) => (
             <div id={index?.toString()} className="grid grid-cols-10 col-span-10 mt-2">
               <div className="col-span-4">
                 <div className="flex flex-row items-start">
                   <div className="flex justify-center items-center p-2.5 rounded-md mr-3"
                     style={{ background: getRandomColor('dark', index, 0.2) }}
                   >
-                    <img className="w-7 h-6" src={item.image} alt="image" />
+                    <img className="w-7 h-6" src={item.image} alt={item.name} />
                   </div>
                   <div className="flex flex-col">
                     <h6 className="text-sm text-greyBlack font-ubuntu font-medium">{item.name}</h6>

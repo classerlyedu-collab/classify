@@ -1,8 +1,11 @@
 import axios from "axios";
-// let baseURL= "http://localhost:8082"
-let baseURL= "https://backend-updated-0114457b2529.herokuapp.com"
+
+// Environment-based configuration
+const baseURL = process.env.REACT_APP_API_BASE_URL || "http://localhost:8082";
+const apiVersion = process.env.REACT_APP_API_VERSION || "/api/v1";
+
 const instance = axios.create({
-  baseURL:baseURL+"/api/v1"
+  baseURL: baseURL + apiVersion
 });
 instance.interceptors.request.use(
   (config) => {
@@ -19,10 +22,10 @@ instance.interceptors.request.use(
 );
 
 export const Get = (endPoint, id, params) => {
-  
+
   return new Promise((resolve, reject) => {
     instance
-      .get(`${endPoint}${id ? "/"+id : ""}`, {
+      .get(`${endPoint}${id ? "/" + id : ""}`, {
         params: { ...params },
       })
       .then((res) => {
@@ -33,7 +36,7 @@ export const Get = (endPoint, id, params) => {
         // }
       })
       .catch((err) => {
-        if (err.response?.status == 401) {
+        if (err.response?.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
         }
@@ -44,15 +47,15 @@ export const Get = (endPoint, id, params) => {
 export const Post = (endPoint, body, id, headers) => {
   return new Promise((resolve, reject) => {
     instance
-      .post(`${endPoint}${id ? "/"+id : ""}`, body, {
+      .post(`${endPoint}${id ? "/" + id : ""}`, body, {
         headers: headers
           ? headers
           : {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem(
-                "token"
-              )}`,
-            },
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem(
+              "token"
+            )}`,
+          },
       })
       .then((res) => {
         resolve(res.data);
@@ -62,7 +65,7 @@ export const Post = (endPoint, body, id, headers) => {
         // }
       })
       .catch((err) => {
-        if (err?.response?.status == 401) {
+        if (err?.response?.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
         }
@@ -73,18 +76,18 @@ export const Post = (endPoint, body, id, headers) => {
 export const Put = (endPoint, body, id) => {
   return new Promise((resolve, reject) => {
     instance
-      .put(`${endPoint}${id ? "/"+id : ""}`, body)
+      .put(`${endPoint}${id ? "/" + id : ""}`, body)
       .then((res) => {
         if (res.data.success
-          
-          ||res.data.user) {
+
+          || res.data.user) {
           resolve(res.data);
         } else {
           reject(res.data);
         }
       })
       .catch((err) => {
-        if (err.response.status == 401) {
+        if (err.response.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
         }
@@ -94,18 +97,18 @@ export const Put = (endPoint, body, id) => {
 };
 export const Delete = (endPoint, id, params) => {
   return new Promise((resolve, reject) => {
-    
+
     instance
-      .delete(`${endPoint}${id ? "/"+ id : ""}`, {data:params})
+      .delete(`${endPoint}${id ? "/" + id : ""}`, { data: params })
       .then((res) => {
-        if (res.data.Success || res.status == 200) {
+        if (res.data.Success || res.status === 200) {
           resolve(res.data);
         } else {
           reject(res.data);
         }
       })
       .catch((err) => {
-        if (err.response.status == 401) {
+        if (err.response.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
         }
@@ -114,4 +117,4 @@ export const Delete = (endPoint, id, params) => {
   });
 };
 
-export const ImageLink=baseURL+"/uploads/"
+export const ImageLink = baseURL + (process.env.REACT_APP_UPLOAD_PATH || "/uploads/")

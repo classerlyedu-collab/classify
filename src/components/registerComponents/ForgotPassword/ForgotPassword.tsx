@@ -17,8 +17,8 @@ type propsForgotPassword = {
     setconfirmpasswordError: Dispatch<SetStateAction<string>>;
     setForgotPasswordState: any;
     setScreenStatus: any;
-    otp:string;
-    setOtp:any;
+    otp: string;
+    setOtp: any;
 
 };
 
@@ -38,8 +38,8 @@ const ForgotPassword = ({
     setconfirmpasswordError,
     setForgotPasswordState,
     setScreenStatus,
-otp,
-setOtp
+    otp,
+    setOtp
 }: propsForgotPassword) => {
 
 
@@ -52,7 +52,7 @@ setOtp
             case 'Email':
                 return (
                     <>
-                        <img src={require('../../../images/register/lock.png')} className="w-12 h-12 md:w-14 md:h-14 mt-4 mb-4 border-true" />
+                        <img src={require('../../../images/register/lock.png')} alt="Lock icon" className="w-12 h-12 md:w-14 md:h-14 mt-4 mb-4 border-true" />
 
                         <h1 className="text-lg md:text-xl font-medium">Forgot Password?</h1>
                         <p className="text-base md:text-sm font-medium pt-4 text-black opacity-50 pb-12">No worries we'll send you reset instructions</p>
@@ -71,7 +71,7 @@ setOtp
             case 'Pin':
                 return (
                     <div>
-                        <img src={require('../../../images/register/pin.png')} className="w-12 h-12 md:w-14 md:h-14 mt-4 mb-4 border-true" />
+                        <img src={require('../../../images/register/pin.png')} alt="Pin icon" className="w-12 h-12 md:w-14 md:h-14 mt-4 mb-4 border-true" />
 
                         <h1 className="text-lg md:text-xl font-medium">Reset Password?</h1>
                         <div className="pt-3 md:pt-4 pb-8 md:pb-12 flex flex-row justify-start items-center" >
@@ -83,14 +83,14 @@ setOtp
 
                         <div className="pt-3 md:pt-4 pb-8 md:pb-12 flex flex-row justify-center items-center w-full" >
                             <p className="text-xs md:text-sm font-medium text-black opacity-50">Didn`t received the email? </p>
-                            <p className="text-xs md:text-sm text-secondary font-bold opacity-50 ml-1 cursor-pointer" onClick={()=>{setForgotPasswordState("Email")}}>Click to resend.</p>
+                            <p className="text-xs md:text-sm text-secondary font-bold opacity-50 ml-1 cursor-pointer" onClick={() => { setForgotPasswordState("Email") }}>Click to resend.</p>
                         </div>
                     </div>
                 );
             case 'Password':
                 return (
                     <div>
-                        <img src={require('../../../images/register/password.png')} className="w-12 h-12 md:w14 md:h14 mt-3 mb-3" />
+                        <img src={require('../../../images/register/password.png')} alt="Password icon" className="w-12 h-12 md:w14 md:h14 mt-3 mb-3" />
                         <h1 className="text-lg md:text-xl pt-3 font-medium ">Set new password</h1>
                         <p className="text-xs md:text-sm font-normal pt-2 pb-7 text-black opacity-50 ">Must be at least 8 characters.</p>
 
@@ -121,7 +121,7 @@ setOtp
             case 'Done':
                 return (
                     <div>
-                        <img src={require('../../../images/register/all done.png')} className="w-12 h-12 md:w-14 md:h-14 mt-4 mb-4 border-true" />
+                        <img src={require('../../../images/register/all done.png')} alt="Success icon" className="w-12 h-12 md:w-14 md:h-14 mt-4 mb-4 border-true" />
 
 
                         <div>
@@ -131,7 +131,7 @@ setOtp
                             <div className="bg-gradient-to-r from-primary to-secondary h-10 w-full rounded-md mt-16 text-center pt-2 text-white cursor-pointer">
                                 <p className="font-normal text-sm md:base ">Set up recovery email</p>
                             </div>
-                            <div className="h-10 w-full rounded-md mt-4 text-center pt-2 border-black cursor-pointer border " onClick={()=> {
+                            <div className="h-10 w-full rounded-md mt-4 text-center pt-2 border-black cursor-pointer border " onClick={() => {
                                 setForgotPasswordState('Email');
                                 setScreenStatus('Signin');
                             }} >

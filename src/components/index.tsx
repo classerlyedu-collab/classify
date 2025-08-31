@@ -9,3 +9,4 @@ export * from './teacherComponents';
 export * from './studentComponents';
 export * from './NavbarGames';
 export * from './CourseSelection';
+export { default as SubscriptionPackages } from './SubscriptionPackages';

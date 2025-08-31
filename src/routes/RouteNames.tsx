@@ -49,13 +49,11 @@ export const RouteName = {
     QUIZ_CONFIRMATION: '/Subjects/Daily_Quiz/Confirmation',
 
     // payments routes
-    PARENTS_PAYMENT: '/payment/parent',
-    TEACHER_PAYMENT: '/payment/teacher',
-    STUDENT_PAYMENT: '/payment/student',
-    CREATE_COUPON:'/coupon/create',
-    GET_COUPON:'/coupon',
-    DELETE_COUPON:'/coupon/delete',
-    USE_COUPON:'/coupon/usecoupon'
+    SUBSCRIPTION: '/subscription',
+    CREATE_COUPON: '/coupon/create',
+    GET_COUPON: '/coupon',
+    DELETE_COUPON: '/coupon/delete',
+    USE_COUPON: '/coupon/usecoupon'
 
 
 

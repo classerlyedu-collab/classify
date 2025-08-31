@@ -15,7 +15,7 @@ const FeaturedCategories = () => {
                     <img
                         className=""
                         src={require("../../../../images/students/quiz/single.png")}
-                        alt="image"
+                        alt="Solo Quiz"
                     />
 
                     <div
@@ -46,7 +46,7 @@ const FeaturedCategories = () => {
                     <img
                         className=""
                         src={require("../../../../images/students/quiz/ranking.png")}
-                        alt="image"
+                        alt="Ranking"
                     />
 
                     <div className="flex justify-center items-center absolute top-16 left-12 sm:top-8 sm:left-6 md:top-12 md:left-10 lg:top-14 lg:left-12 xl:top-16  xl:left-12 py-2 px-6 rounded-2xl bg-[rgba(255,255,255,0.3)] hover:bg-[rgba(255,255,255,0.5)] cursor-pointer transition duration-200">

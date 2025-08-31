@@ -1,4 +1,4 @@
-import { MdArrowBack, MdBackspace, MdCancel } from "react-icons/md";
+import { MdArrowBack, MdCancel } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { RouteName } from "../../routes/RouteNames";
 

@@ -104,7 +104,7 @@ const Information = () => {
       setHasChanges(false);
       setIsModalOpen(false);
     } catch (error) {
-      
+
       setHasChanges(false);
       setIsModalOpen(false);
     }
@@ -118,7 +118,7 @@ const Information = () => {
     } catch (error) {
       setHasChanges(false);
       setIsModalOpen(false);
-      
+
     }
   }
 
@@ -158,7 +158,7 @@ const Information = () => {
 
   const handleUpdateClick = () => {
     let reqbody: any = {};
-    if(email != user?.email) {
+    if (email != user?.email) {
       reqbody.email = email;
     }
     if (userName != user?.userName) {
@@ -169,8 +169,7 @@ const Information = () => {
     } else {
       reqbody.grade = grade;
     }
-    if(user?.userType !== 'Parent')
-    {
+    if (user?.userType !== 'Parent') {
       reqbody.subjects = course.filter((i: any) => { return i != null });
     }
 

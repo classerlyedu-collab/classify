@@ -1,9 +1,9 @@
-import {
-  buildStyles,
-  CircularProgressbarWithChildren,
-} from "react-circular-progressbar";
+// import {
+//   buildStyles,
+//   CircularProgressbarWithChildren,
+// } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const Overview = ({ per, mystd }: any) => {
   let date = new Date();

@@ -1,5 +1,4 @@
 import React from "react";
-import { useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import { Post } from "../../../config/apiMethods";
 import { displayMessage } from "../../../config";
@@ -55,7 +54,7 @@ const MyChildernsModal: React.FC<MyChildernModalProps> = ({
             </h1>
           </div>
         </div>
-        
+
         <div className="flex flex-col justify-start items-center pt-4 bg-white rounded-xl shadow-md w-full">
           <div className="flex w-auto mt-5 px-4">
             <CustomInput
@@ -67,11 +66,10 @@ const MyChildernsModal: React.FC<MyChildernModalProps> = ({
           </div>
 
           <div
-            className={`flex flex-row justify-center items-center py-2 px-6 rounded-3xl mb-4 cursor-pointer transition duration-300 ${
-              isButtonEnabled
+            className={`flex flex-row justify-center items-center py-2 px-6 rounded-3xl mb-4 cursor-pointer transition duration-300 ${isButtonEnabled
                 ? "bg-gradient-to-r from-primary to-secondary text-opacity-60 text-white hover:text-opacity-100"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
+              }`}
           >
             <h1
               className="text-sm sm:text-base md:text-lg font-ubuntu font-medium pr-2"
@@ -81,7 +79,7 @@ const MyChildernsModal: React.FC<MyChildernModalProps> = ({
             </h1>
             <FiPlusCircle size={18} />
           </div>
-         
+
         </div>
       </div>
     </div>

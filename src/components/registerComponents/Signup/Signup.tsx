@@ -1,5 +1,4 @@
-import { CustomInput, ImagesSlider, CustomRadio, DropDown, CourseSelection } from "../../../components";
-import { useState } from 'react';
+import { CustomInput, CustomRadio, DropDown, CourseSelection } from "../../../components";
 import { gradeObject } from "../../../constants/register";
 import { MultiDropDown } from "../../multiselectDropdown";
 
@@ -184,7 +183,7 @@ const Signup = ({
                     )
                 }
                 {
-                    role == "Teacher" && (
+                    role === "Teacher" && (
                         <MultiDropDown
                             value={grades}
                             setValue={setGrades}

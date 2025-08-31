@@ -19,7 +19,6 @@ import { IoMdLogOut } from "react-icons/io";
 import { Get, Post } from "../../config/apiMethods";
 import { displayMessage } from "../../config";
 import { MdOutlineSubscriptions } from "react-icons/md";
-import { useSubscriptionStatus } from "../../hooks/useSubscriptionStatus";
 
 const SideDrawer = () => {
   const {
@@ -28,8 +27,6 @@ const SideDrawer = () => {
     setIsModalOpen,
     setHasChanges
   } = UseStateContext();
-
-  const { isSubscribed, loading } = useSubscriptionStatus();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,20 +67,42 @@ const SideDrawer = () => {
     }
   }, [childernValue, navigate, role]);
 
-  const handleSubscriptionPortal = () => {
-    navigate(RouteName.SUBSCRIPTION);
+  const handleSubscriptionPortal = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/v1/payment/create-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({}) // Empty body - no package selection needed
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        window.location.href = data.data.url; // Redirect to Stripe with all packages
+      } else {
+        displayMessage(data.message || "Failed to create checkout session", "error");
+      }
+    } catch (error: any) {
+      displayMessage(error.message || "Error accessing subscription portal", "error");
+    }
+  }
+    try {
+      const response = await Post("/payment/create-checkout-session");
+      if (response.success && response.url) {
+        window.location.href = response.url; // Redirect to Stripe Checkout
+      } else {
+        displayMessage(response.message || "Failed to create checkout session", "error");
+      }
+    } catch (error: any) {
+      displayMessage(error.response?.data?.message || error.message || "Error accessing subscription portal", "error");
+    }
   };
 
   const handleNavigate = (itemRoute: string | undefined, onClick?: () => void) => {
     try {
-      // Check if user is subscribed for protected routes
-      if (itemRoute && itemRoute !== RouteName.SUBSCRIPTION && itemRoute !== RouteName.COUPON && !isSubscribed && role !== 'Student') {
-        // Redirect to subscription page for non-subscribed users
-        navigate(RouteName.SUBSCRIPTION);
-        setShowSideBar(false);
-        return;
-      }
-
       if (hasChanges) {
         setIsModalOpen(true);
       } else {
@@ -136,7 +155,6 @@ const SideDrawer = () => {
         <MdOutlineSubscriptions className="mr-4 text-md md:text-base lg:text-2xl" />
       ),
       text: "Subscription",
-      route: RouteName.SUBSCRIPTION,
       onClick: handleSubscriptionPortal,
     },
     {
@@ -176,7 +194,6 @@ const SideDrawer = () => {
         <MdOutlineSubscriptions className="mr-4 text-md md:text-base lg:text-2xl" />
       ),
       text: "Subscription",
-      route: RouteName.SUBSCRIPTION,
       onClick: handleSubscriptionPortal,
     },
     {
@@ -360,100 +377,91 @@ const SideDrawer = () => {
         </h2>
         <nav>
           <ul className="flex flex-col py-4 text-gray-800">
-            {getMenuItems()?.map((item, index) => {
-              // Check if this item should be disabled
-              const isProtectedRoute = item.route &&
-                item.route !== RouteName.SUBSCRIPTION &&
-                item.route !== RouteName.COUPON;
-              const isDisabled = isProtectedRoute && !isSubscribed && role !== 'Student';
-
-              return (
-                <div className="w-full h-full" key={index}>
-                  <div
-                    className={`py-4 ${isCurrentRoute(item.route)
-                      ? "border-l-4 border-yellow-200 bg-gradient-to-r from-whiteTransparent to-navBg"
-                      : isDisabled
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:border-l-4 border-transparent bg-transparent"
-                      }`}
-                    onClick={() => !isDisabled && handleNavigate(item.route, item.onClick)}
-                  >
-                    <li className={`text-xl text-white flex mx-auto px-4 flex-row justify-start items-center ${isDisabled ? 'cursor-not-allowed' : 'cursor-pointer'
-                      }`}>
-                      {item.icon}
-                      <p className="text-sm md:text-base lg:text-md font-ubuntu text-white">
-                        {item.text}
-                      </p>
-                      {item?.route === RouteName?.MYCHILDREN_SCREEN &&
-                        isCurrentRoute(RouteName?.MYCHILDREN_SCREEN) ? (
-                        <>
-                          {showChildrens ? (
-                            <MdExpandLess
-                              onClick={() => setShowChildrens(false)}
-                              className="self-end text-white text-2xl ml-2"
-                            />
-                          ) : (
-                            <MdExpandMore
-                              onClick={() => setShowChildrens(true)}
-                              className="self-end text-white text-2xl ml-2"
-                            />
-                          )}
-                        </>
-                      ) : (
-                        <></>
-                      )}
-                    </li>
-                  </div>
-                  {isCurrentRoute(RouteName?.MYCHILDREN_SCREEN) ? (
-                    <>
-                      {role === "Parent" &&
-                        item?.text === "My Children" &&
-                        showChildrens && (
-                          <div className="bg-transparent flex flex-col justify-center items-end">
-                            {childData?.map((childItem, childIndex) => (
-                              <div
-                                key={childIndex}
-                                onClick={() => {
-                                  localStorage.setItem(
-                                    "mychildern",
-                                    JSON.stringify(childItem)
-                                  );
-                                  setSelectedChildren(childItem._id);
-                                  navigate(
-                                    RouteName.MYCHILDREN_SCREEN +
-                                    `?childern=${childItem._id}`
-                                  );
-                                  setShowSideBar(false);
-                                }}
-                                className={`w-4/5 py-2 mt-3  self-end  border-transparent ${selectedChildren === childItem._id
-                                  ? "bg-gradient-to-r from-whiteTransparent to-navBg"
-                                  : "hover:w-5/6 bg-transparent"
-                                  }`}
-                              >
-                                <li className="text-xl text-white flex cursor-pointer w-full rounded-full mx-auto flex-row justify-start items-center">
-                                  <img
-                                    src={
-                                      childItem?.auth?.image ||
-                                      "https://st2.depositphotos.com/3889193/6856/i/450/depositphotos_68564721-Beautiful-young-student-posing.jpg"
-                                    }
-                                    alt={childItem?.auth?.fullName || "Student"}
-                                    className="w-8 h-8 md:w-11 md:h-11 rounded-full mx-3"
-                                  />
-                                  <p className="text-sm md:text-base lg:text-md font-ubuntu">
-                                    {childItem?.auth?.fullName?.slice(0, 18)}
-                                  </p>
-                                </li>
-                              </div>
-                            ))}
-                          </div>
+            {getMenuItems()?.map((item, index) => (
+              <div className="w-full h-full">
+                <div
+                  key={index}
+                  className={`py-4 ${isCurrentRoute(item.route)
+                    ? "border-l-4 border-yellow-200 bg-gradient-to-r from-whiteTransparent to-navBg"
+                    : "hover:border-l-4 border-transparent bg-transparent"
+                    }`}
+                  onClick={() => handleNavigate(item.route, item.onClick)}
+                >
+                  <li className="text-xl text-white flex cursor-pointer mx-auto px-4 flex-row justify-start items-center">
+                    {item.icon}
+                    <p className="text-sm md:text-base lg:text-md font-ubuntu text-white">
+                      {item.text}
+                    </p>
+                    {item?.route === RouteName?.MYCHILDREN_SCREEN &&
+                      isCurrentRoute(RouteName?.MYCHILDREN_SCREEN) ? (
+                      <>
+                        {showChildrens ? (
+                          <MdExpandLess
+                            onClick={() => setShowChildrens(false)}
+                            className="self-end text-white text-2xl ml-2"
+                          />
+                        ) : (
+                          <MdExpandMore
+                            onClick={() => setShowChildrens(true)}
+                            className="self-end text-white text-2xl ml-2"
+                          />
                         )}
-                    </>
-                  ) : (
-                    <></>
-                  )}
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                  </li>
                 </div>
-              );
-            })}
+                {isCurrentRoute(RouteName?.MYCHILDREN_SCREEN) ? (
+                  <>
+                    {role === "Parent" &&
+                      item?.text === "My Children" &&
+                      showChildrens && (
+                        <div className="bg-transparent flex flex-col justify-center items-end">
+                          {childData?.map((item, index) => (
+                            <div
+                              onClick={() => {
+                                localStorage.setItem(
+                                  "mychildern",
+                                  JSON.stringify(item)
+                                );
+                                setSelectedChildren(item._id);
+                                navigate(
+                                  RouteName.MYCHILDREN_SCREEN +
+                                  `?childern=${item._id}`
+                                );
+                                setShowSideBar(false);
+                              }}
+                              className={`w-4/5 py-2 mt-3  self-end  border-transparent ${selectedChildren === item._id
+                                ? "bg-gradient-to-r from-whiteTransparent to-navBg"
+                                : "hover:w-5/6 bg-transparent"
+                                }`}
+                            >
+                              <li className="text-xl text-white flex cursor-pointer w-full rounded-full mx-auto flex-row justify-start items-center">
+                                <img
+                                  src={
+                                    item?.auth?.image ||
+                                    "https://st2.depositphotos.com/3889193/6856/i/450/depositphotos_68564721-Beautiful-young-student-posing.jpg"
+                                    // childrensData[index % childrensData?.length]
+                                    //   ?.image
+                                  }
+                                  alt={item?.auth?.fullName || "Student"}
+                                  className="w-8 h-8 md:w-11 md:h-11 rounded-full mx-3"
+                                />
+                                <p className="text-sm md:text-base lg:text-md font-ubuntu">
+                                  {item?.auth?.fullName?.slice(0, 18)}
+                                </p>
+                              </li>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                  </>
+                ) : (
+                  <></>
+                )}
+              </div>
+            ))}
 
             <div className="w-full absolute bottom-10 right-0">
               <div

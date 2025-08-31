@@ -2,7 +2,7 @@
 const EnrolledStudents = () => {
     return (
         <div className="w-full h-full flex flex-col justify-center items-start bg-white rounded-xl">
-            <img src={require('../../../../images/drawer/Dashboard/teacherpic.png')} className=" w-full md:h-4/5" />
+            <img src={require('../../../../images/drawer/Dashboard/teacherpic.png')} alt="Teacher" className=" w-full md:h-4/5" />
 
             <div className="flex flex-row w-full px-2 justify-between items-center">
                 <p className="font-ubuntu text-bluecolor font-medium text-xs md:text-sm">5,957 Enrolled Students</p>

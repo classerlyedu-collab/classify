@@ -48,7 +48,7 @@ const TopicInfo = () => {
     //   updateTimeEveryMinte();
     // }, 1000); // Decrease by 1 second every 1000 ms (1 second)
 
-  //   return () => clearInterval(interval); // Cleanup on component unmount
+    //   return () => clearInterval(interval); // Cleanup on component unmount
   }, []);
 
   const formatTime = (time: number) => {
@@ -78,7 +78,7 @@ const TopicInfo = () => {
       <div className="grid grid-cols-2 rounded-lg gap-3 bg-white">
         <img
           className="col-span-2 sm:col-span-1 w-full h-28 sm:h-44 md:h-60 2xl:h-72 rounded-lg object-cover p-2 sm:p-0"
-          src="https://res.cloudinary.com/deiylfley/image/upload/v1724794943/image_2024-08-28_024217681_gkya4q.png"
+          src={process.env.REACT_APP_DEFAULT_LESSON_IMAGE || "https://res.cloudinary.com/deiylfley/image/upload/v1724794943/image_2024-08-28_024217681_gkya4q.png"}
           alt="Lesson"
         />
 

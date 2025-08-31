@@ -11,9 +11,9 @@ interface subjecttypeORM {
   grade: any;
   image: string;
   name: String;
-  topics:any;
+  topics: any;
   updatedAt: any;
-  _id:any
+  _id: any
 }
 
 const Subjects = () => {
@@ -25,25 +25,26 @@ const Subjects = () => {
   let user = JSON.parse(localStorage.getItem("user") || "");
   useEffect(() => {
     setLoading(true);
-if(user?.userType=="Teacher"){
-  Get("/teacher/mysubjects").then((d) => {
-    if (d.success) {
-      setSubjects(d.data);
-      setLoading(false);
+    if (user?.userType === "Teacher") {
+      Get("/teacher/mysubjects").then((d) => {
+        if (d.success) {
+          setSubjects(d.data);
+          setLoading(false);
+        } else {
+          displayMessage(d.message, "error");
+        }
+      })
     } else {
-      displayMessage(d.message, "error");
+      Get("/student/mysubjects").then((d) => {
+        if (d.success) {
+          setSubjects(d.data);
+          setLoading(false);
+        } else {
+          displayMessage(d.message, "error");
+        }
+      });
     }
-  })
-}else{
-    Get("/student/mysubjects").then((d) => {
-      if (d.success) {
-        setSubjects(d.data);
-        setLoading(false);
-      } else {
-        displayMessage(d.message, "error");
-      }
-    });}
-  }, []);
+  }, [user?.userType]);
   const navigate = useNavigate();
 
   return (
@@ -64,37 +65,38 @@ if(user?.userType=="Teacher"){
         </div> */}
       </div>
       <div className="flex flex-row flex-wrap gap-1 md:gap-3 xl:gap-5">
-        {subjects?.length==0&&
-        <p>No subjects found</p>
+        {subjects?.length === 0 &&
+          <p>No subjects found</p>
         }
         {
-        subjects?.length>0&&subjects?.map((items, index) => (
-          <div
-            id={index?.toString()}
-            onClick={() => {
-              // if(user.userType!="Teacher"){
-              localStorage.setItem("subject",JSON.stringify(items))
-              navigate(`${RouteName?.TOPICS_SUBJECTS}?subject=${items._id}`)}
-            // }
-            }
-            className="py-4 flex flex-col justify-center items-center border rounded-xl w-36  hover:opacity-80 cursor-pointer"
-            style={{
-              background: getRandomColor("dark", index),
-            }}
+          subjects?.length > 0 && subjects?.map((items, index) => (
+            <div
+              id={index?.toString()}
+              onClick={() => {
+                // if(user.userType!="Teacher"){
+                localStorage.setItem("subject", JSON.stringify(items))
+                navigate(`${RouteName?.TOPICS_SUBJECTS}?subject=${items._id}`)
+              }
+                // }
+              }
+              className="py-4 flex flex-col justify-center items-center border rounded-xl w-36  hover:opacity-80 cursor-pointer"
+              style={{
+                background: getRandomColor("dark", index),
+              }}
             // onClick={()=> navigate(RouteName?.)}
-          >
-            <img
-              className="w-14 lg:w-20 h-14 lg:h-20 mb-4"
-              // src={ImageLink+items?.image}
-              src={items.image|| SubjectsData[index%SubjectsData?.length]?.image}
-              alt="image"
-            />
+            >
+              <img
+                className="w-14 lg:w-20 h-14 lg:h-20 mb-4"
+                // src={ImageLink+items?.image}
+                src={items.image || SubjectsData[index % SubjectsData?.length]?.image}
+                alt="subject-image"
+              />
 
-            <h1 className="font-ubuntu font-medium md:text-sm text-sm text-center px-2 text-white">
-              {items?.name}
-            </h1>
-          </div>
-        ))}
+              <h1 className="font-ubuntu font-medium md:text-sm text-sm text-center px-2 text-white">
+                {items?.name}
+              </h1>
+            </div>
+          ))}
       </div>
     </div>
   );
