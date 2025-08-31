@@ -54,6 +54,7 @@ const Register = () => {
   const [roleError, setRoleError] = useState<string>("");
   const [gradeError, setGradeError] = useState<string>("");
   const [rollNoError, setRollNoError] = useState<string>("");
+  const [termsAccepted, setTermsAccepted] = useState<boolean>(false);
   useEffect(() => {
     Get("/grade")
       .then((d) => {
@@ -151,6 +152,10 @@ const Register = () => {
         setRole(userRole);
         if (password != confirmPassword) {
           displayMessage("password must be same", "error");
+          return;
+        }
+        if (!termsAccepted) {
+          displayMessage("You must accept the Terms of Use to continue", "error");
           return;
         }
         let payload: any;
@@ -413,6 +418,8 @@ const Register = () => {
                       courseData={courseData}
                       grades={grades}
                       setGrades={setGrades}
+                      termsAccepted={termsAccepted}
+                      setTermsAccepted={setTermsAccepted}
                     />
                   ) : (
                     <>

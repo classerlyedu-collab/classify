@@ -216,7 +216,6 @@ function App() {
                     <Route path={RouteName.QUIZZESS_DETAILS} element={<QuizzessDetails />} />
 
 
-
                   </Routes>
                 </BrowserRouter>
               </div>

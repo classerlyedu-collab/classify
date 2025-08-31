@@ -41,6 +41,8 @@ type SignupProps = {
     courseData: any,
     grades: any;
     setGrades: any;
+    termsAccepted: boolean;
+    setTermsAccepted: any;
 };
 
 const Signup = ({
@@ -77,6 +79,7 @@ const Signup = ({
     gradeData,
     course, courseError, setCourse, setCourseError,
     courseData, grades, setGrades,
+    termsAccepted, setTermsAccepted,
 }: SignupProps) => {
 
     return (
@@ -276,13 +279,25 @@ const Signup = ({
 
             {/* policies */}
             <div className="flex items-start justify-center mb-4">
-                <input type="checkbox" className="w-4 md:w-6 h-4 md:h-6 text-secondary bg-gray-100 border-gray-300 rounded-lg flex flex-row justify-start items-center" />
-                <div className="flex flex-row items-center justify-start flex-wrap ml-2" >
-                    <p className="text-xs font-medium text-inputPlaceholder mr-1">Creating an account means you’re okay with our</p>
-                    <p className="text-xs font-medium text-radio mr-1 cursor-pointer">Terms of Service, Privacy Policy,</p>
-                    <p className="text-xs font-medium text-inputPlaceholder mr-1"> and our  default</p>
-                    <p className="text-xs font-medium text-radio mr-1 cursor-pointer">Notification Settings.</p>
-                </div>
+                <input
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    className="w-4 md:w-6 h-4 md:h-6 text-secondary bg-gray-100 border-gray-300 rounded-lg mt-0.5"
+                />
+                <p className="text-xs font-medium text-inputPlaceholder ml-2">
+                    Creating an account means you're okay with our{" "}
+                    <a
+                        href="https://gamma.app/docs/Classerly-Terms-of-Use-e5vf07e83fahkw8?mode=present#card-ay2yzv05j51jqeu"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-secondary cursor-pointer hover:underline"
+                    >
+                        Terms of Use
+                    </a>
+                    {" "}(click to read), Privacy Policy, and our default{" "}
+                    <span className="text-radio cursor-pointer">Notification Settings.</span>
+                </p>
             </div>
         </>
     );
