@@ -1,4 +1,4 @@
-import { TextEditor, TopicInfo } from "../../../components";
+import { TextEditor, TopicInfo, Chatbot } from "../../../components";
 
 const Material = () => {
 
@@ -14,6 +14,9 @@ const Material = () => {
             <div className="col-span-1 h-fit" >
                 <TextEditor />
             </div>
+
+            {/* AI Chatbot */}
+            <Chatbot />
 
         </div>
     )

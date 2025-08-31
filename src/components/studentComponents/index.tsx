@@ -8,3 +8,4 @@ export * from './Topics';
 export * from './DailyQuiz';
 export * from './SoloQuiz';
 export * from './MultiplayerQuiz';
+export * from './Chatbot';
