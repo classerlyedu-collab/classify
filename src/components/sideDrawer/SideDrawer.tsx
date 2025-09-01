@@ -21,6 +21,14 @@ import { displayMessage } from "../../config";
 import { MdOutlineSubscriptions } from "react-icons/md";
 import { useSubscriptionStatus } from "../../hooks/useSubscriptionStatus";
 
+// Define interface for menu items
+interface MenuItem {
+  icon: React.ReactElement;
+  text: string;
+  route?: string;
+  onClick?: () => void;
+}
+
 const SideDrawer = () => {
   const {
     role,
@@ -74,10 +82,19 @@ const SideDrawer = () => {
     navigate(RouteName.SUBSCRIPTION);
   };
 
-  const handleNavigate = (itemRoute: string | undefined, onClick?: () => void) => {
+  const handleNavigate = (itemRoute: string | undefined, onClick?: (() => void) | undefined) => {
     try {
       // Check if user is subscribed for protected routes
       if (itemRoute && itemRoute !== RouteName.SUBSCRIPTION && itemRoute !== RouteName.COUPON && !isSubscribed && role !== 'Student') {
+        // Debug logging for navigation
+        const userFromStorage = JSON.parse(localStorage.getItem("user") || "{}");
+        console.log('SideDrawer: Redirecting to subscription', {
+          itemRoute,
+          isSubscribed,
+          role,
+          userType: userFromStorage?.userType
+        });
+
         // Redirect to subscription page for non-subscribed users
         navigate(RouteName.SUBSCRIPTION);
         setShowSideBar(false);
@@ -113,7 +130,7 @@ const SideDrawer = () => {
     return location.pathname.startsWith(itemRoute);
   };
 
-  const parentMenuItems = [
+  const parentMenuItems: MenuItem[] = [
     {
       icon: <AiOutlineHome className="mr-4 text-md md:text-base lg:text-2xl" />,
       text: "Dashboard",
@@ -155,7 +172,7 @@ const SideDrawer = () => {
     },
   ];
 
-  const teacherMenuItems = [
+  const teacherMenuItems: MenuItem[] = [
     {
       icon: <AiOutlineHome className="mr-4 text-md md:text-base lg:text-2xl" />,
       text: "Dashboard",
@@ -209,7 +226,7 @@ const SideDrawer = () => {
     },
   ];
 
-  const studentMenuItems = [
+  const studentMenuItems: MenuItem[] = [
     {
       icon: <AiOutlineHome className="mr-4 text-md md:text-base lg:text-2xl" />,
       text: "Dashboard",
@@ -221,13 +238,6 @@ const SideDrawer = () => {
       ),
       text: "Courses",
       route: RouteName.SUBJECTS_SCREEN,
-    },
-    {
-      icon: (
-        <MdOutlineSubscriptions className="mr-4 text-md md:text-base lg:text-2xl" />
-      ),
-      text: "Subscription",
-      onClick: handleSubscriptionPortal,
     },
     {
       icon: (
@@ -266,7 +276,7 @@ const SideDrawer = () => {
     },
   ];
 
-  const getMenuItems = () => {
+  const getMenuItems = (): MenuItem[] | null => {
     switch (role) {
       case "Student":
         return studentMenuItems;
@@ -366,6 +376,18 @@ const SideDrawer = () => {
                 item.route !== RouteName.SUBSCRIPTION &&
                 item.route !== RouteName.COUPON;
               const isDisabled = isProtectedRoute && !isSubscribed && role !== 'Student';
+
+              // Debug logging for menu items
+              if (item.route && isProtectedRoute) {
+                console.log('SideDrawer: Menu item status', {
+                  route: item.route,
+                  text: item.text,
+                  isProtectedRoute,
+                  isSubscribed,
+                  role,
+                  isDisabled
+                });
+              }
 
               return (
                 <div className="w-full h-full" key={index}>

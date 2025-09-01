@@ -32,6 +32,12 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children }) => {
 
     useEffect(() => {
         const checkSubscription = async () => {
+            // Early return for students - they don't need subscription checks
+            if (role === 'Student') {
+                setIsLoading(false);
+                return;
+            }
+
             if (!user || isPublicRoute) {
                 setIsLoading(false);
                 return;
@@ -65,7 +71,7 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children }) => {
         };
 
         checkSubscription();
-    }, [user, location.pathname, navigate, isPublicRoute]);
+    }, [user, location.pathname, navigate, isPublicRoute, role]);
 
     // Show loading spinner while checking subscription
     if (isLoading) {
@@ -81,8 +87,23 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children }) => {
     // 2. Current route is public, OR
     // 3. User is a student (students don't need subscription)
     if (isSubscribed || isPublicRoute || role === 'Student') {
+        // Debug logging for subscription guard
+        console.log('SubscriptionGuard: Allowing access', {
+            isSubscribed,
+            isPublicRoute,
+            role,
+            userType: user?.userType
+        });
         return <>{children}</>;
     }
+
+    // Debug logging for subscription guard
+    console.log('SubscriptionGuard: Redirecting to subscription', {
+        isSubscribed,
+        isPublicRoute,
+        role,
+        userType: user?.userType
+    });
 
     // Redirect to subscription page
     navigate(RouteName.SUBSCRIPTION);

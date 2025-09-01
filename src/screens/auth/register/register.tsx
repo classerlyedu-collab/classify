@@ -121,24 +121,25 @@ const Register = () => {
               setRole(res.data.userType);
               // navigate(RouteName?.DASHBOARD_SCREEN);
 
-              if (res.data.isSubscribed === true) {
+              // Students don't need subscription - check user type first
+              if (res.data.userType === "Student") {
+                // Students go directly to their dashboard regardless of subscription status
+                navigate(RouteName?.DASHBOARD_SCREEN_STUDENT);
+              } else if (res.data.isSubscribed === true) {
+                // Only Parents and Teachers need subscription
                 switch (res.data.userType) {
                   case "Parent":
                     navigate(RouteName?.DASHBOARD_SCREEN);
                     break;
-                  case "Student":
-                    navigate(RouteName?.DASHBOARD_SCREEN_STUDENT);
-                    break;
                   case "Teacher":
                     navigate(RouteName?.DASHBOARD_SCREEN_TEACHER);
                     break;
-
                   default:
                     navigate(RouteName?.DASHBOARD_SCREEN);
                     break;
                 }
               } else {
-                // For non-subscribed users, redirect to subscription page
+                // For non-subscribed Parents/Teachers, redirect to subscription page
                 navigate(RouteName?.SUBSCRIPTION);
               }
             } else {
@@ -207,29 +208,16 @@ const Register = () => {
               // navigate(RouteName?.DASHBOARD_SCREEN);
 
               switch (userRole) {
-                // case 'Parent':
-                //     navigate(RouteName?.DASHBOARD_SCREEN);
-                //     break;
-                // case "Student":
-                //     navigate(RouteName?.DASHBOARD_SCREEN_STUDENT);
-                //     break;
-                // case 'Teacher':
-                //     navigate(RouteName?.DASHBOARD_SCREEN_TEACHER);
-                //     break;
-
-                // default:
-                //     navigate(RouteName?.DASHBOARD_SCREEN);
-                //     break;
                 case "Parent":
                   navigate(RouteName?.SUBSCRIPTION);
                   break;
                 case "Student":
-                  navigate(RouteName?.SUBSCRIPTION);
+                  // Students don't need subscription - go directly to dashboard
+                  navigate(RouteName?.DASHBOARD_SCREEN_STUDENT);
                   break;
                 case "Teacher":
                   navigate(RouteName?.SUBSCRIPTION);
                   break;
-
                 default:
                   navigate(RouteName?.DASHBOARD_SCREEN);
                   break;

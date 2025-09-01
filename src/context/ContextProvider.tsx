@@ -27,6 +27,13 @@ export const ContextProvider: React.FC<{ children: React.ReactNode }> = (props) 
     //    const [userRole, setUserRole] = useState<"Parent" | "Student" | "Teacher" | null>(user.userType||"Student");
     const [role, setRole] = useState<'Parent' | 'Student' | 'Teacher' | null>(user?.userType || null);
 
+    // Debug logging for role detection
+    console.log('ContextProvider: Role detection', {
+        userFromStorage: user,
+        userType: user?.userType,
+        role: role
+    });
+
     return (
         <StateContext.Provider value={{
             showSideBar,
