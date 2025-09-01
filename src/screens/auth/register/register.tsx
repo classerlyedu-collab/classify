@@ -182,7 +182,10 @@ const Register = () => {
         }
 
         if (userRole == "Parent") {
-          payload.childIds = rollNo;
+          // Only set childIds if rollNo is provided (for existing students)
+          if (rollNo && rollNo.trim() !== "") {
+            payload.childIds = rollNo;
+          }
         }
         if (userRole == "Student") {
           payload.parent = rollNo;

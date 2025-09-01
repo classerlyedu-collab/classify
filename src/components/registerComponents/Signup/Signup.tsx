@@ -244,21 +244,6 @@ const Signup = ({
                 }
 
                 {
-                    role === 'Parent' && (
-                        <CustomInput
-                            value={rollNo}
-                            setValue={setRollNo}
-                            error={rollNoError}
-                            setError={setRollNoError}
-                            label="Child Roll No"
-                            placeholder="e.g 123456"
-
-
-                            type='number'
-                        />
-                    )
-                }
-                {
                     role === 'Student' && (
                         <CustomInput
                             value={rollNo}

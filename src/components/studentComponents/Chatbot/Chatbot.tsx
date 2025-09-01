@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { IoChatbubbleEllipses, IoClose, IoPaperPlane } from 'react-icons/io5';
+import { IoClose, IoPaperPlane } from 'react-icons/io5';
 import { useSearchParams } from 'react-router-dom';
 import { Get, Post } from '../../../config/apiMethods';
 import { displayMessage } from '../../../config';
+import chatbotIcon from '../../../images/students/chatbot-icon.png';
 import './Chatbot.css';
 
 interface Message {
@@ -29,6 +30,7 @@ const Chatbot: React.FC = () => {
     const [chatSession, setChatSession] = useState<ChatSession | null>(null);
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [searchParams] = useSearchParams();
 
     // Get content from URL params
@@ -36,6 +38,12 @@ const Chatbot: React.FC = () => {
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const resetTextareaHeight = () => {
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+        }
     };
 
     useEffect(() => {
@@ -51,6 +59,7 @@ const Chatbot: React.FC = () => {
 
     const initializeChatSession = async () => {
         try {
+            setIsLoading(true); // Set loading state during initialization
             // Get lesson and topic info from localStorage or context
             const lessonData = localStorage.getItem('lesson');
             const lessonId = localStorage.getItem('lessonid');
@@ -77,6 +86,8 @@ const Chatbot: React.FC = () => {
         } catch (error) {
             console.error('Error initializing chat session:', error);
             displayMessage('Failed to initialize chat', 'error');
+        } finally {
+            setIsLoading(false); // Always reset loading state
         }
     };
 
@@ -115,6 +126,7 @@ const Chatbot: React.FC = () => {
             displayMessage('Failed to send message', 'error');
         } finally {
             setIsLoading(false);
+            resetTextareaHeight(); // Reset textarea height after sending a message
         }
     };
 
@@ -129,6 +141,7 @@ const Chatbot: React.FC = () => {
         setIsOpen(!isOpen);
         if (!isOpen) {
             setInputMessage('');
+            resetTextareaHeight(); // Reset height when opening chat
         }
     };
 
@@ -140,7 +153,11 @@ const Chatbot: React.FC = () => {
                 className="chatbot-toggle-btn"
                 title="Chat with AI Assistant"
             >
-                <IoChatbubbleEllipses size={24} />
+                <img
+                    src={chatbotIcon}
+                    alt="Chatbot Icon"
+                    style={{ width: '100%', height: '100%' }}
+                />
             </button>
 
             {/* Chat Window */}
@@ -169,8 +186,21 @@ const Chatbot: React.FC = () => {
                     <div className="chatbot-messages">
                         {messages.length === 0 ? (
                             <div className="chatbot-welcome">
-                                <p>👋 Hi! I'm your AI learning assistant.</p>
-                                <p>Ask me anything about your current lesson or topic!</p>
+                                {isLoading ? (
+                                    <div className="chatbot-loading">
+                                        <p>🔄 Initializing chat session...</p>
+                                        <div className="typing-indicator">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p>👋 Hi! I'm your AI learning assistant.</p>
+                                        <p>Ask me anything about your current lesson or topic!</p>
+                                    </>
+                                )}
                             </div>
                         ) : (
                             messages.map((message, index) => (
@@ -191,7 +221,7 @@ const Chatbot: React.FC = () => {
                             ))
                         )}
 
-                        {isLoading && (
+                        {isLoading && messages.length > 0 && (
                             <div className="chatbot-message assistant">
                                 <div className="message-content">
                                     <div className="typing-indicator">
@@ -210,6 +240,7 @@ const Chatbot: React.FC = () => {
                     <div className="chatbot-input-container">
                         <div className="chatbot-input-wrapper">
                             <textarea
+                                ref={textareaRef}
                                 value={inputMessage}
                                 onChange={(e) => {
                                     setInputMessage(e.target.value);
