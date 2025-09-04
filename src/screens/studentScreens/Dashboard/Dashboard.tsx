@@ -7,7 +7,8 @@ import {
     Subjects,
     Timeline,
     TopPerformingStudents,
-    WelcomeNoticeStudent
+    WelcomeNoticeStudent,
+    Notifications
 } from "../../../components";
 import { MyTeachers } from "../../../components/studentComponents/Dashboard/MyTeachers";
 
@@ -61,8 +62,13 @@ const Dashboard = () => {
 
                     </div>
 
-                    {/* Quiz topics & timeline */}
+                    {/* Quiz topics, notifications & timeline */}
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-3 md:gap-5 col-span-1 xl:col-span-4 h-fit" >
+
+                        {/* Notifications */}
+                        <div className="col-span-1 h-fit" >
+                            <Notifications maxNotifications={3} />
+                        </div>
 
                         {/* Quiz Topic */}
                         <div className="col-span-1 h-fit" >
@@ -74,7 +80,7 @@ const Dashboard = () => {
                             <Timeline />
                             <MyTeachers />
                         </div>
-                        
+
 
                     </div>
 

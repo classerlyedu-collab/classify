@@ -24,6 +24,25 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
     // const [mystd, setMyStd] = useState<any>({});
     const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
     const [notifications, setNotifications] = useState<any[]>([]); // State to store notifications
+
+    // Check if there are unread notifications
+    const hasUnreadNotifications = () => {
+        try {
+            const currentUser = JSON.parse(localStorage.getItem('user') || '');
+            const currentUserId = currentUser?._id || currentUser?.id;
+
+            if (!currentUserId) return false;
+
+            return notifications.some(notification => {
+                if (!notification.readBy) return true; // If no readBy array, it's unread
+                return !notification.readBy.some((readEntry: any) =>
+                    readEntry.userId === currentUserId || readEntry.userId._id === currentUserId
+                );
+            });
+        } catch {
+            return false;
+        }
+    };
     const [isChildernModalVisible, setisChildernModalVisible] = useState(false)
     const [studentName, setStudentName] = useState<string>("");
 
@@ -120,7 +139,9 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
                             </button>
                             <div className="relative cursor-pointer" onClick={handleNotificationClick}>
                                 <IoIosNotificationsOutline className="flex justify-center items-center text-2xl md:text-3xl" />
-                                <div className={`w-2 h-2 bg-red-600 rounded-full absolute top-1 right-1 ${showSideBar ? 'sm:hidden md:flex' : 'flex'}`} />
+                                {hasUnreadNotifications() && (
+                                    <div className={`w-2 h-2 bg-red-600 rounded-full absolute top-1 right-1 ${showSideBar ? 'sm:hidden md:flex' : 'flex'}`} />
+                                )}
                             </div>
                             <div className="border border-bluecolor rounded-md p-0.5  ml-2 md:ml-3 cursor-pointer" >
                                 <img className="w-9 h-9 md:h-10 md:w-10 rounded-md" src={`${user?.image}`} alt="Profile" onClick={() => {
@@ -199,7 +220,9 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
                             </button>}
                         <div className="relative cursor-pointer" onClick={handleNotificationClick}>
                             <IoIosNotificationsOutline className="flex justify-center items-center text-2xl md:text-3xl" />
-                            <div className={`w-2 h-2 bg-red-600 rounded-full absolute top-1 right-1 ${showSideBar ? 'sm:hidden md:flex' : 'flex'}`} />
+                            {hasUnreadNotifications() && (
+                                <div className={`w-2 h-2 bg-red-600 rounded-full absolute top-1 right-1 ${showSideBar ? 'sm:hidden md:flex' : 'flex'}`} />
+                            )}
                         </div>
 
                         <div className="border border-bluecolor rounded-md p-0.5  ml-2 md:ml-3 cursor-pointer">
@@ -214,7 +237,19 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
             )}
             <MyChildernsModal isVisible={isChildernModalVisible} onClose={handleCloseModal} studentName={studentName} setStudentName={setStudentName} />
             {/* Notification Modal */}
-            <NotificationsModal isVisible={isModalVisible} onClose={handleCloseModal} notifications={notifications} />
+            <NotificationsModal
+                isVisible={isModalVisible}
+                onClose={handleCloseModal}
+                notifications={notifications}
+                onNotificationsUpdated={() => {
+                    // Refresh notifications when marked as read
+                    Get("/getNotification").then((d) => {
+                        if (d.success) {
+                            setNotifications(d.data);
+                        }
+                    });
+                }}
+            />
         </div>
     );
 };

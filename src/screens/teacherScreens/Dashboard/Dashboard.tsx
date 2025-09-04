@@ -9,7 +9,8 @@ import {
     UpcomingEvents,
     UpcomingEventsTeachers,
     Lessons,
-    Schedule
+    Schedule,
+    Notifications
 } from "../../../components";
 
 const Dashboard = () => {
@@ -59,8 +60,13 @@ const Dashboard = () => {
 
                     </div>
 
-                    {/* schedule & upcoming events */}
+                    {/* schedule, notifications & upcoming events */}
                     <div className="grid grid-cols-1 md:grid-cols-2 col-span-1 sm:col-span-10 xl:col-span-4 gap-3 sm:gap-5 h-fit" >
+
+                        {/* Notifications */}
+                        <div className="col-span-1 xl:col-span-4 h-fit" >
+                            <Notifications maxNotifications={3} />
+                        </div>
 
                         {/* schedule */}
                         {/* <div className="col-span-1 xl:col-span-4" >

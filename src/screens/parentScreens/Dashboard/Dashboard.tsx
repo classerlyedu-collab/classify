@@ -7,6 +7,7 @@ import {
   Documents,
   Navbar,
   SideDrawer,
+  Notifications,
 } from "../../../components";
 
 const Dashboard = () => {
@@ -26,8 +27,11 @@ const Dashboard = () => {
 
         {/* center */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-5 w-full mb-2 md:mb-6 bg-mainBg">
-          <div className="col-span-2 md:col-span-10 min-h-[500px]">
+          <div className="col-span-2 md:col-span-8 min-h-[500px]">
             <WelcomeNotice />
+          </div>
+          <div className="col-span-2 md:col-span-4 min-h-[500px]">
+            <Notifications maxNotifications={4} />
           </div>
         </div>
         {/* <div className="col-span-12 min-h-52">
