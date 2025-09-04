@@ -5,7 +5,6 @@ import { Get, Post } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
 import { MultiDropDown } from "../../../multiselectDropdown";
 import { useNavigate } from "react-router-dom";
-import { CourseSelection } from "../../../CourseSelection";
 import { UseStateContext } from "../../../../context/ContextProvider";
 
 const Information = () => {
@@ -45,10 +44,6 @@ const Information = () => {
   const [surnameError, setSurnameError] = useState<string>("");
   const [emailError, setEmailError] = useState<string>("");
   const [gradeData, setGradeData] = useState([]);
-  const [courseData, setCourseData] = useState([]);
-  const [course, setCourse] = useState<any>(
-    user?.profile?.subjects
-  );
 
   const checkForChanges = () => {
     try {
@@ -75,9 +70,6 @@ const Information = () => {
       } else if (!arraysMatch(gradet, user?.profile?.grade ?? ['']) && user?.userType === 'Teacher') {
         setHasChanges(true);
         return true;
-      } else if (!arraysMatch(course, user?.profile?.subjects ?? ['']) && user?.userType !== 'Parent') {
-        setHasChanges(true);
-        return true;
       } else {
         setHasChanges(false);
         return false;
@@ -90,13 +82,12 @@ const Information = () => {
 
   useEffect(() => {
     checkForChanges();
-  }, [email, userName, grade, profileImage, gradet, course, courseData, gradeData]);
+  }, [email, userName, grade, profileImage, gradet, gradeData]);
 
   const handleDiscardClick = () => {
     try {
       setUserName(user?.userName);
       setProfileImage(user?.image);
-      setCourse(user?.profile?.subjects);
       setGrade(user?.profile?.grade?._id);
       setGradet(user?.profile?.grade?.map((i: any) => {
         return i._id;
@@ -168,9 +159,6 @@ const Information = () => {
       reqbody.grade = gradet;
     } else {
       reqbody.grade = grade;
-    }
-    if (user?.userType !== 'Parent') {
-      reqbody.subjects = course.filter((i: any) => { return i != null });
     }
 
     if (profileimagechange) {
@@ -248,36 +236,6 @@ const Information = () => {
     // }
   }, []);
 
-  useEffect(() => {
-    if (user?.userType == "Teacher") {
-
-      Get(`/subject/grade/${gradet}`)
-        .then((d) => {
-          if (d.success) {
-            setCourseData(d.data);
-          } else {
-            displayMessage(d.message);
-          }
-        })
-        .catch((e) => {
-          displayMessage(e.message);
-        });
-    } else {
-
-
-      Get(`/subject/grade/${grade}`)
-        .then((d) => {
-          if (d.success) {
-            setCourseData(d.data);
-          } else {
-            displayMessage(d.message);
-          }
-        })
-        .catch((e) => {
-          displayMessage(e.message);
-        });
-    }
-  }, [grade, gradet]);
 
   return (
     <div className="w-full h-full px-2 md:pl-4 md:pr-8 lg:pr-12 xl:pr-16 2xl:pr-20">
@@ -478,29 +436,6 @@ const Information = () => {
         </div>
       )}
 
-      {user.userType != "Parent" && (
-        <div className="py-4 lg:py-7 w-full flex items-start justify-start">
-          <h6 className="text-sm md:text-md font-ubuntu text-greyBlack font-medium mr-2 md:mr-12 lg:mr-28 xl:mr-32 w-20">
-            Courses
-          </h6>
-          <CourseSelection
-            value={course}
-            setValue={setCourse}
-            style={{
-              wrapper: "mb-0 w-full",
-              inputWrapper: "bg-transparent",
-              listWrapper: "bg-white",
-            }}
-            placeholder="Select Course"
-            data={courseData?.map((i: any) => {
-              return {
-                value: i._id,
-                label: i.name,
-              };
-            })}
-          />
-        </div>
-      )}
 
       <div
         onClick={handleUpdateClick}

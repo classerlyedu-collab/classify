@@ -4,7 +4,6 @@ import {
     Navbar,
     QuizTopics,
     SideDrawer,
-    Subjects,
     Timeline,
     TopPerformingStudents,
     WelcomeNoticeStudent,
@@ -41,10 +40,6 @@ const Dashboard = () => {
                             <WelcomeNoticeStudent />
                         </div>
 
-                        {/* subjects */}
-                        <div className="col-span-2 h-fit" >
-                            <Subjects />
-                        </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5 col-span-2" >
 

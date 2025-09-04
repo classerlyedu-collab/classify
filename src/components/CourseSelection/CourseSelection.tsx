@@ -59,17 +59,39 @@ const CourseSelection = ({
             </div>
 
             <div className="w-full">
-                <div className={`w-full flex flex-row flex-wrap rounded-b-md bg-inputBackground ${style?.listWrapper ? style?.listWrapper : ''}`}>
+                <div className={`w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 ${style?.listWrapper ? style?.listWrapper : ''}`}>
                     {
                         data?.map((item: dropDownItemsType, index: number) => (
-                            <div key={index} className="flex items-center px-4 py-1">
-                                <input
-                                    type="checkbox"
-                                    checked={value.includes(item.value.toString())}
-                                    onChange={() => handleCheckboxChange(item.value.toString())}
-                                    className="mr-2"
-                                />
-                                <label className={`text-sm ${value.includes(item.value.toString()) ? 'text-radio' : 'text-neutral-600'} md:text-md font-medium`}>
+                            <div
+                                key={index}
+                                className={`flex items-center p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer ${value.includes(item.value.toString())
+                                        ? 'bg-gradient-to-r from-green-50 to-blue-50 border-green-300 shadow-md'
+                                        : 'bg-white border-gray-200 hover:border-green-200 hover:shadow-sm'
+                                    }`}
+                                onClick={() => handleCheckboxChange(item.value.toString())}
+                            >
+                                <div className="relative">
+                                    <input
+                                        type="checkbox"
+                                        checked={value.includes(item.value.toString())}
+                                        onChange={() => handleCheckboxChange(item.value.toString())}
+                                        className="sr-only"
+                                    />
+                                    <div className={`w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all duration-200 ${value.includes(item.value.toString())
+                                            ? 'bg-gradient-to-r from-green-500 to-blue-500 border-green-500'
+                                            : 'border-gray-300 bg-white'
+                                        }`}>
+                                        {value.includes(item.value.toString()) && (
+                                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        )}
+                                    </div>
+                                </div>
+                                <label className={`ml-3 text-sm font-medium cursor-pointer transition-colors duration-200 ${value.includes(item.value.toString())
+                                        ? 'text-green-700'
+                                        : 'text-gray-700 hover:text-green-600'
+                                    }`}>
                                     {item.label}
                                 </label>
                             </div>
