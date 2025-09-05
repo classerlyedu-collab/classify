@@ -78,16 +78,14 @@ export const Put = (endPoint, body, id) => {
     instance
       .put(`${endPoint}${id ? "/" + id : ""}`, body)
       .then((res) => {
-        if (res.data.success
-
-          || res.data.user) {
+        if (res.data.success || res.data.user) {
           resolve(res.data);
         } else {
           reject(res.data);
         }
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err.response?.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
         }
@@ -101,14 +99,14 @@ export const Delete = (endPoint, id, params) => {
     instance
       .delete(`${endPoint}${id ? "/" + id : ""}`, { data: params })
       .then((res) => {
-        if (res.data.Success || res.status === 200) {
+        if (res.data.success || res.data.Success || res.status === 200) {
           resolve(res.data);
         } else {
           reject(res.data);
         }
       })
       .catch((err) => {
-        if (err.response.status === 401) {
+        if (err.response?.status === 401) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
         }
