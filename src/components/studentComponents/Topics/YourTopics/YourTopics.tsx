@@ -26,7 +26,7 @@ const YourTopics = ({ topic }: any) => {
     "Difficulty",
     "Lessons",
     "Practice",
-    "Quizzess",
+    "Quizzes",
     "Status",
   ];
 
@@ -35,7 +35,7 @@ const YourTopics = ({ topic }: any) => {
     "Difficulty",
     "Lessons",
     "Practice",
-    "Quizzess"
+    "Quizzes"
   ];
   // const [topic, setTopics] = useState<topictypeORM[]>([]);
   // const [searchParams] = useSearchParams();

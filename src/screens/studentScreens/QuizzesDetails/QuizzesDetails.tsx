@@ -15,7 +15,7 @@ import { displayMessage } from "../../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RouteName } from "../../../routes/RouteNames";
 
-const QuizzessDetails = () => {
+const QuizzesDetails = () => {
 
     const location = useLocation();
     const { state } = location || {}; // Access the passed state
@@ -31,7 +31,7 @@ const QuizzessDetails = () => {
         "Action",
     ];
 
-    const dummyQuizzess = [
+    const dummyQuizzes = [
         {
             score: 9,
             subject: 'Science',
@@ -160,4 +160,4 @@ const QuizzessDetails = () => {
     )
 };
 
-export default QuizzessDetails;
+export default QuizzesDetails;

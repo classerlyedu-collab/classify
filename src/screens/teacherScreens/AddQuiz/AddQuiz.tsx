@@ -116,10 +116,7 @@ const Courses = () => {
       score: parseInt(score, 10),
     };
 
-    console.log("Adding new question:", newQuestion);
-   
     setQuestions([...questions, newQuestion]);
-    console.log("Updated questions array:", [...questions, newQuestion]); // Verify update
     setTotalScore(totalScore + parseInt(score, 10)); // Update total score
 
     // Reset fields
@@ -194,14 +191,13 @@ const Courses = () => {
 
   const handleUploadQuiz = () => {
     // Implement upload logic here
-    console.log("Questions before POST request:", questions); // Check if empty here
     Post("/quiz/teacher", {
       grade,
       subject,
       topic,
       lesson,
-      startsAt: new Date(startTime || ""),
-      endsAt: new Date(endTime || ""),
+      startsAt: startTime && !isNaN(startTime.getTime()) ? startTime : null,
+      endsAt: endTime && !isNaN(endTime.getTime()) ? endTime : null,
       questions: questions.map((i) => {
         let option = Object.values(i.options);
         return {
@@ -215,10 +211,9 @@ const Courses = () => {
       .then((d) => {
         if (d.success) {
           displayMessage(d.message, "success")
-          navigate(RouteName.DASHBOARD_SCREEN_TEACHER)
+          navigate(RouteName.MY_QUIZZES)
         } else {
           displayMessage(d.message, "error")
-
         }
 
       })

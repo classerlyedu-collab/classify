@@ -33,25 +33,23 @@ const QuizTopics = () => {
     setLoading(true);
     Get("/quiz", null, {
       grade: user?.profile?.grade?._id,
-
-      limit: 3,
-      page: 0
-
-      //   grade: "666b510e00af65249616e24a",
+      // Remove limit to get all quizzes for random selection
     }).then((d) => {
-
       if (d.success) {
-        setQuizes(d.data);
+        // Shuffle and select random 10 quizzes
+        const shuffled = [...d.data].sort(() => 0.5 - Math.random());
+        const randomQuizzes = shuffled.slice(0, 10);
+        setQuizes(randomQuizzes);
         setLoading(false);
       } else {
-        // displayMessage(d.message, "error");
+        displayMessage(d.message, "error");
       }
     });
   }, []);
   return (
     <div className="w-full h-full flex flex-col md:overflow-y-auto  max-h-96">
       <h1 className="font-ubuntu font-medium text-base md:text-xl text-greyBlack mb-2">
-        Recent Quizzes
+        Random Quizzes (10 Selected)
       </h1>
       <div className="flex flex-row gap-3 xl:gap-5 cursor-pointer w-full overflow-x-auto md:overflow-x-hidden md:flex-wrap">
         {quizes?.map((items, index) => (

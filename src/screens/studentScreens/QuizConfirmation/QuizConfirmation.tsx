@@ -75,16 +75,12 @@ const QuizConfirmation = () => {
               Ready For Quiz
             </h1>
             <h1 className="font-ubuntu font-medium md:text-sm text-xs text-greyBlack text-center max-w-64">
-              Test yourself in this course and increase your knowledge for what
+              Test yourself with 10 randomly selected questions from this course and increase your knowledge for what
               you already know.
             </h1>
             <h1 className="font-ubuntu font-medium md:text-sm text-xs text-black pt-3 text-center">
-              {quizdata?.questions?.length} Questions
-              <span className="pl-2">{quizdata?.questions?.length * 30
-                //               .reduce((accumulator: any, currentObject: { time: any; }) => {
-                //   return accumulator + currentObject.time;
-                // }, 0)/60
-              } Seconds</span>
+              10 Random Questions (from {quizdata?.questions?.length} available)
+              <span className="pl-2">300 Seconds (5 minutes)</span>
             </h1>
             <div className="rounded-md cursor-pointer bg-[#FF8000] px-3 py-2 mt-2 hover:opacity-80">
               <h1 className="font-ubuntu font-medium text-sm text-white"

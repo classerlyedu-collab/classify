@@ -180,8 +180,8 @@ const SideDrawer = () => {
     },
     {
       icon: <IoBookOutline className="mr-4 text-md md:text-base lg:text-2xl" />,
-      text: "Quizzess",
-      route: RouteName.MY_QUIZZESS,
+      text: "Quizzes",
+      route: RouteName.MY_QUIZZES,
     },
     {
       icon: <PiStudentFill className="mr-4 text-md md:text-base lg:text-2xl" />,

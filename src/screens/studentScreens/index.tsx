@@ -12,4 +12,4 @@ export * from './DailyQuiz';
 export * from './RootSubjects';
 export * from './DailyQuizOverview';
 export * from './StudentFeedback';
-export * from './QuizzessDetails';
+export * from './QuizzesDetails';

@@ -8,14 +8,14 @@ interface PropsTypes {
 const QuizResults = ({
     result
 }: PropsTypes) => {
-    
+
 
     let cusomindex = 1;
 
     return (
         <div className={`w-full py-5 px-3 rounded-lg bg-white mb-4 md:mb-6`}>
             <h3 className="font-ubuntu font-medium text-base md:text-xl text-greyBlack py-3 mb-2">
-                Quizzess Result
+                Quizzes Result
             </h3>
 
             <div className={`w-full flex flex-col items-center justify-between`} >

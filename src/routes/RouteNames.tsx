@@ -18,15 +18,15 @@ export const RouteName = {
     STUDENT_DETAILS_SCREEN: '/Students/Student_Details',
     FEEDBACK_SCREEN: '/Feedback',
     TEACHER_FEEDBACK: '/AddFeedback',
-    ADD_QUIZ: '/my_quizzess/add_quiz',
-    UPDATE_QUIZ: '/my_quizzess/update_quiz',
-    MY_QUIZZESS: '/my_quizzess',
+    ADD_QUIZ: '/my_quizzes/add_quiz',
+    UPDATE_QUIZ: '/my_quizzes/update_quiz',
+    MY_QUIZZES: '/my_quizzes',
 
     // Student
     DASHBOARD_SCREEN_STUDENT: '/Dashboard_Student',
 
     RESULTS_SCREEN: '/Results',
-    QUIZZESS_DETAILS: '/Results/Quizzess_details',
+    QUIZZES_DETAILS: '/Results/Quizzes_details',
 
     ROOT_SUBJECTS: '/Subjects',
     SUBJECTS_SCREEN: '/Subjects/Overview',
@@ -47,6 +47,7 @@ export const RouteName = {
     SOLO_QUIZ: '/Subjects/Daily_Quiz/Singleplayer_Quiz',
     MULTIPLAYER_QUIZ: '/Subjects/Daily_Quiz/Multiplayer_Quiz',
     QUIZ_CONFIRMATION: '/Subjects/Daily_Quiz/Confirmation',
+    QUIZ_RESULT: '/Subjects/Daily_Quiz/Result',
 
     // payments routes
     SUBSCRIPTION: '/subscription',

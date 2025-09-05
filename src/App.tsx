@@ -1,7 +1,8 @@
 import { CustomProvider } from 'rsuite';
 import 'rsuite/dist/rsuite.min.css';
 import './App.css';
-import { Register, Dashboard, MyChildren, Calendar, Settings, DashboardTeacher, Courses, Students, Feedback, DailyQuizStudent, Games, Lessons, Material, MultiplayerQuiz, QuizConfirmation, SoloQuiz, StudentDashboard, StudentResult, StudentSubjects, StudentTopics, RootSubjects, DailyQuizOverview, AddQuiz, StudentFeedback, StudentDetails, MyQuizzess, UpdateQuiz, QuizzessDetails, ChildResult } from "./screens";
+import { Register, Dashboard, MyChildren, Calendar, Settings, DashboardTeacher, Courses, Students, Feedback, DailyQuizStudent, Games, Lessons, Material, MultiplayerQuiz, QuizConfirmation, SoloQuiz, StudentDashboard, StudentResult, StudentSubjects, StudentTopics, RootSubjects, DailyQuizOverview, AddQuiz, StudentFeedback, StudentDetails, MyQuizzes, UpdateQuiz, QuizzesDetails, ChildResult } from "./screens";
+import QuizResult from "./screens/studentScreens/QuizResult";
 import {
   BrowserRouter,
   Routes,
@@ -122,10 +123,10 @@ function App() {
                       }
                     />
                     <Route
-                      path={RouteName.MY_QUIZZESS}
+                      path={RouteName.MY_QUIZZES}
                       element={
                         <SubscriptionGuard>
-                          <MyQuizzess />
+                          <MyQuizzes />
                         </SubscriptionGuard>
                       }
                     />
@@ -208,12 +209,13 @@ function App() {
                         <Route path={RouteName.QUIZ_CONFIRMATION} element={<QuizConfirmation />} />
                         <Route path={RouteName.SOLO_QUIZ} element={<SoloQuiz />} />
                         <Route path={RouteName.MULTIPLAYER_QUIZ} element={<MultiplayerQuiz />} />
+                        <Route path={RouteName.QUIZ_RESULT} element={<QuizResult />} />
                       </Route>
 
                     </Route>
 
                     <Route path={RouteName.RESULTS_SCREEN} element={<StudentResult />} />
-                    <Route path={RouteName.QUIZZESS_DETAILS} element={<QuizzessDetails />} />
+                    <Route path={RouteName.QUIZZES_DETAILS} element={<QuizzesDetails />} />
 
 
                   </Routes>

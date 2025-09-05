@@ -4,5 +4,5 @@ export * from './Students';
 export * from './Courses';
 export * from './AddQuiz';
 export * from './StudentDetails';
-export * from './MyQuizzess';
+export * from './MyQuizzes';
 export * from './UpdateQuiz';

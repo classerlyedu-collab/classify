@@ -11,6 +11,7 @@ import { Quiz } from "../../../components/teacherComponents/Quiz";
 const UpdateQuiz = () => {
   const location = useLocation();
 
+
   const [questionName, setQuestionName] = useState<string>("");
   const [optionA, setOptionA] = useState<string>("");
   const [optionB, setOptionB] = useState<string>("");
@@ -20,41 +21,56 @@ const UpdateQuiz = () => {
   const [subjectdata, setSubjectData] = useState<any[]>([]);
   const [topicdata, setTopicData] = useState<any[]>([]);
   const [lessons, setLessons] = useState<any[]>([]);
-  const [lesson, setLesson] = useState<string | number | null>(location?.state?.lesson?._id??null)
-  const [topic, setTopic] = useState<string | number | null>(location?.state?.topic?._id??null);
-  const [subject, setSubject] = useState<string | number | null>(location?.state?.subject?._id??null);
-  const [grade, setGrade] = useState<string | number | null>(location?.state?.grade?._id?? null);
+  const [lesson, setLesson] = useState<string | number | null>(location?.state?.lesson?._id ?? null)
+  const [topic, setTopic] = useState<string | number | null>(location?.state?.topic?._id ?? null);
+  const [subject, setSubject] = useState<string | number | null>(location?.state?.subject?._id ?? null);
+  const [grade, setGrade] = useState<string | number | null>(location?.state?.grade?._id ?? null);
   const [gradeError, setGradeError] = useState<string>("");
   const [subjectError, setSubjectError] = useState<string>("");
   const [topicError, setTopicError] = useState<string>("");
+  const [lessonError, setLessonError] = useState<string>("");
   const [quizType, setQuizType] = useState<string | number | null>(location?.state?.type);
-  
+
   const [correctQuestion, setCorrectQuestion] = useState<
     string | number | null
   >(null);
-  
+
   const [score, setScore] = useState<string>("");
   const [questions, setQuestions] = useState<any[]>(
     location?.state?.questions
-    .map((i:any)=>{
-    return {
-      questionName:i.question,
+      .map((i: any) => {
+        return {
+          questionName: i.question,
           options: { A: i.options[0], B: i.options[1], C: i.options[2], D: i.options[3] },
-           correctQuestion: i.options?.indexOf(i?.answer)+1,
+          correctQuestion: i.options?.indexOf(i?.answer) + 1,
 
           score: i.score,
 
-    }
-  })
-  ??[]);
- 
-  const [totalScore, setTotalScore] = useState<number>(0);
+        }
+      })
+    ?? []);
+
+  const [totalScore, setTotalScore] = useState<number>(
+    location?.state?.questions?.reduce((sum: number, q: any) => sum + (q.score || 0), 0) || 0
+  );
 
   // Quiz start and end times
-  const [startTime, setStartTime] = useState<any>((new Date(location?.state?.startsAt)).toString()?? null);
-  const [endTime, setEndTime] = useState<any>((new Date(location?.state?.endsAt)).toString()??null);
+  const [startTime, setStartTime] = useState<Date | null>(() => {
+    if (location?.state?.startsAt) {
+      const date = new Date(location.state.startsAt);
+      return isNaN(date.getTime()) ? null : date;
+    }
+    return null;
+  });
+  const [endTime, setEndTime] = useState<Date | null>(() => {
+    if (location?.state?.endsAt) {
+      const date = new Date(location.state.endsAt);
+      return isNaN(date.getTime()) ? null : date;
+    }
+    return null;
+  });
   const navigate = useNavigate();
-  
+
 
   // Separate Errors
   const [questionError, setQuestionError] = useState<string>("");
@@ -65,7 +81,8 @@ const UpdateQuiz = () => {
   const [correctQuestionError, setCorrectQuestionError] = useState<string>("");
   const [scoreError, setScoreError] = useState<string>("");
   const [timeError, setTimeError] = useState<string>("");
-  const [isEdit, setIsEdit] = useState(false)
+  const [isEdit, setIsEdit] = useState(!!location?.state?._id)
+  const [editingQuestionIndex, setEditingQuestionIndex] = useState<number | null>(null)
 
   const correctQuestionData = [
     { label: "Option A", value: 1 },
@@ -92,6 +109,9 @@ const UpdateQuiz = () => {
     }
     if (!topic) {
       setTopicError("Please select Topic");
+    }
+    if (!lesson) {
+      setLessonError("Please select Lesson");
     }
     // Validation: Ensure all fields are filled
     if (!questionName) {
@@ -143,6 +163,106 @@ const UpdateQuiz = () => {
     setCorrectQuestion(null);
     setScore("");
   };
+
+  const handleEditQuestion = (index: number) => {
+    const question = questions[index];
+    setQuestionName(question.questionName);
+    setOptionA(question.options.A);
+    setOptionB(question.options.B);
+    setOptionC(question.options.C);
+    setOptionD(question.options.D);
+    setCorrectQuestion(question.correctQuestion);
+    setScore(question.score.toString());
+    setEditingQuestionIndex(index);
+  };
+
+  const handleUpdateQuestion = () => {
+    // Reset errors
+    setQuestionError("");
+    setOptionAError("");
+    setOptionBError("");
+    setOptionCError("");
+    setOptionDError("");
+    setCorrectQuestionError("");
+    setScoreError("");
+
+    // Validation: Ensure all fields are filled
+    if (!questionName) {
+      setQuestionError("Please fill out the question.");
+      return;
+    }
+    if (!optionA) {
+      setOptionAError("Please fill out option A.");
+      return;
+    }
+    if (!optionB) {
+      setOptionBError("Please fill out option B.");
+      return;
+    }
+    if (!optionC) {
+      setOptionCError("Please fill out option C.");
+      return;
+    }
+    if (!optionD) {
+      setOptionDError("Please fill out option D.");
+      return;
+    }
+    if (!correctQuestion) {
+      setCorrectQuestionError("Please select the correct answer.");
+      return;
+    }
+    if (!score) {
+      setScoreError("Please enter the question score.");
+      return;
+    }
+
+    // Update the question in the list
+    const updatedQuestion = {
+      questionName,
+      options: { A: optionA, B: optionB, C: optionC, D: optionD },
+      correctQuestion,
+      score: parseInt(score, 10),
+    };
+
+    const updatedQuestions = [...questions];
+    updatedQuestions[editingQuestionIndex!] = updatedQuestion;
+    setQuestions(updatedQuestions);
+
+    // Recalculate total score
+    const newTotalScore = updatedQuestions.reduce((sum, q) => sum + q.score, 0);
+    setTotalScore(newTotalScore);
+
+    // Reset fields and editing state
+    setQuestionName("");
+    setOptionA("");
+    setOptionB("");
+    setOptionC("");
+    setOptionD("");
+    setCorrectQuestion(null);
+    setScore("");
+    setEditingQuestionIndex(null);
+  };
+
+  const handleDeleteQuestion = (index: number) => {
+    const updatedQuestions = questions.filter((_, i) => i !== index);
+    setQuestions(updatedQuestions);
+
+    // Recalculate total score
+    const newTotalScore = updatedQuestions.reduce((sum, q) => sum + q.score, 0);
+    setTotalScore(newTotalScore);
+  };
+
+  const handleCancelEdit = () => {
+    setQuestionName("");
+    setOptionA("");
+    setOptionB("");
+    setOptionC("");
+    setOptionD("");
+    setCorrectQuestion(null);
+    setScore("");
+    setEditingQuestionIndex(null);
+  };
+
   useEffect(() => {
     Get("/grade")
       .then((d) => {
@@ -184,7 +304,7 @@ const UpdateQuiz = () => {
   useEffect(() => {
     if (topic != null) {
       Get(`/topic/lesson/${topic}`).then((d) => {
-        
+
         if (d.success) {
 
           setLessons(d.data)
@@ -205,72 +325,92 @@ const UpdateQuiz = () => {
   };
 
   const handleUploadQuiz = () => {
+    // Basic validation
+    if (!grade) {
+      setGradeError("Please select a grade");
+      return;
+    }
+    if (!subject) {
+      setSubjectError("Please select a subject");
+      return;
+    }
+    if (!topic) {
+      setTopicError("Please select a topic");
+      return;
+    }
+    if (!lesson) {
+      setLessonError("Please select a lesson");
+      return;
+    }
+    if (questions.length === 0) {
+      displayMessage("Please add at least one question", "error");
+      return;
+    }
+
     // Implement upload logic here
-if(!isEdit){
-    Post("/quiz/teacher", {
-      grade,
-      subject,
-      topic,
-      lesson,
-      startsAt: new Date(startTime || ""),
-      endsAt: new Date(endTime || ""),
-      questions: questions.map((i) => {
-        let option = Object.values(i.options);
-        return {
-          question: i.questionName,
-          options: option,
-          answer: option[i.correctQuestion - 1],
-          score: i.score,
-        };
-      }),
-    })
-      .then((d) => {
-        if (d.success) {
-          displayMessage(d.message, "success")
-          navigate(RouteName.DASHBOARD_SCREEN_TEACHER)
-        } else {
-          displayMessage(d.message, "error")
+    if (!isEdit) {
 
-        }
-
+      Post("/quiz/teacher", {
+        grade,
+        subject,
+        topic,
+        lesson,
+        startsAt: startTime && !isNaN(startTime.getTime()) ? startTime : null,
+        endsAt: endTime && !isNaN(endTime.getTime()) ? endTime : null,
+        questions: questions.map((i) => {
+          let option = Object.values(i.options);
+          return {
+            question: i.questionName,
+            options: option,
+            answer: option[i.correctQuestion - 1],
+            score: i.score,
+          };
+        }),
       })
-      .catch((e) => {
-        displayMessage(e.message, "error")
+        .then((d) => {
+          if (d.success) {
+            displayMessage(d.message, "success")
+            navigate(RouteName.MY_QUIZZES)
+          } else {
+            displayMessage(d.message, "error")
+          }
+        })
+        .catch((e) => {
+          displayMessage(e.message, "error")
+        });
+    } else {
+      Put(`/quiz/teacher/${location.state?._id}`, {
+        grade,
+        subject,
+        topic,
+        lesson,
+        startsAt: startTime && !isNaN(startTime.getTime()) ? startTime : null,
+        endsAt: endTime && !isNaN(endTime.getTime()) ? endTime : null,
+        questions: questions.map((i) => {
+          let option = Object.values(i.options);
+          return {
+            question: i.questionName,
+            options: option,
+            answer: option[i.correctQuestion - 1],
+            score: i.score,
+          };
+        }),
+      })
+        .then((d) => {
+          if (d.success) {
+            displayMessage(d.message, "success")
+            navigate(RouteName.MY_QUIZZES)
+          } else {
+            displayMessage(d.message, "error")
 
-      });
-}else{
-  Put(`/quiz/teacher/${location.state?._id}`, {
-    grade,
-    subject,
-    topic,
-    lesson,
-    startsAt: new Date(startTime || ""),
-    endsAt: new Date(endTime || ""),
-    questions: questions.map((i) => {
-      let option = Object.values(i.options);
-      return {
-        question: i.questionName,
-        options: option,
-        answer: option[i.correctQuestion - 1],
-        score: i.score,
-      };
-    }),
-  })
-    .then((d) => {
-      if (d.success) {
-        displayMessage(d.message, "success")
-        navigate(RouteName.DASHBOARD_SCREEN_TEACHER)
-      } else {
-        displayMessage(d.message, "error")
+          }
 
-      }
+        })
+        .catch((e) => {
+          displayMessage(e.message, "error")
 
-    })
-    .catch((e) => {
-      displayMessage(e.message, "error")
-
-    });
-}
+        });
+    }
   };
 
   return (
@@ -284,7 +424,7 @@ if(!isEdit){
       <div className="flex flex-col h-screen w-screen lg:w-10/12 px-2 py-2 md:px-4 md:py-6 md:pr-16 bg-mainBg">
         {/* 1st Navbar */}
         <div className="w-full h-fit bg-mainBg mb-2 md:mb-6">
-          <Navbar title="Add Quiz" hideSearchBar />
+          <Navbar title={isEdit ? "Edit Quiz" : "Add Quiz"} hideSearchBar />
         </div>
 
         {/* center */}
@@ -407,8 +547,8 @@ if(!isEdit){
                   };
                 })}
                 placeholder="Select Lesson"
-                error={topicError}
-                setError={setTopicError}
+                error={lessonError}
+                setError={setLessonError}
               />
             </div>
 
@@ -450,9 +590,25 @@ if(!isEdit){
           >
             {questions.map((q, index) => (
               <div key={index} className="w-full border-b border-gray-300 py-5">
-                <h4 className="font-semibold text-sm md:text-base">
-                  Question {index + 1}: {q.questionName}
-                </h4>
+                <div className="flex justify-between items-start mb-2">
+                  <h4 className="font-semibold text-sm md:text-base">
+                    Question {index + 1}: {q.questionName}
+                  </h4>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEditQuestion(index)}
+                      className="px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteQuestion(index)}
+                      className="px-3 py-1 bg-red-500 text-white text-xs rounded hover:bg-red-600 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
                 <ul className="list-disc pl-5">
                   <li>Option A: {q.options.A}</li>
                   <li>Option B: {q.options.B}</li>
@@ -467,14 +623,17 @@ if(!isEdit){
             ))}
           </div>
 
-          {/* Add New Question */}
+          {/* Add/Edit Question */}
           <div className="w-full border-b border-gray-300 py-5">
             <div className="xl:w-3/4">
+              <h3 className="text-lg font-semibold mb-4">
+                {editingQuestionIndex !== null ? `Edit Question ${editingQuestionIndex + 1}` : `Add Question ${questions?.length + 1}`}
+              </h3>
               <CustomInput
                 value={questionName}
                 setValue={setQuestionName}
                 placeholder="e.g How many planets in our solar system?"
-                label={`Question ${questions?.length + 1}`}
+                label="Question"
                 error={questionError}
                 setError={setQuestionError}
                 style={{
@@ -550,15 +709,30 @@ if(!isEdit){
           </div>
 
           <div className="flex gap-3 items-center justify-between w-full 2xl:w-3/4">
-            <button
-              className="py-2 mt-5 px-2 w-fit h-fit bg-slate-500 text-white rounded-lg hover:bg-slate-700 transition-colors delay-100"
-              onClick={() => {
-                handleAddQuestion();
-              }}
-              disabled={questions?.length >= 100} // Disable when the max limit is reached
-            >
-              Add Question
-            </button>
+            {editingQuestionIndex !== null ? (
+              <>
+                <button
+                  className="py-2 mt-5 px-2 w-fit h-fit bg-green-500 text-white rounded-lg hover:bg-green-700 transition-colors delay-100"
+                  onClick={handleUpdateQuestion}
+                >
+                  Update Question
+                </button>
+                <button
+                  className="py-2 mt-5 px-2 w-fit h-fit bg-gray-500 text-white rounded-lg hover:bg-gray-700 transition-colors delay-100"
+                  onClick={handleCancelEdit}
+                >
+                  Cancel Edit
+                </button>
+              </>
+            ) : (
+              <button
+                className="py-2 mt-5 px-2 w-fit h-fit bg-slate-500 text-white rounded-lg hover:bg-slate-700 transition-colors delay-100"
+                onClick={handleAddQuestion}
+                disabled={questions?.length >= 100} // Disable when the max limit is reached
+              >
+                Add Question
+              </button>
+            )}
             <button
               className={`py-2 mt-5 px-2 w-fit h-fit bg-primary text-white rounded-lg hover:opacity-60 transition-all delay-100`}
               onClick={() => {

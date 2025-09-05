@@ -8,51 +8,51 @@ import { useNavigate } from "react-router-dom";
 
 const AnalyticsComponent = () => {
   const navigate = useNavigate();
-const  teacherdata = [
-  {
-    label: 'Total Students',
-    value: 0,
-    icon: <FcManager className="text-5xl md:text-6xl lg:text-7xl" />,
-    color: '#7F49F2',
-    RouteName: RouteName?.STUDENTS_SCREEN
-  },
-  {
-    label: 'Total Subjects',
-    value: 0,
-    icon: <FcReading className="text-5xl md:text-6xl lg:text-7xl" />,
-    color: '#E9C030',
-    RouteName: RouteName?.STUDENTS_SCREEN
-  },
-  {
-    label: 'Total Quizzes',
-    value: 0,
-    icon: <FcRules className="text-5xl md:text-6xl lg:text-7xl" />,
-    color: '#EA794A',
-    RouteName: RouteName?.MY_QUIZZESS
-  },
-  // {
-  //   label: 'Total Games',
-  //   value: 0,
-  //   icon: <FcPuzzle className="text-5xl md:text-6xl lg:text-7xl" />,
-  //   color: '#63CB82',
-  //   RouteName: null
-  // },
-  // {
-  //     label: 'Total Classess',
-  //     value: 90,
-  //     icon: <FcPodiumWithSpeaker className="text-5xl md:text-6xl lg:text-7xl" />,
-  //     color: '#3BC6DF'
-  // },
-]
+  const teacherdata = [
+    {
+      label: 'Total Students',
+      value: 0,
+      icon: <FcManager className="text-5xl md:text-6xl lg:text-7xl" />,
+      color: '#7F49F2',
+      RouteName: RouteName?.STUDENTS_SCREEN
+    },
+    {
+      label: 'Total Subjects',
+      value: 0,
+      icon: <FcReading className="text-5xl md:text-6xl lg:text-7xl" />,
+      color: '#E9C030',
+      RouteName: RouteName?.STUDENTS_SCREEN
+    },
+    {
+      label: 'Total Quizzes',
+      value: 0,
+      icon: <FcRules className="text-5xl md:text-6xl lg:text-7xl" />,
+      color: '#EA794A',
+      RouteName: RouteName?.MY_QUIZZES
+    },
+    // {
+    //   label: 'Total Games',
+    //   value: 0,
+    //   icon: <FcPuzzle className="text-5xl md:text-6xl lg:text-7xl" />,
+    //   color: '#63CB82',
+    //   RouteName: null
+    // },
+    // {
+    //     label: 'Total Classess',
+    //     value: 90,
+    //     icon: <FcPodiumWithSpeaker className="text-5xl md:text-6xl lg:text-7xl" />,
+    //     color: '#3BC6DF'
+    // },
+  ]
   const [teacher, setTeacher] = useState<any[]>(
-   []
+    []
   );
-  useEffect(()=>{},[teacher])
+  useEffect(() => { }, [teacher])
   useEffect(() => {
     Get("/teacher/dashboard")
       .then((d) => {
         if (d.success) {
-          
+
           let data = [...teacherdata]
 
           data[0].value = d.data.students

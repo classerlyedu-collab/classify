@@ -9,7 +9,7 @@ const Analytics = ({ myresult }: any) => {
         <div className="w-full h-full rounded-2xl flex justify-start flex-wrap items-center gap-3">
 
             <div
-                onClick={() => navigate(RouteName.QUIZZESS_DETAILS, {
+                onClick={() => navigate(RouteName.QUIZZES_DETAILS, {
                     state: { title: 'pass' }, // Pass state data here
                 })}
                 className="bg-[#83C38B] Py-2 px-3 rounded-2xl flex items-center 2xl:rounded-3xl justify-between transition-all delay-100 py-2 w-40 sm:w-48 md:w-52 lg:py-4 xl:py-5 2xl:w-64 2xl:py-6 cursor-pointer hover:opacity-85" >
@@ -25,7 +25,7 @@ const Analytics = ({ myresult }: any) => {
             </div>
 
             <div
-                onClick={() => navigate(RouteName.QUIZZESS_DETAILS, {
+                onClick={() => navigate(RouteName.QUIZZES_DETAILS, {
                     state: { title: 'fail' }, // Pass state data here
                 })}
                 className="bg-[#7000FF] Py-2 px-3 rounded-2xl flex items-center 2xl:rounded-3xl justify-between transition-all delay-100 py-2 w-40 sm:w-48 md:w-52 lg:py-4 xl:py-5 2xl:w-64 2xl:py-6 cursor-pointer hover:opacity-85" >
