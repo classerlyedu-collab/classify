@@ -42,6 +42,7 @@ export const ContextProvider: React.FC<{ children: React.ReactNode }> = (props) 
     // Function to update user data
     const updateUser = (userData: any) => {
         setUser(userData);
+        setRole(userData?.userType || null);
         localStorage.setItem("user", JSON.stringify(userData));
     };
 

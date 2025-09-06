@@ -13,9 +13,11 @@ import { useNavigate } from "react-router-dom";
 import { RouteName } from "../../../routes/RouteNames";
 import { getRandomColor } from "../../../utils/randomColorGenerator";
 import { SubjectsData } from "../../../constants/student/Dashboard";
+import { UseStateContext } from "../../../context/ContextProvider";
 
 const Subjects = () => {
     // Get current user data
+    const { updateUser } = UseStateContext();
     let user = JSON.parse(localStorage.getItem("user") || "");
     const navigate = useNavigate();
 
@@ -106,7 +108,7 @@ const Subjects = () => {
             if (res.success) {
                 localStorage.setItem("token", res.data.token);
                 delete res.data.token;
-                localStorage.setItem("user", JSON.stringify(res.data.data));
+                updateUser(res.data.data);
                 user = res.data.data; // Update local user reference
 
                 // Update course state to reflect the new selection

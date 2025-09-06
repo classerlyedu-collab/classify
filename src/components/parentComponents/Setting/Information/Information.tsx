@@ -277,9 +277,21 @@ const Information = () => {
   useEffect(() => {
 
     if (user?.userType === "Teacher") {
-      setGradet(user?.profile?.grade?.map((i: any) => {
-        return i._id;
-      }))
+      // For teachers, grade is an array of ObjectIds (not populated)
+      if (user?.profile?.grade && Array.isArray(user?.profile?.grade)) {
+        // Check if it's populated grade objects or just ObjectIds
+        if (user?.profile?.grade[0] && typeof user?.profile?.grade[0] === 'object' && user?.profile?.grade[0]._id) {
+          // It's populated grade objects
+          setGradet(user?.profile?.grade?.map((i: any) => {
+            return i._id;
+          }))
+        } else {
+          // It's ObjectIds, use them directly
+          setGradet(user?.profile?.grade || [])
+        }
+      } else {
+        setGradet([])
+      }
     } else {
       setGrade(user?.profile?.grade?._id)
     }

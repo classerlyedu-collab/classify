@@ -13,7 +13,7 @@ import { Get, Post } from "../../../config/apiMethods";
 import { displayMessage } from "../../../config/index";
 
 const Register = () => {
-  const { setRole } = UseStateContext();
+  const { setRole, updateUser } = UseStateContext();
 
   const navigate = useNavigate();
 
@@ -115,10 +115,10 @@ const Register = () => {
               localStorage.setItem("token", res.data.token);
               delete res.data.token;
 
-              localStorage.setItem("user", JSON.stringify(res.data));
+              // Use updateUser to properly set both user and role state
+              updateUser(res.data);
 
               displayMessage(res.message, "success");
-              setRole(res.data.userType);
               // navigate(RouteName?.DASHBOARD_SCREEN);
 
               // Students don't need subscription - check user type first
@@ -201,7 +201,8 @@ const Register = () => {
             if (res.success) {
               localStorage.setItem("token", res.data.token);
 
-              localStorage.setItem("user", JSON.stringify(res.data));
+              // Use updateUser to properly set both user and role state
+              updateUser(res.data);
 
               displayMessage(res.message, "success");
 

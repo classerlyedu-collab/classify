@@ -142,7 +142,7 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
                                 )}
                             </div>
                             <div className="border border-bluecolor rounded-md p-0.5  ml-2 md:ml-3 cursor-pointer" >
-                                <img className="w-9 h-9 md:h-10 md:w-10 rounded-md" src={`${user?.image}`} alt="Profile" onClick={() => {
+                                <img className="w-9 h-9 md:h-10 md:w-10 rounded-md" src={user?.image || "https://st2.depositphotos.com/3889193/6856/i/450/depositphotos_68564721-Beautiful-young-student-posing.jpg"} alt="Profile" onClick={() => {
 
                                     handleNavigate(RouteName.SETTING_SCREEN)
                                 }} />
@@ -224,7 +224,7 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
                         </div>
 
                         <div className="border border-bluecolor rounded-md p-0.5  ml-2 md:ml-3 cursor-pointer">
-                            <img className="w-9 h-9 md:h-10 md:w-10 rounded-md" src={`${user?.image}`} alt="Profile"
+                            <img className="w-9 h-9 md:h-10 md:w-10 rounded-md" src={user?.image || "https://st2.depositphotos.com/3889193/6856/i/450/depositphotos_68564721-Beautiful-young-student-posing.jpg"} alt="Profile"
                                 onClick={() => {
 
                                     handleNavigate(RouteName.SETTING_SCREEN)

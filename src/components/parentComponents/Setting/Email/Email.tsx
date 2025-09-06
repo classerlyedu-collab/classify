@@ -4,8 +4,10 @@ import { FormControlLabel } from "@mui/material";
 import { IOSSwitch } from "../../../../utils/settings";
 import { Post } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
+import { UseStateContext } from "../../../../context/ContextProvider";
 
 const Email = () => {
+  const { updateUser } = UseStateContext();
   let user = JSON.parse(localStorage.getItem("user") || "");
 
   // data states
@@ -24,7 +26,7 @@ const Email = () => {
           localStorage.setItem("token", res.data.token);
           delete res.data.token;
 
-          localStorage.setItem("user", JSON.stringify(res.data.data));
+          updateUser(res.data.data);
         }
         displayMessage(res.message, "success");
       });
