@@ -1,15 +1,15 @@
 "use client";
 import React, { useState } from "react";
 
-const PostModal = ({ isOpen,  children, title, description }: any) => {
+const PostModal = ({ isOpen, children, title, description }: any) => {
   return (
     <div>
       {isOpen && (
-        <div className="overflow-y-auto overflow-x-hidden fixed inset-0 flex items-center justify-center z-50 w-full h-screen bg-gray-600 bg-opacity-50 backdrop-blur-sm">
-        <div className="relative p-4 w-full max-w-lg h-auto md:h-auto mx-4 my-auto flex justify-center">
-          <div className="relative mt-44 md:mt-24  p-4 bg-[#202020] rounded-3xl shadow-md md:p-8 border border-[#7c7c7c] w-full max-w-lg mx-auto">
-              <h3 className="mb-2 text-2xl font-bold text-white">{title}</h3>
-              <p className="text-xs text-[#BDBDBD]">{description}</p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4">
+          <div className="relative w-full max-w-md">
+            <div className="bg-white rounded-xl shadow-xl border border-gray-200 p-6">
+              <h3 className="mb-3 text-xl font-semibold text-gray-900">{title}</h3>
+              <p className="text-sm text-gray-600 mb-4 leading-relaxed break-words">{description}</p>
               {children}
             </div>
           </div>

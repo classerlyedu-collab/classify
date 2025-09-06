@@ -11,7 +11,7 @@ function Coupon() {
   const [newCoupon, setNewCoppon] = useState(true);
   const [couponClosed, setCouponClosed] = useState(false);
 
-  
+
   useEffect(() => {
     const user: any = JSON.parse(localStorage.getItem("user") || "{}");
     if (user.couponClosed) {
@@ -22,7 +22,7 @@ function Coupon() {
       setCouponClosed(false);
     }
   }, []);
-  
+
   const fetchCoupons = async () => {
     const user: any = JSON.parse(localStorage.getItem("user") || "{}");
     try {
@@ -32,10 +32,10 @@ function Coupon() {
       if (response.message === "Coupons retrieved successfully") {
         setCoupons(response.coupons);
         console.log("Coupons updated!"); // Logging after state update
-        if(user.plan === "allowToRegisterMultiStudents") {
-          
+        if (user.plan === "allowToRegisterMultiStudents") {
+
           setNewCoppon(false);
-        }else{
+        } else {
           setNewCoppon(true);
         }
       } else if (response.message === "No coupons found for this user") {
@@ -74,20 +74,24 @@ function Coupon() {
           </div>
         </div> */}
 
-        <div className="w-full mb-2 md:mb-6 flex flex-col md:flex-row bg-mainBg h-screen mt-7">
-          <div>
-            {/* Apply blur only to AddCoupon when couponClosed is true */}
-            <div
-              className={`${
-                couponClosed ? "pointer-events-none opacity-50 blur-sm" : ""
-              }`}
-            >
-              <AddCoupon fetchCoupons={fetchCoupons} newCoupon={newCoupon} />
+        <div className="w-full mb-2 md:mb-6 bg-mainBg h-screen mt-7">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Create Coupon Section */}
+            <div className="lg:col-span-1">
+              <div
+                className={`${couponClosed ? "pointer-events-none opacity-50 blur-sm" : ""
+                  }`}
+              >
+                <AddCoupon fetchCoupons={fetchCoupons} newCoupon={newCoupon} />
+              </div>
             </div>
 
-            {coupons && (
-              <UpdateCoupon fetchCoupons={fetchCoupons} coupons={coupons} />
-            )}
+            {/* Coupons List Section */}
+            <div className="lg:col-span-2">
+              {coupons && (
+                <UpdateCoupon fetchCoupons={fetchCoupons} coupons={coupons} />
+              )}
+            </div>
           </div>
         </div>
       </div>
