@@ -15,9 +15,7 @@ import { displayMessage } from '../../../config';
 
 const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
     const location = useLocation();
-    let user = JSON.parse(localStorage.getItem('user') || '');
-
-    const { showSideBar, setShowSideBar, hasChanges, setIsModalOpen, setHasChanges } = UseStateContext();
+    const { showSideBar, setShowSideBar, hasChanges, setIsModalOpen, setHasChanges, user } = UseStateContext();
     const navigate = useNavigate()
     // const [selectedCourse, setSelectedCourse] = useState<number>(0);
     const [subjects, setSubjects] = useState<any[]>([]);
@@ -119,7 +117,7 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
 
 
     return (
-        <div className="flex flex-row items-center justify-between w-full bg-mainBg flex-wrap">
+        <div className="flex flex-row items-center justify-between w-full flex-wrap">
             {isMyChildrenRoute() ? (
                 <div className="w-full flex flex-col items-center lg:flex-row-reverse lg:justify-between">
                     {/* 1st */}

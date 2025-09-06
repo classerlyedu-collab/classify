@@ -11,6 +11,9 @@ interface StateContextProps {
     setHasChanges: any;
     isModalOpen: boolean;
     setIsModalOpen: any;
+    user: any;
+    setUser: any;
+    updateUser: (userData: any) => void;
 }
 
 const StateContext = createContext<StateContextProps | undefined>(undefined);
@@ -21,11 +24,26 @@ export const ContextProvider: React.FC<{ children: React.ReactNode }> = (props) 
     const [hasChanges, setHasChanges] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [loading, setLoading] = useState(false);
-    let user: any = localStorage.getItem("user")
-    user = JSON.parse(user)
 
-    //    const [userRole, setUserRole] = useState<"Parent" | "Student" | "Teacher" | null>(user.userType||"Student");
+    // Initialize user from localStorage
+    const getUserFromStorage = () => {
+        try {
+            const userData = localStorage.getItem("user");
+            return userData ? JSON.parse(userData) : null;
+        } catch (error) {
+            console.error('Error parsing user from localStorage:', error);
+            return null;
+        }
+    };
+
+    const [user, setUser] = useState<any>(getUserFromStorage());
     const [role, setRole] = useState<'Parent' | 'Student' | 'Teacher' | null>(user?.userType || null);
+
+    // Function to update user data
+    const updateUser = (userData: any) => {
+        setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
+    };
 
     // Debug logging for role detection
     console.log('ContextProvider: Role detection', {
@@ -45,7 +63,10 @@ export const ContextProvider: React.FC<{ children: React.ReactNode }> = (props) 
             hasChanges,
             setHasChanges,
             isModalOpen,
-            setIsModalOpen
+            setIsModalOpen,
+            user,
+            setUser,
+            updateUser
         }} >
             {props.children}
         </StateContext.Provider>
