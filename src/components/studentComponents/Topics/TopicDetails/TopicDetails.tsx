@@ -3,38 +3,38 @@ import { useState, useEffect } from "react"; // Importing useState and useEffect
 
 import { Get } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
-const TopicDetails = ({topic}:any) => {
+const TopicDetails = ({ topic, loading }: any) => {
     const [currentIndex, setCurrentIndex] = useState(0); // State to keep track of the current topic index
-    
+
     const topicsSliderData = [
         {
-            title: topic[0]?.name||'Photography Course',
+            title: topic[0]?.name || 'Photography Course',
             Description: 'The course is for beginners. it will intrest for people who like photography. ',
             image: require('../../../../images/students/topics/slider1.jpg')
         },
         {
-            title:topic[1]?.name||'Practice Mathematics',
+            title: topic[1]?.name || 'Practice Mathematics',
             Description: 'The course is for beginners. it will intrest for people who like photography. ',
             image: require('../../../../images/students/topics/slider2.jpg')
         },
         {
-            title: topic[2]?.name||'Solve Algebra',
+            title: topic[2]?.name || 'Solve Algebra',
             Description: 'The course is for beginners. it will intrest for people who like photography. ',
             image: require('../../../../images/students/topics/slider3.webp')
         },
     ];
 
-    
+
     // const [searchParams] = useSearchParams();
-    
-const [subject,setSubject]= useState<any>({})
+
+    const [subject, setSubject] = useState<any>({})
     useEffect(() => {
-      
+
         // const subject = searchParams.get('subject');
-        let sub:any=localStorage.getItem("subject")
+        let sub: any = localStorage.getItem("subject")
         setSubject(JSON.parse(sub))
 
-        
+
         // Get(`/subject/grade/${subject}`).then((d)=>{
         //     if(d.success){
         //         // setTopics(d.data)
@@ -53,43 +53,125 @@ const [subject,setSubject]= useState<any>({})
 
     const currentTopic = topicsSliderData[currentIndex]; // Get the current topic data
 
+    // Loading skeleton for TopicDetails
+    if (loading) {
+        return (
+            <div className="w-full rounded-xl pb-6">
+                <div className="animate-pulse">
+                    <div className="h-6 bg-gray-200 rounded w-48 mb-4"></div>
+                    <div className="w-full h-64 bg-gray-200 rounded-lg mb-4"></div>
+                    <div className="flex justify-center gap-3">
+                        <div className="w-3 h-3 bg-gray-200 rounded-full"></div>
+                        <div className="w-3 h-3 bg-gray-200 rounded-full"></div>
+                        <div className="w-3 h-3 bg-gray-200 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="w-full rounded-xl pb-6">
-            {/* Container for the entire component */}
-
-            <h1 className="font-ubuntu pb-3 font-medium text-base md:text-xl text-greyBlack mb-2">
-                {subject.name}
-            </h1>
-            {/* Header for the component */}
-
-            <div className="w-full h-full">
-                {/* Container for the image and text overlay */}
-
-                <div className="relative">
-                    {/* Relative container to position the text overlay */}
-
-                    <img src={currentTopic?.image} alt="images" className="w-full rounded-lg" />
-                    {/* Image for the current topic */}
-
-                    <div className="absolute top-4 left-4 p-4 w-full lg:w-4/5 2xl:w-3/5 pr-2">
-                        {/* Absolute container for the text overlay */}
-
-                        <h1 className="text-3xl md:text-2xl xl:text-4xl font-ubuntu font-extrabold text-white">
-                            {currentTopic?.title}
+        <div className="w-full rounded-2xl pb-6 bg-gradient-to-br from-pink-50 to-blue-50 shadow-lg border border-pink-100">
+            {/* Kid-friendly header */}
+            <div className="bg-gradient-to-r from-pink-500 to-blue-500 rounded-t-2xl p-4">
+                <div className="flex items-center space-x-3">
+                    <div className="text-2xl">🌟</div>
+                    <div>
+                        <h1 className="font-bold text-lg md:text-xl text-white">
+                            {subject.name || "Featured Topics"}
                         </h1>
-                        <p className="text-lg md:text-base lg:text-lg font-ubuntu font-normal text-white">
-                            {currentTopic?.Description}
+                        <p className="text-pink-100 text-sm">
+                            Discover amazing learning adventures! 🚀
                         </p>
                     </div>
                 </div>
+            </div>
 
-                {/* dots */}
-                <div className="w-full items-start flex justify-center gap-3 mt-4">
-                    {
-                        topicsSliderData?.map((item, index) => (
-                            <div className={`${index===currentIndex ? 'w-8 bg-purple' : 'bg-lightPurple w-3' }  transition-all delay-100 h-3 rounded-full `} />
-                        ))
-                    }
+            <div className="p-4">
+                {/* Enhanced carousel container */}
+                <div className="relative bg-white rounded-xl shadow-md overflow-hidden">
+                    {/* Main carousel image */}
+                    <div className="relative h-48 md:h-56">
+                        <img
+                            src={currentTopic?.image}
+                            alt={currentTopic?.title}
+                            className="w-full h-full object-cover transition-all duration-500"
+                        />
+
+                        {/* Gradient overlay for better text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+
+                        {/* Enhanced text overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                    <span className="text-white text-sm">📚</span>
+                                </div>
+                                <span className="text-white text-xs font-medium bg-white bg-opacity-20 px-2 py-1 rounded-full">
+                                    Topic {currentIndex + 1} of {topicsSliderData.length}
+                                </span>
+                            </div>
+
+                            <h2 className="text-lg md:text-xl font-bold text-white mb-1 drop-shadow-lg">
+                                {currentTopic?.title}
+                            </h2>
+
+                            <p className="text-white text-xs md:text-sm opacity-90 leading-relaxed line-clamp-2">
+                                {currentTopic?.Description}
+                            </p>
+                        </div>
+
+                        {/* Navigation arrows */}
+                        <button
+                            onClick={() => setCurrentIndex(currentIndex === 0 ? topicsSliderData.length - 1 : currentIndex - 1)}
+                            className="absolute left-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center text-white transition-all duration-200 backdrop-blur-sm"
+                        >
+                            <span className="text-lg">←</span>
+                        </button>
+
+                        <button
+                            onClick={() => setCurrentIndex(currentIndex === topicsSliderData.length - 1 ? 0 : currentIndex + 1)}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full flex items-center justify-center text-white transition-all duration-200 backdrop-blur-sm"
+                        >
+                            <span className="text-lg">→</span>
+                        </button>
+                    </div>
+
+                    {/* Enhanced navigation dots */}
+                    <div className="p-3 bg-gradient-to-r from-pink-50 to-blue-50">
+                        <div className="flex justify-center items-center space-x-3">
+                            {topicsSliderData?.map((item, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setCurrentIndex(index)}
+                                    className={`transition-all duration-300 ${index === currentIndex
+                                        ? 'w-8 h-3 bg-gradient-to-r from-pink-500 to-blue-500 rounded-full shadow-md'
+                                        : 'w-3 h-3 bg-gray-300 hover:bg-gray-400 rounded-full'
+                                        }`}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Topic preview thumbnails */}
+                        <div className="flex justify-center space-x-2 mt-3">
+                            {topicsSliderData?.slice(0, 3).map((item, index) => (
+                                <div
+                                    key={index}
+                                    className={`w-12 h-8 rounded-lg overflow-hidden cursor-pointer transition-all duration-200 ${index === currentIndex
+                                        ? 'ring-2 ring-pink-500 shadow-md'
+                                        : 'opacity-60 hover:opacity-80'
+                                        }`}
+                                    onClick={() => setCurrentIndex(index)}
+                                >
+                                    <img
+                                        src={item.image}
+                                        alt={item.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
             </div>

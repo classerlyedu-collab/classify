@@ -27,7 +27,7 @@ const Dashboard = () => {
 
         {/* center */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-5 w-full mb-2 md:mb-6 bg-mainBg">
-          <div className="col-span-2 md:col-span-8 min-h-[500px]">
+          <div className="col-span-2 md:col-span-8 h-fit">
             <WelcomeNotice />
           </div>
           <div className="col-span-2 md:col-span-4 min-h-[500px]">

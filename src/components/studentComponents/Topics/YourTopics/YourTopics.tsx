@@ -18,25 +18,49 @@ import { displayMessage } from "../../../../config";
 //   _id: any;
 // }
 
-const YourTopics = ({ topic }: any) => {
+const YourTopics = ({ topic, loading }: any) => {
   const navigate = useNavigate();
 
-  const studentHeaderArray = [
-    "Topic Name",
-    "Difficulty",
-    "Lessons",
-    "Practice",
-    "Quizzes",
-    "Status",
-  ];
+  // Kid-friendly colors for different difficulty levels
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty?.toLowerCase()) {
+      case 'beginner':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'advanced':
+        return 'bg-red-100 text-red-800 border-red-200';
+      default:
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+    }
+  };
 
-  const headerArray = [
-    "Topic Name",
-    "Difficulty",
-    "Lessons",
-    "Practice",
-    "Quizzes"
-  ];
+  // Fun emojis for different content types
+  const getContentEmoji = (type: string) => {
+    switch (type) {
+      case 'lessons':
+        return '📚';
+      case 'practice':
+        return '✏️';
+      case 'quizzes':
+        return '🧠';
+      default:
+        return '📖';
+    }
+  };
+
+  // Progress bar color based on completion
+  const getProgressColor = (status: string) => {
+    if (status?.includes('100%')) return 'bg-green-500';
+    if (status?.includes('0%')) return 'bg-gray-300';
+    return 'bg-blue-500';
+  };
+
+  // Extract progress percentage from status string
+  const getProgressPercentage = (status: string) => {
+    const match = status?.match(/(\d+)%/);
+    return match ? parseInt(match[1]) : 0;
+  };
   // const [topic, setTopics] = useState<topictypeORM[]>([]);
   // const [searchParams] = useSearchParams();
 
@@ -60,168 +84,152 @@ const YourTopics = ({ topic }: any) => {
   let user = JSON.parse(localStorage.getItem("user") || "");
 
 
-  return (
-    <div className="w-full h-full bg-white rounded-2xl shadow-md">
-      {/* Container for the entire component */}
-
-      <h1 className="font-ubuntu font-medium text-base md:text-xl ml-5 py-4 text-greyBlack">
-        Your Topics
-      </h1>
-      {/* Header for the component */}
-
-      <div className="flex flex-col w-full py-3 gap-0 px-5 overflow-x-auto">
-        {/* Grid container for the column headers */}
-
-        {/* for header */}
-        <div className="w-full grid grid-cols-7 px-2 min-w-[45rem]">
-          {user.userType === 'Student' && studentHeaderArray?.map((item, index) => (
-            <div
-              id={`header-${index}`}
-              key={index}
-              className={`first:col-span-2 col-span-1`}
-            >
-              <h6 className="text-sm text-grey font-ubuntu font-light">
-                {item}
-              </h6>
-            </div>
-          ))}
-          {user.userType !== 'Student' && headerArray?.map((item, index) => (
-            <div
-              id={`header-${index}`}
-              key={index}
-              className={`first:col-span-2 col-span-1`}
-            >
-              <h6 className="text-sm text-grey font-ubuntu font-light">
-                {item}
-              </h6>
+  // Loading skeleton component
+  const LoadingSkeleton = () => (
+    <div className="w-full h-full bg-white rounded-2xl shadow-md p-6">
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded-lg mb-6 w-48"></div>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-gray-100 rounded-xl p-4 h-32">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-gray-200 rounded-full"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </div>
+                <div className="w-20 h-8 bg-gray-200 rounded"></div>
+              </div>
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
 
-        {/* for body */}
-        <div className="w-full grid grid-cols-7 min-w-[45rem]">
-          {topic?.length == 0 && (
-            <div
-              className="col-span-5 flex items-center pl-2"
+  if (loading) {
+    return <LoadingSkeleton />;
+  }
 
-            >
+  return (
+    <div className="w-full h-full bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl shadow-lg border border-purple-100">
+      {/* Header with fun styling */}
+      <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-t-2xl p-6">
+        <div className="flex items-center space-x-3">
+          <div className="text-3xl">🎓</div>
+          <div>
+            <h1 className="font-bold text-xl md:text-2xl text-white">
+              Your Learning Topics
+            </h1>
+            <p className="text-blue-100 text-sm">
+              Choose a topic to start your learning adventure! ✨
+            </p>
+          </div>
+        </div>
+      </div>
 
-              <h4>No any topic Found</h4>
-            </div>
-          )}
-          {
-            topic?.length > 0 && topic?.map((item: any, index: any) => (
+      {/* Topics Grid */}
+      <div className="p-6">
+        {topic?.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-6xl mb-4">📚</div>
+            <h3 className="text-xl font-semibold text-gray-600 mb-2">
+              No Topics Found
+            </h3>
+            <p className="text-gray-500">
+              It looks like there are no topics available right now.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {topic?.map((item: any, index: any) => (
               <div
-                id={`body-${index}`}
                 key={index}
-                className="grid mb-1 rounded-lg grid-cols-7 col-span-7 cursor-pointer mt-2 items-center p-2 transition-all delay-100"
-                style={{
-                  background: getRandomColor("dark", index, 0.3),
-                }}
-                onMouseEnter={() => {
-                  const element = document.getElementById(`body-${index}`);
-                  if (element) {
-                    element.style.background = getRandomColor("dark", index, 0.5);
-                  }
-                }}
-                onMouseLeave={() => {
-                  const element = document.getElementById(`body-${index}`);
-                  if (element) {
-                    element.style.background = getRandomColor("dark", index, 0.3);
-                  }
-                }}
+                className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden"
               >
-                {/* Grid container for each topic item */}
+                {/* Topic Header */}
+                <div className="bg-gradient-to-r from-sky-500 to-indigo-600 p-4 text-white">
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-2xl font-bold">
+                      {item.name?.substring(0, 2).toUpperCase()}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-base sm:text-lg">
+                        {item.name}
+                      </h3>
+                      <div className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ${getDifficultyColor(item.difficulty)}`}>
+                        {item.difficulty}
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-                {/* Container for the topic image and name */}
-                <div
-                  className="col-span-2 flex items-center pl-2"
-                  onClick={() =>
-                    navigate(`${RouteName?.LESSONS_STUDENT}?topic=${item._id}`)
-                  }
-                >
-                  {/* Image for the topic */}
-                  {/* <img className="w-12 h-12 object-cover rounded-lg" src={
-                                    item.image||
-                                    yourTopicsData[index%yourTopicsData?.length].image} alt="image" /> */}
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      //   backgroundColor: '#ccc',
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginRight: "10px",
-                      fontSize: "18px",
-                      fontWeight: "bold",
-                      color: "#fff",
-                    }}
-                  >
-                    {item.name?.substring(0, 2)}
+                {/* Content Stats */}
+                <div className="p-4">
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="text-center">
+                      <div className="text-2xl mb-1">{getContentEmoji('lessons')}</div>
+                      <div className="text-sm font-semibold text-gray-700">
+                        {item.lessons?.length || 0}
+                      </div>
+                      <div className="text-xs text-gray-500">Lessons</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl mb-1">{getContentEmoji('practice')}</div>
+                      <div className="text-sm font-semibold text-gray-700">
+                        {item.practices?.length || 0}
+                      </div>
+                      <div className="text-xs text-gray-500">Practice</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl mb-1">{getContentEmoji('quizzes')}</div>
+                      <div className="text-sm font-semibold text-gray-700">
+                        {item.quizes?.length || 0}
+                      </div>
+                      <div className="text-xs text-gray-500">Quizzes</div>
+                    </div>
                   </div>
 
-                  {/* Topic name */}
-                  <h6 className="text-xs sm:text-sm text-greyBlack font ubuntu font-bold ml-2">
-                    {item.name}
-                  </h6>
-                </div>
-
-                <div className="col-span-1">
-                  <h6 className="text-xs sm:text-sm text-greyBlack font ubuntu font-bold">
-                    {item.difficulty}
-                  </h6>
-                </div>
-                <div className="col-span-1">
-                  <h6 className="text-xs sm:text-sm text-greyBlack font ubuntu font-bold">
-                    {item.lessons?.length || 0}
-                  </h6>
-                </div>
-                <div className="col-span-1">
-                  <h6 className="text-xs sm:text-sm text-greyBlack font ubuntu font-bold">
-                    {item.practices?.length || 0}
-                  </h6>
-                </div>
-                <div className="col-span-1">
-                  <h6 className="text-xs sm:text-sm text-greyBlack font ubuntu font-bold">
-                    {item.quizes?.length || 0}
-                  </h6>
-                </div>
-                {
-                  user.userType === 'Student' && (
-                    <div className="col-span-1">
-                      <h6 className="text-xs sm:text-sm text-greyBlack font ubuntu font-bold">
-                        {/* {yourTopicsData[index % yourTopicsData?.length].status} */}
-                        {item.status}
-                      </h6>
+                  {/* Progress Bar */}
+                  {user.userType === 'Student' && (
+                    <div className="mb-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-sm font-medium text-gray-700">Progress</span>
+                        <span className="text-sm font-bold text-gray-900">
+                          {getProgressPercentage(item.status)}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full transition-all duration-500 ${getProgressColor(item.status)}`}
+                          style={{ width: `${getProgressPercentage(item.status)}%` }}
+                        ></div>
+                      </div>
                     </div>
-                  )
-                }
+                  )}
 
-                {user.userType === "Student" &&
-                  (
-                    <div className="col-span-1 flex items-start justify-start">
-                      {item.quizes?.length > 0 && item?.quizes[0]?._id && (
-                        <button
-                          className="px-2 py-2 bg-white rounded-md group hover:bg-secondary transition-all delay-100 cursor-pointer"
-                          onClick={() => {
-                            navigate(
-                              `${RouteName?.QUIZ_CONFIRMATION}?topic=${item._id}`
-                            );
-                          }}
-                        >
-                          <h6 className="text-xs sm:text-sm text-black font ubuntu group-hover:text-white font-medium transition-all delay-100">
-                            Start Quiz
-                          </h6>
-                        </button>
-                      )}
-                    </div>
-                  )
-                }
+                  {/* Action Buttons */}
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => navigate(`${RouteName?.LESSONS_STUDENT}?topic=${item._id}`)}
+                      className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-200 transform hover:scale-105"
+                    >
+                      📖 Start Learning
+                    </button>
+                    {user.userType === "Student" && item.quizes?.length > 0 && item?.quizes[0]?._id && (
+                      <button
+                        onClick={() => navigate(`${RouteName?.QUIZ_CONFIRMATION}?topic=${item._id}`)}
+                        className="bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-4 rounded-lg font-medium hover:from-green-600 hover:to-green-700 transition-all duration-200 transform hover:scale-105"
+                      >
+                        🧠 Quiz
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
