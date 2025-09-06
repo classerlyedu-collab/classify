@@ -133,27 +133,27 @@ const StudentFeedback = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
       <div className="bg-gradient-to-r from-sky-500 to-indigo-600 text-white">
-        <div className="max-w-6xl mx-auto px-4 py-10">
-          <h1 className="text-3xl md:text-4xl font-bold">Feedback Center</h1>
-          <p className="text-base md:text-lg text-white/90 mt-2 max-w-2xl">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Feedback Center</h1>
+          <p className="text-sm sm:text-base md:text-lg text-white/90 mt-2 max-w-2xl">
             Share your thoughts with your teachers and keep track of their feedback.
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="max-w-6xl mx-auto px-4 -mt-6">
-        <div className="inline-flex rounded-xl bg-white p-1 shadow-sm border">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-6">
+        <div className="inline-flex rounded-xl bg-white p-1 shadow-sm border w-full sm:w-auto">
           <button
             onClick={() => setActiveTab("give")}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${activeTab === "give" ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-gray-100"
+            className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${activeTab === "give" ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-gray-100"
               }`}
           >
             Give Feedback
           </button>
           <button
             onClick={() => setActiveTab("receive")}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${activeTab === "receive" ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-gray-100"
+            className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${activeTab === "receive" ? "bg-indigo-600 text-white" : "text-gray-700 hover:bg-gray-100"
               }`}
           >
             My Feedback
@@ -163,43 +163,43 @@ const StudentFeedback = () => {
 
       {/* Give Feedback */}
       {activeTab === "give" && (
-        <div className="max-w-6xl mx-auto px-4 mt-8 mb-16">
-          <div className="bg-white rounded-2xl border shadow-sm">
-            <div className="px-6 py-5 border-b">
-              <h2 className="text-xl font-semibold text-gray-900">Write Feedback</h2>
-              <p className="text-sm text-gray-600 mt-1">Choose a teacher, write your message, and pick a star rating.</p>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 mb-12 sm:mb-16">
+          <div className="bg-white rounded-xl sm:rounded-2xl border shadow-sm">
+            <div className="px-4 sm:px-6 py-4 sm:py-5 border-b">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Write Feedback</h2>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Choose a teacher, write your message, and pick a star rating.</p>
             </div>
 
-            <div className="p-6 space-y-6">
+            <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
               {/* Teacher */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Teacher</label>
-                <div className="relative max-w-md">
+                <div className="relative w-full max-w-md">
                   <button
                     type="button"
                     onClick={() => setIsTeacherOpen((o) => !o)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-300 bg-white text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg sm:rounded-xl border border-gray-300 bg-white text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     aria-haspopup="listbox"
                     aria-expanded={isTeacherOpen}
                   >
-                    <span className={`text-sm ${selectedTeacher ? "text-gray-900" : "text-gray-500"}`}>
+                    <span className={`text-xs sm:text-sm ${selectedTeacher ? "text-gray-900" : "text-gray-500"}`}>
                       {selectedTeacherLabel}
                     </span>
-                    <svg className="h-4 w-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <svg className="h-3 w-3 sm:h-4 sm:w-4 absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                       <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.084l3.71-3.854a.75.75 0 111.08 1.04l-4.24 4.4a.75.75 0 01-1.08 0l-4.24-4.4a.75.75 0 01.02-1.06z" clipRule="evenodd" />
                     </svg>
                   </button>
                   {isTeacherOpen && (
-                    <div className="absolute z-20 mt-2 w-full bg-white rounded-xl border border-gray-200 shadow-lg p-2">
+                    <div className="absolute z-20 mt-2 w-full bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-lg p-2">
                       <input
                         value={teacherQuery}
                         onChange={(e) => setTeacherQuery(e.target.value)}
                         placeholder="Search teacher"
-                        className="w-full px-3 py-2 mb-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                        className="w-full px-2 sm:px-3 py-1.5 sm:py-2 mb-2 rounded-md sm:rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-xs sm:text-sm"
                       />
-                      <ul role="listbox" className="max-h-56 overflow-auto rounded-lg">
+                      <ul role="listbox" className="max-h-40 sm:max-h-56 overflow-auto rounded-md sm:rounded-lg">
                         {filteredTeachers.length === 0 ? (
-                          <li className="px-3 py-2 text-sm text-gray-500">No results</li>
+                          <li className="px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm text-gray-500">No results</li>
                         ) : (
                           filteredTeachers.map((opt) => (
                             <li key={opt.value}>
@@ -210,7 +210,7 @@ const StudentFeedback = () => {
                                   setIsTeacherOpen(false);
                                   setTeacherQuery("");
                                 }}
-                                className={`w-full text-left px-3 py-2 rounded-md text-sm hover:bg-gray-100 ${selectedTeacher === opt.value ? "bg-indigo-50 text-indigo-700" : "text-gray-800"
+                                className={`w-full text-left px-2 sm:px-3 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm hover:bg-gray-100 ${selectedTeacher === opt.value ? "bg-indigo-50 text-indigo-700" : "text-gray-800"
                                   }`}
                                 role="option"
                                 aria-selected={selectedTeacher === opt.value}
@@ -225,7 +225,7 @@ const StudentFeedback = () => {
                         <button
                           type="button"
                           onClick={() => setIsTeacherOpen(false)}
-                          className="text-sm text-gray-600 hover:text-gray-800"
+                          className="text-xs sm:text-sm text-gray-600 hover:text-gray-800"
                         >
                           Close
                         </button>
@@ -236,7 +236,7 @@ const StudentFeedback = () => {
                               setSelectedTeacher(null);
                               setTeacherQuery("");
                             }}
-                            className="text-sm text-indigo-600 hover:text-indigo-800"
+                            className="text-xs sm:text-sm text-indigo-600 hover:text-indigo-800"
                           >
                             Clear selection
                           </button>
@@ -254,7 +254,7 @@ const StudentFeedback = () => {
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
                   placeholder="Write your feedback here (be kind and helpful)."
-                  className={`w-full max-w-3xl px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${feedbackError ? "border-red-500" : "border-gray-300"
+                  className={`w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm ${feedbackError ? "border-red-500" : "border-gray-300"
                     }`}
                   rows={4}
                   onFocus={() => {
@@ -262,14 +262,14 @@ const StudentFeedback = () => {
                   }}
                 />
                 {feedbackError && (
-                  <p className="mt-2 text-sm text-red-600">{feedbackError}</p>
+                  <p className="mt-2 text-xs sm:text-sm text-red-600">{feedbackError}</p>
                 )}
               </div>
 
               {/* Star Rating */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">Star Rating</label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   {Array.from({ length: 5 }, (_, index) => (
                     <button
                       key={index}
@@ -281,11 +281,11 @@ const StudentFeedback = () => {
                       aria-label={`Rate ${index + 1} star${index ? "s" : ""}`}
                     >
                       <FaStar
-                        className={`h-8 w-8 transition ${((hoverRating ?? rating) ?? 0) > index ? "text-yellow-400" : "text-gray-300"}`}
+                        className={`h-6 w-6 sm:h-8 sm:w-8 transition ${((hoverRating ?? rating) ?? 0) > index ? "text-yellow-400" : "text-gray-300"}`}
                       />
                     </button>
                   ))}
-                  <span className="ml-3 text-sm text-gray-700">
+                  <span className="ml-2 sm:ml-3 text-xs sm:text-sm text-gray-700">
                     {getRatingLabel(hoverRating ?? rating)}
                   </span>
                 </div>
@@ -296,7 +296,7 @@ const StudentFeedback = () => {
                 <button
                   onClick={submitFeedback}
                   disabled={loading || !selectedTeacher || !feedback.trim() || !rating}
-                  className={`inline-flex items-center px-6 py-3 rounded-xl font-semibold shadow-sm transition ${loading
+                  className={`inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-semibold shadow-sm transition text-sm sm:text-base ${loading
                     ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                     : "bg-indigo-600 text-white hover:bg-indigo-700"
                     }`}
@@ -311,43 +311,43 @@ const StudentFeedback = () => {
 
       {/* Receive Feedback */}
       {activeTab === "receive" && (
-        <div className="max-w-6xl mx-auto px-4 mt-8 mb-16">
-          <div className="bg-white rounded-2xl border shadow-sm">
-            <div className="px-6 py-5 border-b">
-              <h2 className="text-xl font-semibold text-gray-900">My Feedback</h2>
-              <p className="text-sm text-gray-600 mt-1">Feedback from your teachers will appear here.</p>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 mb-12 sm:mb-16">
+          <div className="bg-white rounded-xl sm:rounded-2xl border shadow-sm">
+            <div className="px-4 sm:px-6 py-4 sm:py-5 border-b">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">My Feedback</h2>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">Feedback from your teachers will appear here.</p>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {receivedFeedback.length === 0 ? (
-                <div className="text-center py-16">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
-                    <FaComments className="text-gray-400 text-2xl" />
+                <div className="text-center py-12 sm:py-16">
+                  <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-100 mb-3 sm:mb-4">
+                    <FaComments className="text-gray-400 text-xl sm:text-2xl" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">No feedback yet</h3>
-                  <p className="text-sm text-gray-600">Keep learning and your teachers will add feedback soon.</p>
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1">No feedback yet</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Keep learning and your teachers will add feedback soon.</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                   {receivedFeedback.map((item: any, index: number) => (
-                    <div key={index} className="bg-white rounded-xl border p-5">
+                    <div key={index} className="bg-white rounded-lg sm:rounded-xl border p-3 sm:p-5">
                       <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-3">
-                          <div className="h-10 w-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-semibold">
+                        <div className="flex items-start gap-2 sm:gap-3 flex-1 min-w-0">
+                          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-semibold text-xs sm:text-sm flex-shrink-0">
                             {getInitials(item?.from?.auth?.userName)}
                           </div>
-                          <div>
-                            <h3 className="text-base font-semibold text-gray-900">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm sm:text-base font-semibold text-gray-900 truncate">
                               {item?.from?.auth?.userName || "Teacher"}
                             </h3>
                             <p className="text-xs text-gray-500 mt-0.5">{formatDate(item?.createdAt)}</p>
                           </div>
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex items-center flex-shrink-0 ml-2">
                           {Array.from({ length: 5 }).map((_, starIndex) => (
                             <FaStar
                               key={starIndex}
-                              className={`h-4 w-4 ${starIndex < (item?.star || 0)
+                              className={`h-3 w-3 sm:h-4 sm:w-4 ${starIndex < (item?.star || 0)
                                 ? "text-yellow-400"
                                 : "text-gray-300"
                                 }`}
@@ -355,7 +355,7 @@ const StudentFeedback = () => {
                           ))}
                         </div>
                       </div>
-                      <p className="text-gray-700 mt-3 leading-relaxed">
+                      <p className="text-gray-700 mt-2 sm:mt-3 leading-relaxed text-sm sm:text-base">
                         {item.feedback || "No feedback provided"}
                       </p>
                     </div>
