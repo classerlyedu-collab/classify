@@ -1,22 +1,19 @@
 import { AiFillGift, AiOutlineClose, AiOutlineHome } from "react-icons/ai";
 import {
-  MdExpandLess,
-  MdExpandMore,
   MdOutlineCalendarMonth,
   MdOutlineFeedback,
 } from "react-icons/md";
 import { AiOutlineSetting } from "react-icons/ai";
 import { FaChildren } from "react-icons/fa6";
 import { UseStateContext } from "../../context/ContextProvider";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { RouteName } from "../../routes/RouteNames";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoBookOutline } from "react-icons/io5";
 import { PiBooksDuotone, PiStudentFill } from "react-icons/pi";
 import { RiFileList3Line } from "react-icons/ri";
-import { childrensData } from "../../constants/parent/myChildren";
 import { IoMdLogOut } from "react-icons/io";
-import { Get, Post } from "../../config/apiMethods";
+import { Post } from "../../config/apiMethods";
 import { displayMessage } from "../../config";
 import { MdOutlineSubscriptions } from "react-icons/md";
 import { useSubscriptionStatus } from "../../hooks/useSubscriptionStatus";
@@ -48,35 +45,6 @@ const SideDrawer = () => {
   // Get the value of the 'childern' query parameter
   const childernValue = searchParams.get("childern");
   const { showSideBar, setShowSideBar } = UseStateContext();
-  const [selectedChildren, setSelectedChildren] = useState<any>(childernValue);
-  const [showChildrens, setShowChildrens] = useState<boolean>(true);
-  // let user = JSON.parse(localStorage.getItem("user") || "");
-  const [childData, setChildData] = useState<any[]>([]);
-
-  useEffect(() => { }, [childernValue]);
-  useEffect(() => {
-    if (role === "Parent") {
-      Get("/mychilds")
-        .then((d) => {
-
-          if (d.success) {
-            setChildData(d.data);
-
-            if (d.data?.length > 0 && childernValue !== null) {
-              navigate(
-                RouteName.MYCHILDREN_SCREEN + `?childern=${d.data[0]._id}`
-              );
-              // localStorage.setItem("mychildern",JSON.stringify(d.data[0]))
-            }
-          } else {
-            displayMessage(d.message, "error");
-          }
-        })
-        .catch((err) => {
-          displayMessage(err.message, "error");
-        });
-    }
-  }, [childernValue, navigate, role]);
 
   const handleSubscriptionPortal = () => {
     navigate(RouteName.SUBSCRIPTION);
@@ -406,73 +374,8 @@ const SideDrawer = () => {
                       <p className="text-sm md:text-base lg:text-md font-ubuntu text-white">
                         {item.text}
                       </p>
-                      {item?.route === RouteName?.MYCHILDREN_SCREEN &&
-                        isCurrentRoute(RouteName?.MYCHILDREN_SCREEN) ? (
-                        <>
-                          {showChildrens ? (
-                            <MdExpandLess
-                              onClick={() => setShowChildrens(false)}
-                              className="self-end text-white text-2xl ml-2"
-                            />
-                          ) : (
-                            <MdExpandMore
-                              onClick={() => setShowChildrens(true)}
-                              className="self-end text-white text-2xl ml-2"
-                            />
-                          )}
-                        </>
-                      ) : (
-                        <></>
-                      )}
                     </li>
                   </div>
-                  {isCurrentRoute(RouteName?.MYCHILDREN_SCREEN) ? (
-                    <>
-                      {role === "Parent" &&
-                        item?.text === "My Children" &&
-                        showChildrens && (
-                          <div className="bg-transparent flex flex-col justify-center items-end">
-                            {childData?.map((childItem, childIndex) => (
-                              <div
-                                key={childIndex}
-                                onClick={() => {
-                                  localStorage.setItem(
-                                    "mychildern",
-                                    JSON.stringify(childItem)
-                                  );
-                                  setSelectedChildren(childItem._id);
-                                  navigate(
-                                    RouteName.MYCHILDREN_SCREEN +
-                                    `?childern=${childItem._id}`
-                                  );
-                                  setShowSideBar(false);
-                                }}
-                                className={`w-4/5 py-2 mt-3  self-end  border-transparent ${selectedChildren === childItem._id
-                                  ? "bg-gradient-to-r from-whiteTransparent to-navBg"
-                                  : "hover:w-5/6 bg-transparent"
-                                  }`}
-                              >
-                                <li className="text-xl text-white flex cursor-pointer w-full rounded-full mx-auto flex-row justify-start items-center">
-                                  <img
-                                    src={
-                                      childItem?.auth?.image ||
-                                      "https://st2.depositphotos.com/3889193/6856/i/450/depositphotos_68564721-Beautiful-young-student-posing.jpg"
-                                    }
-                                    alt={childItem?.auth?.fullName || "Student"}
-                                    className="w-8 h-8 md:w-11 md:h-11 rounded-full mx-3"
-                                  />
-                                  <p className="text-sm md:text-base lg:text-md font-ubuntu">
-                                    {childItem?.auth?.fullName?.slice(0, 18)}
-                                  </p>
-                                </li>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                    </>
-                  ) : (
-                    <></>
-                  )}
                 </div>
               );
             })}
