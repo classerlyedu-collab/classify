@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { CustomInput, DropDown, Navbar, SideDrawer } from "../../../components";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { Get, Post } from "../../../config/apiMethods";
 import { displayMessage } from "../../../config";
 import { useNavigate } from "react-router-dom";
@@ -35,9 +33,9 @@ const Courses = () => {
   const [questions, setQuestions] = useState<any[]>([]);
   const [totalScore, setTotalScore] = useState<number>(0);
 
-  // Quiz start and end times
-  const [startTime, setStartTime] = useState<Date | null>(null);
-  const [endTime, setEndTime] = useState<Date | null>(null);
+  // Quiz start and end times (time only)
+  const [startTime, setStartTime] = useState<string>("");
+  const [endTime, setEndTime] = useState<string>("");
   const navigate = useNavigate();
 
 
@@ -180,24 +178,36 @@ const Courses = () => {
     }
   }, [topic])
 
-  const handleDateValidation = () => {
-    if (startTime && endTime && startTime >= endTime) {
-      setTimeError("End time must be later than start time.");
-      return false;
+  const handleTimeValidation = () => {
+    if (startTime && endTime) {
+      const [startHour, startMin] = startTime.split(':').map(Number);
+      const [endHour, endMin] = endTime.split(':').map(Number);
+      const startMinutes = startHour * 60 + startMin;
+      const endMinutes = endHour * 60 + endMin;
+
+      if (startMinutes >= endMinutes) {
+        setTimeError("End time must be later than start time.");
+        return false;
+      }
     }
     setTimeError("");
     return true;
   };
 
   const handleUploadQuiz = () => {
+    // Convert time strings to Date objects for today
+    const today = new Date();
+    const startDateTime = startTime ? new Date(`${today.toDateString()} ${startTime}`) : null;
+    const endDateTime = endTime ? new Date(`${today.toDateString()} ${endTime}`) : null;
+
     // Implement upload logic here
     Post("/quiz/teacher", {
       grade,
       subject,
       topic,
       lesson,
-      startsAt: startTime && !isNaN(startTime.getTime()) ? startTime : null,
-      endsAt: endTime && !isNaN(endTime.getTime()) ? endTime : null,
+      startsAt: startDateTime,
+      endsAt: endDateTime,
       questions: questions.map((i) => {
         let option = Object.values(i.options);
         return {
@@ -245,26 +255,24 @@ const Courses = () => {
               <label className="text-sm md:text-base font-semibold text-greyBlack">
                 Quiz Start Time
               </label>
-              <DatePicker
-                selected={startTime}
-                onChange={(date: Date | null) => setStartTime(date)}
-                showTimeSelect
-                dateFormat="Pp"
-                className="border py-1 px-1 rounded-md"
-                placeholderText="Start Date Here"
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
+                className="border py-1 px-2 rounded-md text-sm"
+                placeholder="Select start time"
               />
             </div>
             <div className="flex items-center justify-center gap-3">
               <label className="text-sm md:text-base font-semibold text-greyBlack">
                 Quiz End Time
               </label>
-              <DatePicker
-                selected={endTime}
-                onChange={(date: Date | null) => setEndTime(date)}
-                showTimeSelect
-                dateFormat="Pp"
-                className="border py-1 px-1 rounded-md"
-                placeholderText="End Date Here"
+              <input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
+                className="border py-1 px-2 rounded-md text-sm"
+                placeholder="Select end time"
               />
             </div>
 
@@ -512,7 +520,7 @@ const Courses = () => {
             <button
               className={`py-2 mt-5 px-2 w-fit h-fit bg-primary text-white rounded-lg hover:opacity-60 transition-all delay-100`}
               onClick={() => {
-                if (handleDateValidation()) {
+                if (handleTimeValidation()) {
                   handleUploadQuiz();
                 }
               }}

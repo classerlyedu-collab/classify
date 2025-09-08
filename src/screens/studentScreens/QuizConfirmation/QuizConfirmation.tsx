@@ -10,7 +10,67 @@ const QuizConfirmation = () => {
   const [searchParams] = useSearchParams();
   const [quizdata, setQuizData] = useState<any>({})
   const [quizes, setQuizes] = useState<any[]>([])
+  const [calculatedTime, setCalculatedTime] = useState<number>(300); // Default 5 minutes
+  const [actualQuestionCount, setActualQuestionCount] = useState<number>(10); // Default 10 questions
 
+  // Helper function to calculate time per question (same logic as SoloQuiz)
+  const calculateTimePerQuestion = (startTime: Date, endTime: Date, questionCount: number): number => {
+    const totalTimeInSeconds = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
+
+    if (totalTimeInSeconds <= 0) {
+      console.warn('Invalid time range: end time is not after start time');
+      return 30; // Default fallback
+    }
+
+    // Divide by actual number of questions (not hardcoded 10)
+    const timePerQuestion = Math.floor(totalTimeInSeconds / questionCount);
+
+    // Set minimum time of 30 seconds per question and maximum of 300 seconds (5 minutes)
+    return Math.max(30, Math.min(300, timePerQuestion));
+  };
+
+  // Calculate time when quiz data changes
+  useEffect(() => {
+    if (quizdata?.startsAt && quizdata?.endsAt && quizdata?.questions) {
+      let startTime: Date;
+      let endTime: Date;
+
+      // Check if we have the new time-only format (time strings) or old format (full dates)
+      const startsAtStr = quizdata.startsAt.toString();
+      const endsAtStr = quizdata.endsAt.toString();
+
+      // Detect format: if it's a time string (HH:MM format), it's the new format
+      const isNewFormat = /^\d{2}:\d{2}$/.test(startsAtStr) || /^\d{2}:\d{2}$/.test(endsAtStr);
+
+      if (isNewFormat) {
+        // New format: time-only strings, convert to today's date with the specified time
+        const today = new Date();
+        const todayStr = today.toDateString();
+
+        startTime = new Date(`${todayStr} ${startsAtStr}`);
+        endTime = new Date(`${todayStr} ${endsAtStr}`);
+      } else {
+        // Old format: full date/time objects
+        startTime = new Date(quizdata.startsAt);
+        endTime = new Date(quizdata.endsAt);
+      }
+
+      // Validate dates
+      if (!isNaN(startTime.getTime()) && !isNaN(endTime.getTime())) {
+        // Calculate actual number of questions (min of 10 or available questions)
+        const availableQuestions = quizdata.questions.length;
+        const questionsToShow = Math.min(10, availableQuestions);
+
+        // Calculate time per question
+        const timePerQuestion = calculateTimePerQuestion(startTime, endTime, questionsToShow);
+
+        setCalculatedTime(timePerQuestion);
+        setActualQuestionCount(questionsToShow);
+
+        console.log(`Quiz confirmation: ${questionsToShow} questions, ${timePerQuestion}s per question`);
+      }
+    }
+  }, [quizdata]);
 
   useEffect(() => {
 
@@ -75,12 +135,12 @@ const QuizConfirmation = () => {
               Ready For Quiz
             </h1>
             <h1 className="font-ubuntu font-medium md:text-sm text-xs text-greyBlack text-center max-w-64">
-              Test yourself with 10 randomly selected questions from this course and increase your knowledge for what
+              Test yourself with {actualQuestionCount} randomly selected questions from this course and increase your knowledge for what
               you already know.
             </h1>
             <h1 className="font-ubuntu font-medium md:text-sm text-xs text-black pt-3 text-center">
-              10 Random Questions (from {quizdata?.questions?.length} available)
-              <span className="pl-2">300 Seconds (5 minutes)</span>
+              {actualQuestionCount} Random Questions (from {quizdata?.questions?.length} available)
+              <span className="pl-2">{calculatedTime} Seconds ({calculatedTime >= 60 ? `${(calculatedTime / 60).toFixed(1)} minutes` : `${calculatedTime} seconds`} per question)</span>
             </h1>
             <div className="rounded-md cursor-pointer bg-[#FF8000] px-3 py-2 mt-2 hover:opacity-80">
               <h1 className="font-ubuntu font-medium text-sm text-white"
