@@ -119,19 +119,25 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
     return (
         <div className="flex flex-row items-center justify-between w-full flex-wrap">
             {isMyChildrenRoute() ? (
-                <div className="w-full flex flex-col items-center lg:flex-row-reverse lg:justify-between">
-                    {/* 1st */}
-                    <div className="mt-2 md:mt-0 mb-3 md:mb-5 lg:mt-0 flex justify-between lg:justify-start w-full lg:w-auto items-center">
-                        <IoMenuOutline
-                            className="lg:hidden text-black mr-1 md:mr-2 text-xl md:text-2xl"
-                            onClick={() => setShowSideBar(true)}
-                        />
+                <div className="w-full flex flex-col lg:flex-row lg:justify-between">
+                    {/* 1st - Title and Actions on Mobile, Title only on Desktop */}
+                    <div className="mt-2 md:mt-0 mb-3 lg:mt-0 flex justify-between lg:justify-start w-full lg:w-auto items-center">
+                        <div className="flex items-center">
+                            <IoMenuOutline
+                                className="lg:hidden text-black mr-1 md:mr-2 text-xl md:text-2xl"
+                                onClick={() => setShowSideBar(true)}
+                            />
+                            <h1 className="font-ubuntu font-bold text-lg md:text-xl text-greyBlack ml-2 lg:ml-0">
+                                My Child
+                            </h1>
+                        </div>
 
-                        <div className="flex flex-row items-center justify-end">
+                        {/* Actions - Show on mobile, hide on desktop */}
+                        <div className="flex flex-row items-center justify-end lg:hidden">
                             {/* Notifications Icon */}
                             <button
                                 onClick={handleAddChildernClick}
-                                className="border border-greyBlack mr-2 rounded-md hover:border-none hover:bg-secondary px-1.5 py-1.5 hover:text-white transition-all delay-100 ml-10"
+                                className="border border-greyBlack mr-2 rounded-md hover:border-none hover:bg-secondary px-1.5 py-1.5 hover:text-white transition-all delay-100"
                             >
                                 Add Children
                             </button>
@@ -150,48 +156,26 @@ const Navbar = ({ title, hideSearchBar, hideTitle, mystd }: any) => {
                         </div>
                     </div>
 
-                    {/* 2nd */}
-                    <div className={`flex justify-center lg:justify-between items-center mb-3 md:mb-5 lg:mb-0 w-full lg:w-auto flex-wrap`}>
-                        <div className="flex items-center justify-start bg-transparent">
-                            <div className="bg-white rounded-full flex items-center justify-start pr-2 md:pr-3 relative">
-                                <div className="flex items-center justify-start pr-2 md:pr-3 rounded-full  py-2 md:py-3 shadow-[8px_0_15px_-5px_rgba(0,0,0,0.4)] mr-3">
-                                    <img
-                                        className="w-10 md:h-14 h-10 md:w-14 rounded-full absolute"
-                                        src={mystd?.auth?.image || "https://st2.depositphotos.com/3889193/6856/i/450/depositphotos_68564721-Beautiful-young-student-posing.jpg"}
-                                        alt="profile"
-                                        onClick={() => {
+                    {/* 2nd - Actions Section - Desktop only */}
+                    <div className="hidden lg:flex flex-row items-center justify-end">
+                        {/* Notifications Icon */}
+                        <button
+                            onClick={handleAddChildernClick}
+                            className="border border-greyBlack mr-2 rounded-md hover:border-none hover:bg-secondary px-1.5 py-1.5 hover:text-white transition-all delay-100"
+                        >
+                            Add Children
+                        </button>
+                        <div className="relative cursor-pointer" onClick={handleNotificationClick}>
+                            <IoIosNotificationsOutline className="flex justify-center items-center text-2xl md:text-3xl" />
+                            {hasUnreadNotifications() && (
+                                <div className={`w-2 h-2 bg-red-600 rounded-full absolute top-1 right-1 ${showSideBar ? 'sm:hidden md:flex' : 'flex'}`} />
+                            )}
+                        </div>
+                        <div className="border border-bluecolor rounded-md p-0.5  ml-2 md:ml-3 cursor-pointer" >
+                            <img className="w-9 h-9 md:h-10 md:w-10 rounded-md" src={user?.image || "https://st2.depositphotos.com/3889193/6856/i/450/depositphotos_68564721-Beautiful-young-student-posing.jpg"} alt="Profile" onClick={() => {
 
-                                            handleNavigate(RouteName.MYCHILDREN_SCREEN + `?childern=${mystd.profile._id}`)
-                                        }}
-                                    />
-
-                                    <h1 className="font-ubuntu font-medium text-xs md:text-sm text-greyBlack ml-12 md:ml-16">{mystd?.auth?.fullName?.slice(0, 18)}</h1>
-                                </div>
-
-                                {/* <div className="w-32">
-                                    <RoundedDropDown
-                                        value={selectedCourse}
-                                        setValue={setSelectedCourse}
-                                        data={subjects.map((i) => {
-                                            return {
-                                                label: i.auth.userName.slice(0, 12),
-                                                value: i._id,
-                                                image: i.auth.image||"https://st2.depositphotos.com/3889193/6856/i/450/depositphotos_68564721-Beautiful-young-student-posing.jpg"
-                                            };
-                                        })}
-                                        // imagePath={require('../../../images/myChildren/courses.png')}
-                                        placeholder="Childs"
-                                        style={{
-                                            inputWrapper: 'bg-white',
-                                            listWrapper: 'bg-white shadow-lg'
-                                        }}
-                                    />
-                                </div> */}
-                            </div>
-                            {/*                             
-                            <h1 className="font-ubuntu font-medium text-xs md:text-sm text-greyBlack pl-2 md:pl-3">
-                                {returnMatchingLabel({ arrayOfObject: coursesDropdown, value: selectedCourse })}
-                            </h1> */}
+                                handleNavigate(RouteName.SETTING_SCREEN)
+                            }} />
                         </div>
                     </div>
                 </div>
