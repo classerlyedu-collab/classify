@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useSelectedGameMode } from "../../../hooks/selected-game-mode.hook";
 import { gameModeUrlMap, SET_BOARD_DIMENSIONS } from "../../../store/constants";
@@ -30,6 +30,7 @@ export const DifficultyChooser = ({ level, state,children }) => {
     
     dispatch({ type: SET_BOARD_DIMENSIONS, payload });
     navigate(gameModeUrlMap[selectedGameMode],{state:state});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, level, levelMap, navigate, selectedGameMode]);
 
   return <span className="w-full items-center justify-center flex flex-row" onClick={handleClick}>{children}</span>;

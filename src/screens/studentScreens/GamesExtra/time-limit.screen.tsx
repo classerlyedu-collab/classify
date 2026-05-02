@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 import styled from "styled-components";
@@ -31,7 +31,6 @@ export const TimeLimitScreen = () => {
   const dispatch = useDispatch();
   const [timeLeft, startTimer, pauseTimer] = useTimer(30); // seconds
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     if (areTilesAligned || timeLeft === 0 || !isGameStarted) {

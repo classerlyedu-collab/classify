@@ -1,4 +1,4 @@
-import { FaUser, FaGraduationCap, FaIdCard, FaCalendarAlt } from "react-icons/fa";
+import { FaUser, FaIdCard, FaCalendarAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { Get } from "../../../../config/apiMethods";
 import { useNavigate } from "react-router-dom";
@@ -27,12 +27,11 @@ const Overview = ({ per, mystd }: any) => {
   }, []);
 
   const handleChildSelect = (child: any) => {
-    // Store selected child in localStorage
+    // Store selected child in localStorage and route via React Router.
+    // No window.location.reload() — MyChildren reacts to the ?childern= query
+    // param via state, so the new selection propagates without a full refresh.
     localStorage.setItem("mychildern", JSON.stringify(child));
-    // Navigate to the same page with child parameter
     navigate(RouteName.MYCHILDREN_SCREEN + `?childern=${child._id}`);
-    // Reload the page to update the selected child
-    window.location.reload();
   };
 
   if (loading) {

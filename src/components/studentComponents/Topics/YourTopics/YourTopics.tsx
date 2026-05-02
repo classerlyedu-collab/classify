@@ -1,12 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { yourTopicsData } from "../../../../constants/student/Subjects"; // Importing topics data from the constants
-import { getRandomColor } from "../../../../utils/randomColorGenerator"; // Importing a utility function to get a random color
 import { RouteName } from "../../../../routes/RouteNames";
-import { useEffect, useState } from "react";
-
-import { useSearchParams } from "react-router-dom";
-import { Get } from "../../../../config/apiMethods";
-import { displayMessage } from "../../../../config";
 
 // interface topictypeORM {
 //   name: String;

@@ -4,11 +4,9 @@ import { Post } from "../../../config/apiMethods";
 import { displayMessage } from "../../../config";
 import { CustomInput } from "../../customInput";
 import { useSubscriptionLimits } from "../../../hooks/useSubscriptionLimits";
-import { UseStateContext } from "../../../context/ContextProvider";
 
 const AddChildern = () => {
   const [studentName, setStudentName] = useState<string>("");
-  const { role } = UseStateContext();
   const { canAddStudents, maxStudents, currentStudents, remainingStudents, planType, loading } = useSubscriptionLimits();
 
   // Determine if the button should be enabled

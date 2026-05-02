@@ -17,7 +17,6 @@ export const RouteName = {
     STUDENTS_SCREEN: '/Students',
     STUDENT_DETAILS_SCREEN: '/Students/Student_Details',
     FEEDBACK_SCREEN: '/Feedback',
-    TEACHER_FEEDBACK: '/AddFeedback',
     ADD_QUIZ: '/my_quizzes/add_quiz',
     UPDATE_QUIZ: '/my_quizzes/update_quiz',
     MY_QUIZZES: '/my_quizzes',

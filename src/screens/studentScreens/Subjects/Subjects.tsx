@@ -1,311 +1,355 @@
-
-import {
-    Challenges,
-    FeaturedCategories,
-    MotivationNotice,
-    RecentResults,
-} from "../../../components";
-import { CourseSelection } from "../../../components/CourseSelection";
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Get, Post } from "../../../config/apiMethods";
 import { displayMessage } from "../../../config";
-import { useNavigate } from "react-router-dom";
 import { RouteName } from "../../../routes/RouteNames";
-import { getRandomColor } from "../../../utils/randomColorGenerator";
 import { SubjectsData } from "../../../constants/student/Dashboard";
 import { UseStateContext } from "../../../context/ContextProvider";
+import {
+    HiOutlineCheck,
+    HiOutlineXMark,
+    HiOutlinePlus,
+    HiOutlineSparkles,
+    HiOutlineArrowRight,
+    HiOutlineRocketLaunch,
+    HiOutlineExclamationTriangle,
+} from "react-icons/hi2";
+
+const TONES = [
+    { bg: "from-pink-100 to-rose-100", icon: "bg-pink-500", text: "text-pink-700", emoji: "🎨" },
+    { bg: "from-sky-100 to-blue-100", icon: "bg-sky-500", text: "text-sky-700", emoji: "🔬" },
+    { bg: "from-amber-100 to-orange-100", icon: "bg-amber-500", text: "text-amber-700", emoji: "📐" },
+    { bg: "from-emerald-100 to-teal-100", icon: "bg-emerald-500", text: "text-emerald-700", emoji: "📖" },
+    { bg: "from-violet-100 to-purple-100", icon: "bg-violet-500", text: "text-violet-700", emoji: "🌍" },
+    { bg: "from-fuchsia-100 to-pink-100", icon: "bg-fuchsia-500", text: "text-fuchsia-700", emoji: "🎵" },
+    { bg: "from-cyan-100 to-blue-100", icon: "bg-cyan-500", text: "text-cyan-700", emoji: "🚀" },
+    { bg: "from-lime-100 to-green-100", icon: "bg-lime-600", text: "text-lime-700", emoji: "🌱" },
+];
+
+const tone = (i: number) => TONES[i % TONES.length];
 
 const Subjects = () => {
-    // Get current user data
     const { updateUser } = UseStateContext();
-    let user = JSON.parse(localStorage.getItem("user") || "");
+    let user = JSON.parse(localStorage.getItem("user") || "{}");
     const navigate = useNavigate();
 
-    // State for course selection
-    const [course, setCourse] = useState<any>(user?.profile?.subjects?.map((subject: any) => subject._id || subject) || []);
-    const [courseData, setCourseData] = useState([]);
-    const [grade, setGrade] = useState(user?.profile?.grade?._id);
-    const [hasChanges, setHasChanges] = useState(false);
-    const [loadingCourseData, setLoadingCourseData] = useState(false);
+    const initialSelection = useMemo(
+        () => user?.profile?.subjects?.map((s: any) => s._id || s) || [],
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        []
+    );
 
-    // State for enrolled subjects
-    const [enrolledSubjects, setEnrolledSubjects] = useState([]);
-    const [loadingSubjects, setLoadingSubjects] = useState(false);
+    const [course, setCourse] = useState<string[]>(initialSelection);
+    const [courseData, setCourseData] = useState<any[]>([]);
+    const [grade] = useState(user?.profile?.grade?._id);
+    const [loadingCourseData, setLoadingCourseData] = useState(true);
 
-    // Check for changes
-    const checkForChanges = () => {
-        const arraysMatch = (arr1: any, arr2: any) => {
-            if (!arr1 || !arr2) return false;
-            if (arr1.length !== arr2.length) return false;
-            for (let i = 0; i < arr1.length; i++) {
-                if (arr1[i] !== arr2[i]) {
-                    return false;
-                }
-            }
-            return true;
-        };
+    const [enrolledSubjects, setEnrolledSubjects] = useState<any[]>([]);
+    const [loadingSubjects, setLoadingSubjects] = useState(true);
+    const [saving, setSaving] = useState(false);
 
-        const currentSubjects = user?.profile?.subjects?.map((subject: any) => subject._id || subject) || [];
-        if (!arraysMatch(course, currentSubjects)) {
-            setHasChanges(true);
-            return true;
-        } else {
-            setHasChanges(false);
-            return false;
-        }
+    const arraysMatch = (a: string[], b: string[]) => {
+        if (a.length !== b.length) return false;
+        const setA = new Set(a);
+        return b.every((v) => setA.has(v));
     };
+    const dirty = !arraysMatch(course, initialSelection);
 
     useEffect(() => {
-        checkForChanges();
-    }, [course]);
-
-    // Fetch course data based on grade
-    useEffect(() => {
-        if (grade) {
-            setLoadingCourseData(true);
-            Get(`/subject/grade/${grade}`)
-                .then((d) => {
-                    if (d.success) {
-                        setCourseData(d.data);
-                        setLoadingCourseData(false);
-                    } else {
-                        displayMessage(d.message);
-                        setLoadingCourseData(false);
-                    }
-                })
-                .catch((e) => {
-                    displayMessage(e.message);
-                    setLoadingCourseData(false);
-                });
+        if (!grade) {
+            setLoadingCourseData(false);
+            return;
         }
+        Get(`/subject/grade/${grade}`)
+            .then((d) => {
+                if (d.success) setCourseData(d.data || []);
+                else displayMessage(d.message);
+            })
+            .catch((e) => displayMessage(e.message))
+            .finally(() => setLoadingCourseData(false));
     }, [grade]);
 
-    // Fetch enrolled subjects
     useEffect(() => {
-        setLoadingSubjects(true);
-        Get("/student/mysubjects").then((d) => {
-            if (d.success) {
-                setEnrolledSubjects(d.data);
-                setLoadingSubjects(false);
-            } else {
-                displayMessage(d.message, "error");
-                setLoadingSubjects(false);
-            }
-        }).catch((error) => {
-            displayMessage("Failed to fetch enrolled subjects", "error");
-            setLoadingSubjects(false);
-        });
+        Get("/student/mysubjects")
+            .then((d) => {
+                if (d.success) setEnrolledSubjects(d.data || []);
+                else displayMessage(d.message, "error");
+            })
+            .catch(() => displayMessage("Failed to fetch enrolled subjects", "error"))
+            .finally(() => setLoadingSubjects(false));
     }, []);
 
-    // Handle course update
-    const handleUpdateCourses = () => {
-        const reqbody = {
-            grade: grade,
-            subjects: course.filter((i: any) => { return i != null })
-        };
+    const toggleCourse = (id: string) => {
+        setCourse((prev) => (prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]));
+    };
 
-        Post("/auth/updateuser", reqbody).then((res) => {
-            if (res.success) {
-                localStorage.setItem("token", res.data.token);
-                delete res.data.token;
-                updateUser(res.data.data);
-                user = res.data.data; // Update local user reference
+    const handleDiscard = () => setCourse(initialSelection);
 
-                // Update course state to reflect the new selection
-                const newSubjects = res.data.data?.profile?.subjects?.map((subject: any) => subject._id || subject) || [];
-                setCourse(newSubjects);
-                setHasChanges(false);
-                displayMessage(res.message, "success");
+    const handleSave = () => {
+        if (saving) return;
+        setSaving(true);
+        Post("/auth/updateuser", {
+            grade,
+            subjects: course.filter((i) => i != null),
+        })
+            .then((res) => {
+                if (res.success) {
+                    localStorage.setItem("token", res.data.token);
+                    delete res.data.token;
+                    updateUser(res.data.data);
+                    user = res.data.data;
+                    const newSubjects = res.data.data?.profile?.subjects?.map((s: any) => s._id || s) || [];
+                    setCourse(newSubjects);
+                    displayMessage("Saved! 🎉", "success");
+                    Get("/student/mysubjects").then((d) => {
+                        if (d.success) setEnrolledSubjects(d.data || []);
+                    });
+                } else {
+                    displayMessage(res.message, "error");
+                }
+            })
+            .catch(() => displayMessage("Failed to update courses", "error"))
+            .finally(() => setSaving(false));
+    };
 
-                // Refresh enrolled subjects after successful update
-                Get("/student/mysubjects").then((d) => {
-                    if (d.success) {
-                        setEnrolledSubjects(d.data);
-                    }
-                }).catch((error) => {
-                    // Failed to refresh enrolled subjects
-                });
-            } else {
-                displayMessage(res.message, "error");
-            }
-        }).catch((error) => {
-            displayMessage("Failed to update courses", "error");
-        });
+    const openSubject = (subject: any) => {
+        localStorage.setItem("subject", JSON.stringify(subject));
+        navigate(`${RouteName?.TOPICS_SUBJECTS}?subject=${subject._id}`);
     };
 
     return (
-        <div className="flex flex-col h-full w-full bg-gradient-to-br from-blue-50 to-purple-50 px-2 py-2 md:px-4 md:py-6" >
+        <div className="px-2 py-2 md:px-2 md:py-4 pb-32">
+            {/* Hero strip */}
+            <section className="relative overflow-hidden rounded-3xl mb-6 bg-gradient-to-br from-cyan-400 via-sky-500 to-violet-500 text-white p-6 md:p-8 shadow-[0_25px_60px_-25px_rgba(99,102,241,0.55)]">
+                <div aria-hidden className="absolute inset-0 pointer-events-none">
+                    <span className="absolute top-6 left-12 text-3xl animate-bounce" style={{ animationDuration: "3s" }}>📚</span>
+                    <span className="absolute top-20 right-16 text-2xl animate-bounce" style={{ animationDuration: "4s", animationDelay: "0.4s" }}>🌟</span>
+                    <span className="absolute bottom-8 left-32 text-2xl animate-bounce" style={{ animationDuration: "3.5s", animationDelay: "1.2s" }}>🚀</span>
+                    <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-white/15 blur-3xl" />
+                    <div className="absolute -left-16 -bottom-16 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
+                </div>
+                <div className="relative flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                    <div className="max-w-xl">
+                        <p className="text-xs uppercase tracking-wider text-white/80 font-semibold">Your learning</p>
+                        <h1 className="font-trykker text-3xl md:text-4xl mt-1 leading-tight">
+                            My Subjects 🎒
+                        </h1>
+                        <p className="mt-2 text-sm md:text-base text-white/90 leading-relaxed">
+                            Pick what you want to learn. Tap a subject to open lessons and quizzes!
+                        </p>
+                    </div>
+                    {user?.profile?.grade?.grade && (
+                        <span className="self-start md:self-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 ring-1 ring-white/30 backdrop-blur text-sm font-bold">
+                            <HiOutlineSparkles size={14} />
+                            Grade {user.profile.grade.grade}
+                        </span>
+                    )}
+                </div>
+            </section>
 
-            {/* My Enrolled Courses Section - Now at the top */}
-            <div className="w-full mb-6 bg-white rounded-2xl shadow-lg p-6 border-2 border-blue-100">
-                <div className="flex flex-row items-center justify-between mb-6">
-                    <div className="flex flex-row justify-center items-center">
-                        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-full mr-3">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                            </svg>
-                        </div>
+            {/* Enrolled */}
+            <section className="rounded-3xl bg-white ring-1 ring-inputBorder/50 p-5 md:p-6 mb-5">
+                <header className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <span className="text-2xl">🎯</span>
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-800">My Enrolled Courses</h2>
-                            <span className="font-ubuntu font-medium text-sm text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
-                                Grade {user?.profile?.grade?.grade}
-                            </span>
+                            <h2 className="font-trykker text-lg md:text-xl text-black leading-tight">My courses</h2>
+                            <p className="text-xs text-grey">Tap a subject to start learning.</p>
                         </div>
                     </div>
-                </div>
+                    {!loadingSubjects && enrolledSubjects.length > 0 && (
+                        <span className="text-[10px] uppercase tracking-wider text-grey bg-mainBg font-bold px-2 py-1 rounded-full">
+                            {enrolledSubjects.length} active
+                        </span>
+                    )}
+                </header>
 
                 {loadingSubjects ? (
-                    <div className="flex justify-center items-center py-12">
-                        <div className="flex flex-col items-center">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mb-4"></div>
-                            <div className="text-blue-600 font-medium">Loading your courses...</div>
-                        </div>
-                    </div>
-                ) : enrolledSubjects?.length === 0 ? (
-                    <div className="text-center py-12">
-                        <div className="bg-yellow-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-10 h-10 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                            </svg>
-                        </div>
-                        <p className="text-gray-600 mb-2 font-medium">No courses enrolled yet!</p>
-                        <p className="text-sm text-gray-500">Select some courses below to get started with your learning journey! 🚀</p>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        {enrolledSubjects?.map((subject: any, index: number) => (
-                            <div
-                                key={index}
-                                onClick={() => {
-                                    localStorage.setItem("subject", JSON.stringify(subject));
-                                    navigate(`${RouteName?.TOPICS_SUBJECTS}?subject=${subject._id}`);
-                                }}
-                                className="group relative bg-gradient-to-br from-white to-gray-50 rounded-2xl p-4 shadow-md hover:shadow-xl cursor-pointer transition-all duration-300 transform hover:scale-105 border-2 border-transparent hover:border-blue-200"
-                            >
-                                <div className="flex flex-col items-center">
-                                    <div
-                                        className="w-16 h-16 rounded-2xl flex items-center justify-center mb-3 shadow-lg"
-                                        style={{ background: getRandomColor("light", index) }}
-                                    >
-                                        <img
-                                            className="w-10 h-10 object-contain"
-                                            src={subject.image || SubjectsData[index % SubjectsData?.length]?.image}
-                                            alt="subject-image"
-                                        />
-                                    </div>
-                                    <h3 className="font-bold text-sm text-center text-gray-800 group-hover:text-blue-600 transition-colors">
-                                        {subject?.name}
-                                    </h3>
-                                    <div className="absolute top-2 right-2 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
-                                </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                        {[0, 1, 2, 3, 4].map((i) => (
+                            <div key={i} className="rounded-2xl bg-mainBg/60 ring-1 ring-inputBorder/30 p-4 flex flex-col items-center gap-2">
+                                <div className="h-16 w-16 rounded-2xl bg-mainBg animate-pulse" />
+                                <div className="h-3 w-3/4 rounded bg-mainBg animate-pulse" />
                             </div>
                         ))}
                     </div>
+                ) : enrolledSubjects.length === 0 ? (
+                    <div className="rounded-2xl border-2 border-dashed border-inputBorder/70 p-10 text-center">
+                        <span className="text-5xl block mb-2">🌱</span>
+                        <p className="text-sm font-bold text-black">No courses yet</p>
+                        <p className="text-xs text-grey mt-1 max-w-xs mx-auto">
+                            Pick from the subjects below to start your learning adventure!
+                        </p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                        {enrolledSubjects.map((subject: any, i: number) => {
+                            const t = tone(i);
+                            return (
+                                <button
+                                    key={subject._id || i}
+                                    type="button"
+                                    onClick={() => openSubject(subject)}
+                                    className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${t.bg} ring-1 ring-white p-4 hover:ring-violet-400 hover:shadow-lg hover:-translate-y-1 transition-all text-center`}
+                                >
+                                    <div className="flex flex-col items-center gap-2.5">
+                                        <div className={`relative h-16 w-16 rounded-2xl ${t.icon} flex items-center justify-center shadow-md`}>
+                                            {subject.image ? (
+                                                <img
+                                                    src={subject.image}
+                                                    alt=""
+                                                    className="w-10 h-10 object-contain"
+                                                />
+                                            ) : SubjectsData[i % SubjectsData?.length]?.image ? (
+                                                <img
+                                                    src={SubjectsData[i % SubjectsData?.length].image}
+                                                    alt=""
+                                                    className="w-10 h-10 object-contain"
+                                                />
+                                            ) : (
+                                                <span className="text-2xl">{t.emoji}</span>
+                                            )}
+                                            <span className="absolute -top-1 -right-1 h-3.5 w-3.5 rounded-full bg-emerald-500 ring-2 ring-white" />
+                                        </div>
+                                        <p className={`text-sm font-bold ${t.text} leading-tight line-clamp-2`}>
+                                            {subject.name || "Subject"}
+                                        </p>
+                                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-greyBlack/70 bg-white/70 px-1.5 py-0.5 rounded-full">
+                                            <HiOutlineRocketLaunch size={10} />
+                                            Open
+                                            <HiOutlineArrowRight size={10} className="group-hover:translate-x-0.5 transition-transform" />
+                                        </span>
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
                 )}
-            </div>
+            </section>
 
-            {/* Course Selection Section - Redesigned for kids */}
-            <div className="w-full mb-6 bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl shadow-lg p-6 border-2 border-green-100">
-                <div className="flex items-center mb-6">
-                    <div className="bg-gradient-to-r from-green-500 to-blue-500 p-2 rounded-full mr-3">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 className="text-2xl font-bold text-gray-800">Choose Your Courses</h2>
-                        <p className="text-gray-600 mt-1">Pick the subjects you want to learn! 🎯</p>
-                    </div>
-                </div>
-
-                <div className="bg-white rounded-xl p-4 shadow-inner border-2 border-green-200">
-                    {loadingCourseData ? (
-                        <div className="flex justify-center items-center py-8">
-                            <div className="flex flex-col items-center">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mb-3"></div>
-                                <div className="text-green-600 font-medium">Loading available courses...</div>
-                            </div>
+            {/* Add subjects */}
+            <section className="rounded-3xl bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 ring-1 ring-orange-200/40 p-5 md:p-6">
+                <header className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <span className="text-2xl">✨</span>
+                        <div>
+                            <h2 className="font-trykker text-lg md:text-xl text-black leading-tight">Add more subjects</h2>
+                            <p className="text-xs text-grey">Tap a card to add or remove it from your list.</p>
                         </div>
-                    ) : courseData?.length === 0 ? (
-                        <div className="text-center py-8">
-                            <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                                <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                            </div>
-                            <p className="text-gray-500 font-medium">No courses available for your grade</p>
-                        </div>
-                    ) : (
-                        <CourseSelection
-                            value={course}
-                            setValue={setCourse}
-                            style={{
-                                wrapper: "mb-0 w-full",
-                                inputWrapper: "bg-transparent",
-                                listWrapper: "bg-white border-2 border-green-200 rounded-xl shadow-sm",
-                            }}
-                            placeholder="Select Courses"
-                            data={courseData?.map((i: any) => {
-                                return {
-                                    value: i._id,
-                                    label: i.name,
-                                };
-                            })}
-                        />
+                    </div>
+                    {!loadingCourseData && courseData.length > 0 && (
+                        <span className="text-[10px] uppercase tracking-wider font-bold text-orange-700 bg-white px-2 py-1 rounded-full ring-1 ring-orange-200">
+                            {course.length} of {courseData.length} picked
+                        </span>
                     )}
-                </div>
+                </header>
 
-                {hasChanges && (
-                    <div className="flex justify-center space-x-4 mt-6">
+                {loadingCourseData ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {[0, 1, 2, 3, 4, 5].map((i) => (
+                            <div key={i} className="h-20 rounded-2xl bg-white/80 ring-1 ring-inputBorder/30 animate-pulse" />
+                        ))}
+                    </div>
+                ) : courseData.length === 0 ? (
+                    <div className="rounded-2xl border-2 border-dashed border-orange-200 p-10 text-center bg-white/60">
+                        <span className="text-5xl block mb-2">🤔</span>
+                        <p className="text-sm font-bold text-black">No subjects available</p>
+                        <p className="text-xs text-grey mt-1">Check back soon — your school is adding more subjects!</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {courseData.map((c: any, i: number) => {
+                            const selected = course.includes(c._id);
+                            const t = tone(i);
+                            return (
+                                <button
+                                    key={c._id}
+                                    type="button"
+                                    onClick={() => toggleCourse(c._id)}
+                                    aria-pressed={selected}
+                                    className={`group relative overflow-hidden rounded-2xl text-left p-4 ring-2 transition-all ${
+                                        selected
+                                            ? "bg-gradient-to-br from-emerald-100 to-teal-100 ring-emerald-400 shadow-md"
+                                            : "bg-white ring-inputBorder/40 hover:ring-orange-300 hover:shadow-md hover:-translate-y-0.5"
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <div className={`h-12 w-12 rounded-2xl flex items-center justify-center text-xl flex-shrink-0 transition-colors ${
+                                            selected ? "bg-emerald-500 text-white" : `${t.icon} text-white`
+                                        }`}>
+                                            {selected ? <HiOutlineCheck size={22} strokeWidth={3} /> : t.emoji}
+                                        </div>
+                                        <div className="min-w-0 flex-1">
+                                            <p className={`text-sm font-bold truncate ${selected ? "text-emerald-800" : "text-black"}`}>
+                                                {c.name}
+                                            </p>
+                                            <p className={`text-[11px] mt-0.5 ${selected ? "text-emerald-700" : "text-grey"}`}>
+                                                {selected ? "Added — tap to remove" : "Tap to add"}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    {selected && (
+                                        <span className="absolute top-2 right-2 inline-flex items-center gap-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-white/80 px-1.5 py-0.5 rounded-full">
+                                            <HiOutlineCheck size={10} strokeWidth={3} />
+                                            Picked
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
+            </section>
+
+            {/* Sticky save bar */}
+            <div className="fixed bottom-4 left-4 right-4 lg:left-auto lg:right-8 lg:w-[min(560px,calc(100vw-340px))] z-40 pointer-events-none">
+                <div
+                    className={`pointer-events-auto rounded-2xl bg-white/95 backdrop-blur ring-1 ring-inputBorder/60 shadow-lg p-3 flex items-center justify-between gap-3 transition-all ${
+                        dirty ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0 pointer-events-none"
+                    }`}
+                >
+                    <div className="flex items-center gap-2 min-w-0">
+                        <span className="h-8 w-8 rounded-xl bg-gradient-to-br from-orange-400 to-pink-500 text-white flex items-center justify-center flex-shrink-0">
+                            <HiOutlineExclamationTriangle size={16} />
+                        </span>
+                        <p className="text-xs font-bold text-greyBlack truncate">You changed your subjects!</p>
+                    </div>
+                    <div className="flex gap-2">
                         <button
-                            onClick={() => {
-                                setCourse(user?.profile?.subjects || []);
-                                setHasChanges(false);
-                            }}
-                            className="px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200 font-medium shadow-md hover:shadow-lg"
+                            type="button"
+                            onClick={handleDiscard}
+                            disabled={saving}
+                            className="h-9 px-3 rounded-xl text-xs font-bold text-greyBlack bg-mainBg ring-1 ring-inputBorder/60 hover:ring-grey/40 transition flex items-center gap-1 disabled:opacity-50"
                         >
+                            <HiOutlineXMark size={13} />
                             Cancel
                         </button>
                         <button
-                            onClick={handleUpdateCourses}
-                            className="px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl hover:from-green-600 hover:to-blue-600 transition-all duration-200 font-medium shadow-md hover:shadow-lg transform hover:scale-105"
+                            type="button"
+                            onClick={handleSave}
+                            disabled={saving}
+                            className="h-9 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:shadow-md hover:shadow-emerald-500/30 transition disabled:opacity-50 flex items-center gap-1"
                         >
-                            Save My Choices! ✨
+                            {saving ? (
+                                <>
+                                    <svg className="animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                    </svg>
+                                    Saving
+                                </>
+                            ) : (
+                                <>
+                                    <HiOutlinePlus size={13} />
+                                    Save my picks ✨
+                                </>
+                            )}
                         </button>
                     </div>
-                )}
-            </div>
-
-            {/* MotivationNotice and Featured Categories */}
-            <div className="w-full mb-2 md:mb-6 h-auto" >
-
-                {/* Motivation Notice */}
-                <div className="w-full mb-6 h-auto" >
-                    <MotivationNotice />
                 </div>
-
-                {/* Featured Categories - Enhanced */}
-                <div className="w-full h-auto" >
-                    <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-purple-100">
-                        <div className="flex items-center mb-4">
-                            <div className="bg-gray-800 p-3 rounded-full mr-4 shadow-lg">
-                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-bold text-gray-800">Explore All Subjects</h3>
-                                <p className="text-gray-600 text-sm">Discover all available subjects for your grade! 🌟</p>
-                            </div>
-                        </div>
-                        <FeaturedCategories />
-                    </div>
-                </div>
-
             </div>
-
         </div>
-    )
+    );
 };
 
 export default Subjects;

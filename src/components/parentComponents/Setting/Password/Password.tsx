@@ -1,229 +1,228 @@
-import { useState } from "react";
-import { CustomInput } from "../../../customInput";
-import { DropDown } from "../../../customDropdown";
-import { gradeObject } from "../../../../constants/register";
+import { useMemo, useState } from "react";
 import { Post } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
+import { FloatingInput } from "../../../FloatingInput";
+import {
+  HiOutlineCheck,
+  HiOutlineXMark,
+  HiOutlineExclamationTriangle,
+  HiOutlineShieldCheck,
+} from "react-icons/hi2";
 
 const Password = () => {
-  // data states
-  let user = JSON.parse(localStorage.getItem("user") || "");
-  const [oldPassword, setOldPassword] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [profileImage, setProfileImage] = useState(user?.image);
+  const [oldPassword, setOldPassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // error states
-  const [oldPasswordError, setOldPasswordError] = useState<string>("");
-  const [passwordError, setPasswordError] = useState<string>("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState<string>("");
+  const [oldPasswordError, setOldPasswordError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
-  const handleChangePasswordClick = () => {
-    Post("/auth/changepassword", {
-      oldPassword,
-      password,
-      confirmPassword,
-    })
+  const checks = useMemo(() => ({
+    length: password.length >= 8,
+    mixedCase: /[a-z]/.test(password) && /[A-Z]/.test(password),
+    number: /\d/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+    match: password.length > 0 && password === confirmPassword,
+  }), [password, confirmPassword]);
+
+  const score =
+    (checks.length ? 1 : 0) +
+    (checks.mixedCase ? 1 : 0) +
+    (checks.number ? 1 : 0) +
+    (checks.special ? 1 : 0);
+
+  const strengthLabel =
+    score === 0 ? "—" :
+    score === 1 ? "Weak" :
+    score === 2 ? "Fair" :
+    score === 3 ? "Good" :
+    "Strong";
+  const strengthTone =
+    score <= 2 ? "text-orangeBrown" :
+    score === 3 ? "text-bluecolor" :
+    "text-lightGreen2";
+
+  const dirty = oldPassword.length > 0 || password.length > 0 || confirmPassword.length > 0;
+  const canSubmit =
+    oldPassword.length > 0 &&
+    checks.length &&
+    checks.mixedCase &&
+    checks.number &&
+    checks.special &&
+    checks.match;
+
+  const handleDiscard = () => {
+    setOldPassword("");
+    setPassword("");
+    setConfirmPassword("");
+    setOldPasswordError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
+  };
+
+  const handleChangePassword = () => {
+    if (!canSubmit || loading) return;
+    setLoading(true);
+    Post("/auth/changepassword", { oldPassword, password, confirmPassword })
       .then((res) => {
         if (res.success) {
-          localStorage.setItem("token", res.token);
-
-          displayMessage(res.message, "success");
-          setOldPassword("");
-          setPassword("");
-          setConfirmPassword("");
+          if (res.token) localStorage.setItem("token", res.token);
+          displayMessage(res.message || "Password updated", "success");
+          handleDiscard();
         } else {
-          displayMessage(res.message, "error");
+          displayMessage(res.message || "Password update failed", "error");
         }
       })
-      .catch((err) => {
-        displayMessage(err.message, "error");
-      });
+      .catch((err) => displayMessage(err.message, "error"))
+      .finally(() => setLoading(false));
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-sky-500 to-indigo-600 text-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">Password Settings</h1>
-          <p className="text-sm sm:text-base md:text-lg text-white/90 mt-2 max-w-2xl">
-            Update your password to keep your account secure
-          </p>
+    <div className="space-y-4 pb-28">
+      <div className="rounded-2xl bg-white ring-1 ring-inputBorder/50 overflow-hidden">
+        <div className="px-5 py-4 border-b border-inputBorder/40">
+          <h2 className="font-trykker text-lg text-black">Change password</h2>
+          <p className="text-xs text-grey mt-0.5">Use a strong password you don't reuse elsewhere.</p>
+        </div>
+
+        <div className="p-5 space-y-4">
+          <FloatingInput
+            label="Current password"
+            type="password"
+            value={oldPassword}
+            setValue={setOldPassword}
+            error={oldPasswordError}
+            setError={setOldPasswordError}
+            required
+            autoComplete="current-password"
+          />
+
+          <FloatingInput
+            label="New password"
+            type="password"
+            value={password}
+            setValue={setPassword}
+            error={passwordError}
+            setError={setPasswordError}
+            required
+            autoComplete="new-password"
+          />
+
+          {/* Inline strength meter */}
+          {password.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] uppercase tracking-wider text-grey font-semibold">Strength</span>
+                <span className={`text-[11px] font-bold uppercase tracking-wider ${strengthTone}`}>
+                  {strengthLabel}
+                </span>
+              </div>
+              <div className="flex gap-1">
+                {[0, 1, 2, 3].map((i) => {
+                  const filled = i < score;
+                  const tone =
+                    !filled ? "bg-mainBg" :
+                    score <= 2 ? "bg-orangeBrown" :
+                    score === 3 ? "bg-bluecolor" :
+                    "bg-lightGreen2";
+                  return (
+                    <span
+                      key={i}
+                      className={`flex-1 h-1.5 rounded-full transition-colors ${tone}`}
+                    />
+                  );
+                })}
+              </div>
+              <div className="mt-2.5 flex flex-wrap gap-1.5">
+                {[
+                  { ok: checks.length, label: "8+ chars" },
+                  { ok: checks.mixedCase, label: "Aa" },
+                  { ok: checks.number, label: "0–9" },
+                  { ok: checks.special, label: "!@#" },
+                ].map(({ ok, label }) => (
+                  <span
+                    key={label}
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold transition ${
+                      ok
+                        ? "bg-lightGreen2/10 text-lightGreen2 ring-1 ring-lightGreen2/25"
+                        : "bg-mainBg text-grey ring-1 ring-inputBorder/60"
+                    }`}
+                  >
+                    {ok ? <HiOutlineCheck size={10} strokeWidth={3} /> : <HiOutlineXMark size={10} strokeWidth={3} />}
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <FloatingInput
+            label="Confirm new password"
+            type="password"
+            value={confirmPassword}
+            setValue={setConfirmPassword}
+            error={confirmPasswordError}
+            setError={setConfirmPasswordError}
+            required
+            autoComplete="new-password"
+          />
+
+          {confirmPassword.length > 0 && !checks.match && (
+            <p className="text-xs text-orangeBrown ml-1">Passwords don't match</p>
+          )}
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 sm:-mt-6 mb-12 sm:mb-16">
-        <div className="bg-white rounded-xl sm:rounded-2xl border shadow-sm">
-          {/* Profile Section with Button */}
-          <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-              <div className="flex items-center">
-                <img
-                  src={profileImage || require("../../../../images/settings/profile.png")}
-                  className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
-                  alt="Profile"
-                />
-                <div className="ml-4">
-                  <h2 className="text-lg font-semibold text-gray-900">{user?.userName}</h2>
-                  <p className="text-sm text-gray-600">Change your account password</p>
-                </div>
-              </div>
-              <button
-                onClick={handleChangePasswordClick}
-                className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 shadow-sm hover:shadow-md"
-              >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                </svg>
-                Change Password
-              </button>
-            </div>
+      {/* Sticky save bar — same style as Personal Information */}
+      <div className="fixed bottom-4 left-4 right-4 lg:left-auto lg:right-8 lg:w-[min(560px,calc(100vw-340px))] z-40 pointer-events-none">
+        <div
+          className={`pointer-events-auto rounded-2xl bg-white/95 backdrop-blur ring-1 ring-inputBorder/60 shadow-lg p-3 flex items-center justify-between gap-3 transition-all ${
+            dirty ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0 pointer-events-none"
+          }`}
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            <span className={`h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+              canSubmit ? "bg-lightGreen2/15 text-lightGreen2" : "bg-orangeBrown/10 text-orangeBrown"
+            }`}>
+              {canSubmit ? <HiOutlineShieldCheck size={16} /> : <HiOutlineExclamationTriangle size={16} />}
+            </span>
+            <p className="text-xs font-semibold text-greyBlack truncate">
+              {canSubmit ? "Ready to update" : "Complete all fields"}
+            </p>
           </div>
-
-          {/* Password Form */}
-          <div className="p-4 sm:p-6 space-y-8">
-            {/* Password Requirements Info */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
-              <div className="flex items-start">
-                <div className="flex-shrink-0">
-                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={handleDiscard}
+              disabled={loading}
+              className="h-9 px-3 rounded-xl text-xs font-semibold text-greyBlack bg-mainBg ring-1 ring-inputBorder/60 hover:ring-grey/40 transition flex items-center gap-1 disabled:opacity-50"
+            >
+              <HiOutlineXMark size={13} />
+              Discard
+            </button>
+            <button
+              type="button"
+              onClick={handleChangePassword}
+              disabled={!canSubmit || loading}
+              className="h-9 px-4 rounded-xl text-xs font-semibold text-white bg-gradient-to-r from-primary to-secondary hover:shadow-md hover:shadow-secondary/25 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+            >
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                </div>
-                <div className="ml-4">
-                  <h4 className="text-lg font-semibold text-blue-900 mb-3">Password Requirements</h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="flex items-center text-sm text-blue-800">
-                      <svg className="w-4 h-4 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      At least 8 characters
-                    </div>
-                    <div className="flex items-center text-sm text-blue-800">
-                      <svg className="w-4 h-4 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      Uppercase & lowercase
-                    </div>
-                    <div className="flex items-center text-sm text-blue-800">
-                      <svg className="w-4 h-4 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      At least one number
-                    </div>
-                    <div className="flex items-center text-sm text-blue-800">
-                      <svg className="w-4 h-4 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                      Special character
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Password Fields */}
-            <div className="space-y-6">
-              {/* Current Password */}
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">
-                  Current Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </div>
-                  <CustomInput
-                    value={oldPassword}
-                    setValue={setOldPassword}
-                    type="password"
-                    placeholder="Enter your current password"
-                    error={oldPasswordError}
-                    setError={setOldPasswordError}
-                    style={{
-                      wrapper: "mb-0",
-                      input: "pl-10 pr-4 py-3 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-white shadow-sm",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* New Password */}
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">
-                  New Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                    </svg>
-                  </div>
-                  <CustomInput
-                    value={password}
-                    setValue={setPassword}
-                    type="password"
-                    placeholder="Enter your new password"
-                    error={passwordError}
-                    setError={setPasswordError}
-                    style={{
-                      wrapper: "mb-0",
-                      input: "pl-10 pr-4 py-3 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-white shadow-sm",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Confirm Password */}
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">
-                  Confirm New Password
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <CustomInput
-                    value={confirmPassword}
-                    setValue={setConfirmPassword}
-                    type="password"
-                    placeholder="Confirm your new password"
-                    error={confirmPasswordError}
-                    setError={setConfirmPasswordError}
-                    style={{
-                      wrapper: "mb-0",
-                      input: "pl-10 pr-4 py-3 w-full border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-white shadow-sm",
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Security Tips */}
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
-              <div className="flex items-start">
-                <div className="flex-shrink-0">
-                  <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                </div>
-                <div className="ml-4">
-                  <h4 className="text-lg font-semibold text-amber-900 mb-2">Security Tips</h4>
-                  <ul className="text-sm text-amber-800 space-y-1">
-                    <li>• Use a unique password that you haven't used elsewhere</li>
-                    <li>• Consider using a password manager to generate secure passwords</li>
-                    <li>• Never share your password with anyone</li>
-                    <li>• Change your password regularly for better security</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+                  Updating
+                </>
+              ) : (
+                <>
+                  <HiOutlineCheck size={13} />
+                  Update password
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>

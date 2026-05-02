@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { TeacherAnalyticsData } from "../../../../constants/Teacher/Dashboard";
 import { getRandomColor } from "../../../../utils/randomColorGenerator";
 import { Get } from "../../../../config/apiMethods";
-import { FcManager, FcPodiumWithSpeaker, FcPuzzle, FcReading, FcRules } from "react-icons/fc";
+import { FcManager, FcReading, FcRules } from "react-icons/fc";
 import { RouteName } from "../../../../routes/RouteNames";
 import { useNavigate } from "react-router-dom";
 
@@ -66,6 +65,7 @@ const AnalyticsComponent = () => {
       .catch((e) => {
         //   displayMessage(e.message);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="w-full h-full flex items-center justify-between sm:justify-start flex-wrap  overflow-y-auto max-h-56 md:max-h-72">

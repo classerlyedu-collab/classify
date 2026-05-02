@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { RouteName } from '../routes/RouteNames';
 import { UseStateContext } from '../context/ContextProvider';
@@ -13,101 +13,38 @@ const SubscriptionGuard: React.FC<SubscriptionGuardProps> = ({ children }) => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const navigate = useNavigate();
     const location = useLocation();
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSubscribed, setIsSubscribed] = useState(false);
 
-    // Routes that don't require subscription
     const publicRoutes = [
         RouteName.AUTH_SCREEN,
         RouteName.SUBSCRIPTION,
-        RouteName.COUPON,
-        RouteName.CREATE_COUPON,
-        RouteName.GET_COUPON,
-        RouteName.DELETE_COUPON,
-        RouteName.USE_COUPON
     ];
 
-    // Check if current route is public
     const isPublicRoute = publicRoutes.includes(location.pathname as any);
 
     useEffect(() => {
-        const checkSubscription = async () => {
-            // Early return for students - they don't need subscription checks
-            if (role === 'Student') {
-                setIsLoading(false);
-                return;
-            }
+        // Skip checks for students, public routes, or unauthenticated requests
+        if (role === 'Student' || !user || isPublicRoute) return;
 
-            if (!user || isPublicRoute) {
-                setIsLoading(false);
-                return;
-            }
-
+        let cancelled = false;
+        (async () => {
             try {
-
                 const response = await Get('/payment/user-subscription-status', null, null);
-
-                if (response && response.data && response.data.isSubscribed) {
-                    setIsSubscribed(true);
-                } else {
-                    setIsSubscribed(false);
-                    // Redirect to subscription page if not subscribed
-                    if (!isPublicRoute) {
-                        navigate(RouteName.SUBSCRIPTION);
-                        return;
-                    }
+                if (cancelled) return;
+                if (!response?.data?.isSubscribed) {
+                    navigate(RouteName.SUBSCRIPTION);
                 }
             } catch (error) {
-                console.error('Error checking subscription:', error);
-                setIsSubscribed(false);
-                // Redirect to subscription page on error
-                if (!isPublicRoute) {
-                    navigate(RouteName.SUBSCRIPTION);
-                    return;
-                }
-            } finally {
-                setIsLoading(false);
+                if (cancelled) return;
+                navigate(RouteName.SUBSCRIPTION);
             }
-        };
+        })();
 
-        checkSubscription();
+        return () => {
+            cancelled = true;
+        };
     }, [user, location.pathname, navigate, isPublicRoute, role]);
 
-    // Show loading spinner while checking subscription
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center h-screen">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-            </div>
-        );
-    }
-
-    // Allow access if:
-    // 1. User is subscribed, OR
-    // 2. Current route is public, OR
-    // 3. User is a student (students don't need subscription)
-    if (isSubscribed || isPublicRoute || role === 'Student') {
-        // Debug logging for subscription guard
-        console.log('SubscriptionGuard: Allowing access', {
-            isSubscribed,
-            isPublicRoute,
-            role,
-            userType: user?.userType
-        });
-        return <>{children}</>;
-    }
-
-    // Debug logging for subscription guard
-    console.log('SubscriptionGuard: Redirecting to subscription', {
-        isSubscribed,
-        isPublicRoute,
-        role,
-        userType: user?.userType
-    });
-
-    // Redirect to subscription page
-    navigate(RouteName.SUBSCRIPTION);
-    return null;
+    return <>{children}</>;
 };
 
 export default SubscriptionGuard;

@@ -1,6 +1,4 @@
 import { StudentsData } from "../../../../constants/Teacher/MyStudents";
-import { CiClock2 } from "react-icons/ci";
-import { getRandomColor } from "../../../../utils/randomColorGenerator";
 import { useEffect, useState, useRef } from "react";
 import { Get, Post } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";

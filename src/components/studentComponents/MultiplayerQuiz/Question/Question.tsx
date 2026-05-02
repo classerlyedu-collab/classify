@@ -1,4 +1,3 @@
-import { IoArrowForwardCircle } from "react-icons/io5";
 
 type BodyProps = {
     currentQuestionData: {

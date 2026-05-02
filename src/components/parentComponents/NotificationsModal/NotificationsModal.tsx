@@ -1,168 +1,300 @@
-import React, { useState } from 'react';
-import { FaBell, FaTimes, FaClock } from 'react-icons/fa';
-import { Post } from '../../../config/apiMethods';
-import { displayMessage } from '../../../config';
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import { FiBell, FiX, FiCheck, FiInbox } from "react-icons/fi";
+import { Post } from "../../../config/apiMethods";
+import { displayMessage } from "../../../config";
 
-interface NotificationModalProps {
-  isVisible: boolean;
-  onClose: () => void;
-  notifications: any[]; // Replace with your actual notification type
-  onNotificationsUpdated?: () => void; // Callback to refresh notifications
-}
+type NotificationModalProps = {
+    isVisible: boolean;
+    onClose: () => void;
+    notifications: any[];
+    onNotificationsUpdated?: () => void;
+};
 
-const NotificationsModal: React.FC<NotificationModalProps> = ({ isVisible, onClose, notifications, onNotificationsUpdated }) => {
-  const [isMarkingAsRead, setIsMarkingAsRead] = useState(false);
-
-  if (!isVisible) return null;
-
-  // Get current user ID from localStorage
-  const getCurrentUserId = () => {
+const getCurrentUserId = () => {
     try {
-      const user = JSON.parse(localStorage.getItem('user') || '');
-      return user?._id || user?.id;
+        const u = JSON.parse(localStorage.getItem("user") || "{}");
+        return u?._id || u?.id || null;
     } catch {
-      return null;
+        return null;
     }
-  };
+};
 
-  // Check if a notification is read by current user
-  const isNotificationRead = (notification: any) => {
-    const currentUserId = getCurrentUserId();
-    if (!currentUserId || !notification.readBy) return false;
-
-    return notification.readBy.some((readEntry: any) =>
-      readEntry.userId === currentUserId || readEntry.userId._id === currentUserId
+const isReadByMe = (n: any, id: any) => {
+    if (!id || !n?.readBy) return false;
+    return n.readBy.some(
+        (r: any) => r.userId === id || r.userId?._id === id
     );
-  };
+};
 
-  const getTimeAgo = (timestamp: string) => {
-    const now = new Date();
-    const date = new Date(timestamp);
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+const getTimeAgo = (ts: string) => {
+    const now = Date.now();
+    const t = new Date(ts).getTime();
+    const s = Math.max(0, Math.floor((now - t) / 1000));
+    if (s < 60) return `${s}s ago`;
+    const m = Math.floor(s / 60);
+    if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}h ago`;
+    const d = Math.floor(h / 24);
+    if (d < 7) return `${d}d ago`;
+    const w = Math.floor(d / 7);
+    if (w < 4) return `${w}w ago`;
+    const mo = Math.floor(d / 30);
+    if (mo < 12) return `${mo}mo ago`;
+    return `${Math.floor(d / 365)}y ago`;
+};
 
-    let interval = seconds / 31536000;
-    if (interval > 1) return Math.floor(interval) + "y ago";
-    interval = seconds / 2592000;
-    if (interval > 1) return Math.floor(interval) + "mo ago";
-    interval = seconds / 86400;
-    if (interval > 1) return Math.floor(interval) + "d ago";
-    interval = seconds / 3600;
-    if (interval > 1) return Math.floor(interval) + "h ago";
-    interval = seconds / 60;
-    if (interval > 1) return Math.floor(interval) + "m ago";
-    return Math.floor(seconds) + "s ago";
-  };
+const isToday = (ts: string) => {
+    if (!ts) return false;
+    const a = new Date(ts);
+    const b = new Date();
+    return (
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
+    );
+};
 
-  const handleMarkAllAsRead = async () => {
-    try {
-      setIsMarkingAsRead(true);
+const NotificationsModal: React.FC<NotificationModalProps> = ({
+    isVisible,
+    onClose,
+    notifications,
+    onNotificationsUpdated,
+}) => {
+    const [filter, setFilter] = useState<"all" | "unread">("all");
+    const [marking, setMarking] = useState(false);
+    const userId = getCurrentUserId();
 
-      const response = await Post('/markAllNotificationsAsRead', {});
+    useEffect(() => {
+        if (!isVisible) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") onClose();
+        };
+        document.addEventListener("keydown", onKey);
+        return () => document.removeEventListener("keydown", onKey);
+    }, [isVisible, onClose]);
 
-      if (response.success) {
-        displayMessage(response.message || "All notifications marked as read", "success");
-
-        // Refresh notifications if callback is provided
-        if (onNotificationsUpdated) {
-          onNotificationsUpdated();
+    const filtered = useMemo(() => {
+        if (filter === "unread") {
+            return (notifications || []).filter((n) => !isReadByMe(n, userId));
         }
-      } else {
-        displayMessage(response.message || "Failed to mark notifications as read", "error");
-      }
-    } catch (error: any) {
-      displayMessage("Failed to mark notifications as read", "error");
-    } finally {
-      setIsMarkingAsRead(false);
-    }
-  };
+        return notifications || [];
+    }, [notifications, filter, userId]);
 
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-start justify-end pt-12 pr-5">
-      <div className="bg-white z-40 rounded-xl shadow-2xl p-0 w-4/5 sm:w-3/5 lg:w-2/5 max-w-md">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-100">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-              <FaBell className="w-4 h-4 text-blue-600" />
-            </div>
-            <h1 className="font-ubuntu font-semibold text-lg text-gray-800">
-              Notifications
-            </h1>
-          </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors"
-          >
-            <FaTimes className="w-4 h-4 text-gray-500" />
-          </button>
-        </div>
+    const grouped = useMemo(() => {
+        const today: any[] = [];
+        const earlier: any[] = [];
+        filtered.forEach((n) => {
+            const ts = n?.createdAt || n?.updatedAt;
+            if (ts && isToday(ts)) today.push(n);
+            else earlier.push(n);
+        });
+        return { today, earlier };
+    }, [filtered]);
 
-        {/* Content */}
-        <div className="max-h-96 overflow-y-auto">
-          {notifications?.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 px-4">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                <FaBell className="w-8 h-8 text-gray-400" />
-              </div>
-              <p className="text-gray-500 text-sm font-medium">No notifications yet</p>
-              <p className="text-gray-400 text-xs mt-1">We'll notify you when something new happens</p>
-            </div>
-          ) : (
-            <div className="p-2">
-              {notifications.map((notification, index) => {
-                const isRead = isNotificationRead(notification);
-                return (
-                  <div
-                    key={index}
-                    className={`group p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer border-b border-gray-50 last:border-b-0 ${isRead ? 'opacity-75' : ''
-                      }`}
-                  >
-                    <div className="flex items-start space-x-3">
-                      {/* Notification indicator dot - different colors for read/unread */}
-                      <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${isRead ? 'bg-gray-400' : 'bg-blue-500'
-                        }`}></div>
+    const unreadCount = useMemo(
+        () => (notifications || []).filter((n) => !isReadByMe(n, userId)).length,
+        [notifications, userId]
+    );
 
-                      {/* Content */}
-                      <div className="flex-1 min-w-0">
-                        <p className={`text-sm leading-relaxed ${isRead ? 'font-normal text-gray-600' : 'font-medium text-gray-800'
-                          }`}>
-                          {notification?.title}
-                        </p>
-                        <div className="flex items-center space-x-1 mt-2">
-                          <FaClock className="w-3 h-3 text-gray-400" />
-                          <span className="text-xs text-gray-500">
-                            {getTimeAgo(notification?.createdAt || notification?.updatedAt)}
-                          </span>
-                          {isRead && (
-                            <span className="text-xs text-green-600 font-medium ml-2">
-                              ✓ Read
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+    const handleMarkAll = async () => {
+        try {
+            setMarking(true);
+            const res = await Post("/markAllNotificationsAsRead", {});
+            if (res?.success) {
+                displayMessage(res.message || "All notifications marked as read", "success");
+                onNotificationsUpdated?.();
+            } else {
+                displayMessage(res?.message || "Failed to mark as read", "error");
+            }
+        } catch {
+            displayMessage("Failed to mark notifications as read", "error");
+        } finally {
+            setMarking(false);
+        }
+    };
 
-        {/* Footer */}
-        {notifications?.length > 0 && notifications.some(notification => !isNotificationRead(notification)) && (
-          <div className="p-3 border-t border-gray-100 bg-gray-50 rounded-b-xl">
-            <button
-              onClick={handleMarkAllAsRead}
-              disabled={isMarkingAsRead}
-              className="w-full text-center text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+    if (!isVisible) return null;
+
+    const renderItem = (n: any, idx: number) => {
+        const read = isReadByMe(n, userId);
+        const ts = n?.createdAt || n?.updatedAt;
+        return (
+            <li
+                key={idx}
+                className={`group relative flex gap-3 px-4 py-3 transition cursor-pointer ${read ? "bg-white" : "bg-primary/5 hover:bg-primary/10"
+                    } hover:bg-mainBg`}
             >
-              {isMarkingAsRead ? "Marking as read..." : "Mark all as read"}
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+                {/* unread dot rail */}
+                <span
+                    aria-hidden
+                    className={`absolute left-0 top-0 bottom-0 w-[3px] ${read ? "bg-transparent" : "bg-gradient-to-b from-primary to-secondary"
+                        }`}
+                />
+
+                {/* icon */}
+                <span
+                    className={`mt-0.5 h-9 w-9 shrink-0 rounded-xl flex items-center justify-center ${read
+                            ? "bg-mainBg text-greyBlack"
+                            : "bg-gradient-to-br from-primary/15 to-secondary/15 text-secondary"
+                        }`}
+                >
+                    <FiBell size={16} />
+                </span>
+
+                {/* content */}
+                <div className="min-w-0 flex-1">
+                    <p
+                        className={`text-sm leading-snug ${read ? "text-greyBlack" : "text-black font-medium"
+                            }`}
+                    >
+                        {n?.title || "Notification"}
+                    </p>
+                    {n?.body && (
+                        <p className="text-xs text-grey mt-0.5 leading-snug truncate">
+                            {n.body}
+                        </p>
+                    )}
+                    <p className="text-[11px] text-grey mt-1">
+                        {ts ? getTimeAgo(ts) : ""}
+                    </p>
+                </div>
+
+                {!read && (
+                    <span className="self-start mt-2 h-2 w-2 rounded-full bg-gradient-to-br from-primary to-secondary" />
+                )}
+            </li>
+        );
+    };
+
+    return createPortal(
+        <>
+            {/* Overlay */}
+            <div
+                aria-hidden
+                onClick={onClose}
+                className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            />
+
+            {/* Drawer */}
+            <aside
+                role="dialog"
+                aria-modal="true"
+                aria-label="Notifications"
+                className="fixed top-0 right-0 z-50 h-screen w-full sm:w-[420px] bg-white shadow-2xl flex flex-col font-ubuntu animate-[notifIn_220ms_ease-out]"
+            >
+                <style>{`@keyframes notifIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`}</style>
+
+                {/* Header */}
+                <header className="px-5 py-4 border-b border-inputBorder/50 bg-gradient-to-br from-primary/5 to-secondary/5">
+                    <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <span className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center">
+                                <FiBell size={16} />
+                            </span>
+                            <div>
+                                <h2 className="text-base font-semibold text-black leading-none">
+                                    Notifications
+                                </h2>
+                                <p className="text-[11px] text-grey mt-1">
+                                    {unreadCount > 0
+                                        ? `${unreadCount} unread`
+                                        : "You're all caught up"}
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            aria-label="Close notifications"
+                            className="h-8 w-8 rounded-full text-greyBlack hover:text-black hover:bg-white flex items-center justify-center"
+                        >
+                            <FiX size={15} />
+                        </button>
+                    </div>
+
+                    {/* Filter tabs */}
+                    <div className="mt-4 inline-flex p-1 rounded-full bg-white ring-1 ring-inputBorder/60">
+                        {(["all", "unread"] as const).map((f) => {
+                            const active = filter === f;
+                            return (
+                                <button
+                                    key={f}
+                                    type="button"
+                                    onClick={() => setFilter(f)}
+                                    className={`h-7 px-3 rounded-full text-xs font-medium transition ${active
+                                            ? "bg-gradient-to-r from-primary to-secondary text-white shadow-sm"
+                                            : "text-greyBlack hover:text-black"
+                                        }`}
+                                >
+                                    {f === "all" ? "All" : `Unread${unreadCount ? ` (${unreadCount})` : ""}`}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </header>
+
+                {/* Body */}
+                <div className="flex-1 overflow-y-auto [scrollbar-width:thin]">
+                    {filtered.length === 0 ? (
+                        <div className="h-full flex flex-col items-center justify-center px-6 text-center">
+                            <span className="h-14 w-14 rounded-full bg-mainBg flex items-center justify-center mb-3">
+                                <FiInbox className="text-grey" size={22} />
+                            </span>
+                            <p className="text-sm font-medium text-black">
+                                {filter === "unread" ? "No unread notifications" : "Nothing here yet"}
+                            </p>
+                            <p className="text-xs text-grey mt-1 max-w-[260px]">
+                                {filter === "unread"
+                                    ? "You've read everything. Switch to All to see history."
+                                    : "We'll let you know when something needs your attention."}
+                            </p>
+                        </div>
+                    ) : (
+                        <>
+                            {grouped.today.length > 0 && (
+                                <section>
+                                    <p className="px-5 pt-4 pb-2 text-[10px] uppercase tracking-wider text-grey font-semibold">
+                                        Today
+                                    </p>
+                                    <ul className="divide-y divide-inputBorder/40">
+                                        {grouped.today.map((n, i) => renderItem(n, i))}
+                                    </ul>
+                                </section>
+                            )}
+                            {grouped.earlier.length > 0 && (
+                                <section>
+                                    <p className="px-5 pt-4 pb-2 text-[10px] uppercase tracking-wider text-grey font-semibold">
+                                        Earlier
+                                    </p>
+                                    <ul className="divide-y divide-inputBorder/40">
+                                        {grouped.earlier.map((n, i) => renderItem(n, i + grouped.today.length))}
+                                    </ul>
+                                </section>
+                            )}
+                        </>
+                    )}
+                </div>
+
+                {/* Footer */}
+                {unreadCount > 0 && (
+                    <footer className="px-5 py-3 border-t border-inputBorder/50 bg-white">
+                        <button
+                            type="button"
+                            onClick={handleMarkAll}
+                            disabled={marking}
+                            className="w-full h-10 rounded-xl border border-inputBorder hover:border-primary text-sm font-medium text-secondary hover:bg-primary/5 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <FiCheck size={14} />
+                            {marking ? "Marking…" : "Mark all as read"}
+                        </button>
+                    </footer>
+                )}
+            </aside>
+        </>,
+        document.body
+    );
 };
 
 export default NotificationsModal;

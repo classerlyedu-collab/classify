@@ -1,5 +1,7 @@
 export * from './registerComponents';
 export * from './customInput';
+export * from './FloatingInput';
+export * from './CommandPalette';
 export * from './customRadio';
 export * from './customDropdown';
 export * from './parentComponents';

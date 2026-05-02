@@ -1,9 +1,9 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SubjectsData } from "../../../../constants/student/Dashboard";
 import { getRandomColor } from "../../../../utils/randomColorGenerator";
 import { RouteName } from "../../../../routes/RouteNames";
 import { useEffect, useState } from "react";
-import { Get, ImageLink } from "../../../../config/apiMethods";
+import { Get } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
 
 interface subjecttypeORM {
@@ -20,7 +20,7 @@ const Subjects = () => {
   // const [subjects, setSubjects] = useState([]);
   const [subjects, setSubjects] = useState<subjecttypeORM[]>([]);
 
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   let user = JSON.parse(localStorage.getItem("user") || "");
   useEffect(() => {

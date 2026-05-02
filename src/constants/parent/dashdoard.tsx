@@ -2,7 +2,7 @@ export const UpcomingEventsArray = [
     require('../../images/drawer/Dashboard/up1.png'),
     require('../../images/drawer/Dashboard/up2.png'),
     require('../../images/drawer/Dashboard/up3.png'),
-    require('../../images/drawer/Dashboard/up3\.png')
+    require('../../images/drawer/Dashboard/up3.png')
 
 ];
 

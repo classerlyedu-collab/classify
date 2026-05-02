@@ -1,6 +1,10 @@
-import { CustomInput, CustomRadio, DropDown, CourseSelection } from "../../../components";
-import { gradeObject } from "../../../constants/register";
-import { MultiDropDown } from "../../multiselectDropdown";
+import {
+    CourseSelection,
+    FloatingInput,
+    FloatingSelect,
+    FloatingMultiSelect,
+} from "../../../components";
+import { FaGraduationCap, FaChalkboardTeacher, FaUserShield, FaCheck } from "react-icons/fa";
 
 type SignupProps = {
     role: string | null;
@@ -33,17 +37,23 @@ type SignupProps = {
     setRollNoError: any;
     email: string;
     setemail: any;
-    gradeData: any
-    course: any
-    courseError: any
-    setCourse: any
-    setCourseError: any
-    courseData: any,
+    gradeData: any;
+    course: any;
+    courseError: any;
+    setCourse: any;
+    setCourseError: any;
+    courseData: any;
     grades: any;
     setGrades: any;
     termsAccepted: boolean;
     setTermsAccepted: any;
 };
+
+const ROLE_OPTIONS = [
+    { value: "Student", label: "Student", icon: FaGraduationCap, hint: "Learn & track" },
+    { value: "Teacher", label: "Teacher", icon: FaChalkboardTeacher, hint: "Plan & grade" },
+    { value: "Parent", label: "Parent", icon: FaUserShield, hint: "Stay in the loop" },
+] as const;
 
 const Signup = ({
     role,
@@ -77,214 +87,217 @@ const Signup = ({
     email,
     setemail,
     gradeData,
-    course, courseError, setCourse, setCourseError,
-    courseData, grades, setGrades,
-    termsAccepted, setTermsAccepted,
+    course,
+    setCourse,
+    courseData,
+    grades,
+    setGrades,
+    termsAccepted,
+    setTermsAccepted,
 }: SignupProps) => {
-
     return (
-        <>
-            <div className="w-11/12" >
-                <CustomInput
+        <div className="w-full">
+            {/* Role selector cards */}
+            <div className="mb-4">
+                <div role="radiogroup" className="grid grid-cols-3 gap-2">
+                    {ROLE_OPTIONS.map(({ value, label, icon: Icon, hint }) => {
+                        const active = role === value;
+                        return (
+                            <button
+                                key={value}
+                                type="button"
+                                role="radio"
+                                aria-checked={active}
+                                onClick={() => {
+                                    setRole(value);
+                                    if (roleError) setRoleError("");
+                                }}
+                                className={`group relative rounded-xl p-2.5 flex flex-col items-center justify-center gap-1 border-2 transition focus:outline-none focus:ring-2 focus:ring-primary/40 ${active
+                                    ? "border-transparent bg-gradient-to-br from-primary to-secondary text-white shadow-md"
+                                    : "border-inputBorder bg-white text-greyBlack hover:border-primary hover:text-black"
+                                    }`}
+                            >
+                                {active && (
+                                    <span className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-white/95 text-secondary flex items-center justify-center">
+                                        <FaCheck size={8} />
+                                    </span>
+                                )}
+                                <Icon size={18} />
+                                <span className="text-xs font-semibold leading-none">{label}</span>
+                                <span className={`text-[10px] leading-tight ${active ? "text-white/85" : "text-grey"}`}>
+                                    {hint}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+                {roleError && (
+                    <p role="alert" className="mt-1 ml-1 text-xs text-lightRed">
+                        {roleError}
+                    </p>
+                )}
+            </div>
+
+            {/* Identity row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                <FloatingInput
+                    label="Full name"
                     value={fullName}
                     setValue={setFullName}
                     error={fullNameError}
                     setError={setFullNameError}
-                    required={true}
-                    label="Full Name"
-                    placeholder="e.g Mary Jackson"
+                    autoComplete="name"
+                    required
                 />
-                <CustomInput
+                <FloatingInput
+                    label="Email"
+                    type="email"
                     value={email}
                     setValue={setemail}
-                    // error={userNameError}
-                    // setError={setUserNameError}
-                    required={true}
-                    label="Email"
-                    placeholder="e.g maryjackson123@gmail.com"
+                    autoComplete="email"
+                    inputMode="email"
+                    required
                 />
+            </div>
 
-                <CustomInput
+            {/* Username */}
+            <div className="mb-3">
+                <FloatingInput
+                    label="Username"
                     value={userName}
                     setValue={setUserName}
                     error={userNameError}
                     setError={setUserNameError}
-                    required={true}
-                    label="Username"
-                    placeholder="e.g maryjackson123"
+                    autoComplete="username"
+                    required
                 />
+            </div>
 
-                <CustomInput
+            {/* Passwords */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                <FloatingInput
+                    label="Password"
+                    type="password"
                     value={password}
                     setValue={setPassword}
                     error={passwordError}
                     setError={setPasswordError}
-                    required={true}
-                    type="password"
-                    label="Password"
-                    placeholder="6+ characters"
-
+                    autoComplete="new-password"
+                    required
                 />
-
-                <CustomInput
+                <FloatingInput
+                    label="Confirm password"
+                    type="password"
                     value={confirmPassword}
                     setValue={setConfirmPassword}
                     error={confirmPasswordError}
                     setError={setConfirmPasswordError}
-                    required={true}
-                    label="Confirm Password"
-                    placeholder="6+ characters"
-                    type='password'
+                    autoComplete="new-password"
+                    required
                 />
-
-                {/* radio buttons div */}
-                <div className="flex flex-row justify-between items-center px-3" >
-                    <CustomRadio
-                        value={role}
-                        setValue={setRole}
-                        name="Parent"
-                        label="Parent"
-                        error={roleError}
-                        setError={setRoleError}
-                    />
-                    <CustomRadio
-                        value={role}
-                        setValue={setRole}
-                        name="Student"
-                        label="Student"
-                        error={roleError}
-                        setError={setRoleError}
-                    />
-                    <CustomRadio
-                        value={role}
-                        setValue={setRole}
-                        name="Teacher"
-                        label="Teacher"
-                        error={roleError}
-                        setError={setRoleError}
-                    />
-                </div>
-
-
-
-                {
-                    role === "Student" && (
-                        <DropDown
-                            value={grade}
-                            setValue={setGrade}
-                            error={gradeError}
-                            setError={setGradeError}
-                            label="Select Grade"
-                            data={gradeData.map((i: any) => {
-                                return {
-                                    value: i._id,
-                                    label: i.grade
-                                }
-                            })}
-
-                        />
-                    )
-                }
-                {
-                    role === "Teacher" && (
-                        <MultiDropDown
-                            value={grades}
-                            setValue={setGrades}
-                            error={gradeError}
-                            setError={setGradeError}
-                            label="Select Grade"
-                            data={gradeData.map((i: any) => {
-                                return {
-                                    value: i._id,
-                                    label: i.grade
-                                }
-                            })}
-
-                        />
-                    )
-                }
-
-                {
-
-                    grade && role === "Student" && (
-                        <CourseSelection
-                            value={course}
-                            setValue={setCourse}
-                            // error={courseError}
-                            // setError={setCourseError}
-                            label="Select Course"
-                            data={courseData.map((i: any) => {
-                                return {
-                                    value: i._id,
-                                    label: i.name
-                                }
-                            })}
-
-                        />
-                    )
-                }
-
-                {
-                    (grades?.length > 0) && role === "Teacher" && (
-                        <CourseSelection
-                            value={course}
-                            setValue={setCourse}
-                            // error={courseError}
-                            // setError={setCourseError}
-                            label="Select Course"
-                            data={courseData.map((i: any) => {
-                                return {
-                                    value: i._id,
-                                    label: i.name
-                                }
-                            })}
-
-                        />
-                    )
-                }
-
-                {
-                    role === 'Student' && (
-                        <CustomInput
-                            value={rollNo}
-                            setValue={setRollNo}
-                            error={rollNoError}
-                            setError={setRollNoError}
-                            label="Parent Code"
-                            placeholder="e.g 123456"
-                            type='number'
-                        />
-                    )
-                }
-
-                {/* <div className={`${role === null ? 'h-36 md:h-40' : (role === 'Teacher' ? 'hidden' : 'h-20')}`} /> */}
-                {/* <div className="h-20" /> */}
-
             </div>
 
-            {/* policies */}
-            <div className="flex items-start justify-center mb-4">
+            {/* Role-specific fields */}
+            {role === "Student" && (
+                <div className="mb-3">
+                    <FloatingSelect
+                        label="Select grade"
+                        value={grade as any}
+                        setValue={setGrade}
+                        error={gradeError}
+                        setError={setGradeError}
+                        options={gradeData.map((i: any) => ({ value: i._id, label: i.grade }))}
+                        required
+                    />
+                </div>
+            )}
+            {role === "Teacher" && (
+                <div className="mb-3">
+                    <FloatingMultiSelect
+                        label="Select grades"
+                        value={grades}
+                        setValue={setGrades}
+                        error={gradeError}
+                        setError={setGradeError}
+                        options={gradeData.map((i: any) => ({ value: i._id, label: i.grade }))}
+                        required
+                    />
+                </div>
+            )}
+
+            {grade && role === "Student" && (
+                <div className="mb-3">
+                    <CourseSelection
+                        value={course}
+                        setValue={setCourse}
+                        label="Select Course"
+                        data={courseData.map((i: any) => ({ value: i._id, label: i.name }))}
+                    />
+                </div>
+            )}
+
+            {grades?.length > 0 && role === "Teacher" && (
+                <div className="mb-3">
+                    <CourseSelection
+                        value={course}
+                        setValue={setCourse}
+                        label="Select Course"
+                        data={courseData.map((i: any) => ({ value: i._id, label: i.name }))}
+                    />
+                </div>
+            )}
+
+            {role === "Student" && (
+                <div className="mb-3">
+                    <FloatingInput
+                        label="Parent code"
+                        type="number"
+                        inputMode="numeric"
+                        value={rollNo}
+                        setValue={setRollNo}
+                        error={rollNoError}
+                        setError={setRollNoError}
+                    />
+                </div>
+            )}
+
+            {/* Terms */}
+            <label className="inline-flex items-center gap-2 mt-3 cursor-pointer select-none group">
                 <input
                     type="checkbox"
                     checked={termsAccepted}
                     onChange={(e) => setTermsAccepted(e.target.checked)}
-                    className="w-4 md:w-6 h-4 md:h-6 text-secondary bg-gray-100 border-gray-300 rounded-lg mt-0.5"
+                    className="peer sr-only"
                 />
-                <p className="text-xs font-medium text-inputPlaceholder ml-2">
-                    Creating an account means you're okay with our{" "}
+                <span
+                    aria-hidden
+                    className="h-[18px] w-[18px] shrink-0 rounded-md border-2 border-inputBorder bg-white flex items-center justify-center transition group-hover:border-primary peer-checked:border-transparent peer-checked:bg-gradient-to-br peer-checked:from-primary peer-checked:to-secondary peer-focus:ring-2 peer-focus:ring-primary/40"
+                >
+                    <FaCheck size={9} className={`text-white transition ${termsAccepted ? "opacity-100" : "opacity-0"}`} />
+                </span>
+                <span className="text-xs md:text-sm leading-snug text-greyBlack">
+                    I agree to the{" "}
                     <a
                         href="https://gamma.app/docs/Classerly-Terms-of-Use-e5vf07e83fahkw8?mode=present#card-ay2yzv05j51jqeu"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-secondary cursor-pointer hover:underline"
+                        className="text-secondary hover:underline font-medium"
                     >
-                        Terms of Use
+                        Terms
+                    </a>{" "}
+                    &{" "}
+                    <a
+                        href="https://classerly.com/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-secondary hover:underline font-medium"
+                    >
+                        Privacy Policy
                     </a>
-                    {" "}(click to read), Privacy Policy, and our default{" "}
-                    <span className="text-radio cursor-pointer">Notification Settings.</span>
-                </p>
-            </div>
-        </>
+                    .
+                </span>
+            </label>
+        </div>
     );
 };
 

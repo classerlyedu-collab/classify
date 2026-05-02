@@ -4,7 +4,7 @@ import { displayMessage } from "../../../../config";
 
 const Timeline = () => {
   const [requests,setRequests] = useState<any[]>([])
-  const [myTeachers,setmyTeachers] = useState<any[]>([])
+  const [,setmyTeachers] = useState<any[]>([])
 
   const getrequest = ()=>{
 

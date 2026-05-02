@@ -1,38 +1,19 @@
-import { useState } from "react"
-import ShowMessage from "./showMessage"
-import { App } from 'antd';
+import { Toaster, pushToast } from "../components/Toast";
 
+export const displayMessage = (msg, type) => {
+    if (msg === undefined || msg === null) return;
+    const t =
+        type === "error" || type === "success" || type === "warning" || type === "info"
+            ? type
+            : "info";
+    pushToast(String(msg), t);
+};
 
-export let displayMessage;
 export default function MasterContainer({ children }) {
-    const { message, modal, notification } = App.useApp();
-    const [errorProperty, setErrorProperty] = useState({
-        message: null,
-        type: null,
-        open: false,
-    })
-
-
-    displayMessage = (msg, type) => {
-        
-        if (type === 'error') {
-            message.error(msg)
-        } else if (type === 'success') {
-            message.success(msg)
-        }
-        // setErrorProperty({ ...errorProperty, message: message, type: type, open: true })
-    }
-    const close = () => {
-        setErrorProperty({ ...errorProperty, message: null, type: null, open: false })
-    }
-
-    return <>
-        <ShowMessage
-            close={close}
-            open={errorProperty.open}
-            message={errorProperty.message}
-            type={errorProperty.type}
-        />
-        {children}
-    </>
+    return (
+        <>
+            <Toaster />
+            {children}
+        </>
+    );
 }

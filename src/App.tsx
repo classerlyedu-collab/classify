@@ -20,7 +20,6 @@ import { MinSwapsScreen } from './screens/studentScreens/GamesExtra/min-swaps.sc
 import { TimeLimitScreen } from './screens/studentScreens/GamesExtra/time-limit.screen';
 import { Provider } from 'react-redux';
 import store from './store';
-import { TeacherFeedback } from './screens/teacherScreens/TeacherFeedback';
 import Coupon from './screens/coupon/Coupon';
 import SubscriptionPage from './screens/SubscriptionPage';
 import SubscriptionGuard from './components/SubscriptionGuard';
@@ -55,23 +54,43 @@ function App() {
                     />
                     <Route
                       path={RouteName.COUPON}
-                      element={<Coupon />}
+                      element={
+                        <SubscriptionGuard>
+                          <Coupon />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.CREATE_COUPON}
-                      element={<Coupon />}
+                      element={
+                        <SubscriptionGuard>
+                          <Coupon />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.GET_COUPON}
-                      element={<Coupon />}
+                      element={
+                        <SubscriptionGuard>
+                          <Coupon />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.DELETE_COUPON}
-                      element={<Coupon />}
+                      element={
+                        <SubscriptionGuard>
+                          <Coupon />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.USE_COUPON}
-                      element={<Coupon />}
+                      element={
+                        <SubscriptionGuard>
+                          <Coupon />
+                        </SubscriptionGuard>
+                      }
                     />
                     <Route
                       path={RouteName.DASHBOARD_SCREEN}
@@ -188,8 +207,6 @@ function App() {
                     <Route path={RouteName.DIFFICULTY_LEVEL} element={<DifficultyLevelScreen />} />
                     <Route path={gameModeUrlMap[gameMode.minSwaps]} element={<MinSwapsScreen />} />
                     <Route path={gameModeUrlMap[gameMode.timeLimit]} element={<TimeLimitScreen />} />
-
-                    <Route path={RouteName.TEACHER_FEEDBACK} element={<TeacherFeedback />} />
 
                     <Route path={RouteName.ROOT_SUBJECTS} element={<RootSubjects />} >
 

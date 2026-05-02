@@ -3,7 +3,7 @@ import { featuredArray } from "../../../../constants/student/Subjects";
 import { getRandomColor } from "../../../../utils/randomColorGenerator";
 import { RouteName } from "../../../../routes/RouteNames";
 import { useEffect, useState } from "react";
-import { Get, ImageLink } from "../../../../config/apiMethods";
+import { Get } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
 
 interface subjecttypeORM {
@@ -28,7 +28,7 @@ const FeaturedCategories = () => {
         let grade = ""
 
 
-        if (user?.userType == "Teacher") {
+        if (user?.userType === "Teacher") {
 
             grade = user?.profile?.grade.map((i: any) => { return i._id }).join(",")
 
@@ -47,6 +47,7 @@ const FeaturedCategories = () => {
                 displayMessage(d.message, "error");
             }
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     return (
         <div className="w-full">

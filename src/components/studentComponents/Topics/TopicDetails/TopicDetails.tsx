@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react"; // Importing useState and useEffect hooks
 // import { topicsSliderData } from "../../../../constants/student/Subjects"; // Importing topics slider data
 
-import { Get } from "../../../../config/apiMethods";
-import { displayMessage } from "../../../../config";
 const TopicDetails = ({ topic, loading }: any) => {
     const [currentIndex, setCurrentIndex] = useState(0); // State to keep track of the current topic index
 
@@ -49,6 +47,7 @@ const TopicDetails = ({ topic, loading }: any) => {
 
         // Cleanup interval on component unmount
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const currentTopic = topicsSliderData[currentIndex]; // Get the current topic data

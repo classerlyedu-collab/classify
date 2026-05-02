@@ -1,12 +1,23 @@
-import { CustomInput, OtpInput } from "../../../components";
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from "react";
+import {
+    HiOutlineLockClosed,
+    HiOutlineEnvelope,
+    HiOutlineKey,
+    HiOutlineCheckCircle,
+    HiOutlineArrowLeft,
+    HiOutlineSparkles,
+    HiOutlineShieldCheck,
+} from "react-icons/hi2";
+import { FloatingInput, OtpInput } from "../../../components";
+
+type ForgotState = "Email" | "Pin" | "Password" | "Done";
 
 type propsForgotPassword = {
     userName: string;
     setUserName: Dispatch<SetStateAction<string>>;
     userNameError: string;
     setUserNameError: Dispatch<SetStateAction<string>>;
-    forgotPasswordState: "Email" | "Pin" | "Password" | "Done";
+    forgotPasswordState: ForgotState;
     password: string;
     setpassword: Dispatch<SetStateAction<string>>;
     confirmpassword: string;
@@ -19,7 +30,60 @@ type propsForgotPassword = {
     setScreenStatus: any;
     otp: string;
     setOtp: any;
+};
 
+const STEPS: ForgotState[] = ["Email", "Pin", "Password", "Done"];
+
+const StepHeader = ({
+    Icon,
+    eyebrow,
+    title,
+    desc,
+    state,
+}: {
+    Icon: React.ComponentType<any>;
+    eyebrow: string;
+    title: string;
+    desc: React.ReactNode;
+    state: ForgotState;
+}) => {
+    const stepIdx = STEPS.indexOf(state);
+    return (
+        <header className="mb-5">
+            {/* Step indicator */}
+            <div className="flex items-center gap-1.5 mb-4">
+                {STEPS.map((_, i) => {
+                    const done = i < stepIdx;
+                    const active = i === stepIdx;
+                    return (
+                        <span
+                            key={i}
+                            className={`h-1.5 flex-1 rounded-full transition ${
+                                done
+                                    ? "bg-gradient-to-r from-primary to-secondary"
+                                    : active
+                                        ? "bg-gradient-to-r from-primary to-secondary"
+                                        : "bg-inputBorder"
+                            }`}
+                        />
+                    );
+                })}
+            </div>
+            <div className="flex items-start gap-3">
+                <span className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center shadow-md shadow-secondary/25 flex-shrink-0">
+                    <Icon size={22} />
+                </span>
+                <div className="min-w-0">
+                    <p className="text-[10px] uppercase tracking-wider text-grey font-bold inline-flex items-center gap-1">
+                        <HiOutlineSparkles size={10} className="text-secondary" />
+                        {eyebrow} · Step {stepIdx + 1} of {STEPS.length}
+                    </p>
+                    <h1 className="font-trykker text-xl md:text-2xl text-black mt-1 leading-tight">{title}</h1>
+                    <p className="text-xs md:text-sm text-grey mt-1.5 leading-relaxed">{desc}</p>
+                </div>
+            </div>
+        </header>
+    );
 };
 
 const ForgotPassword = ({
@@ -38,118 +102,212 @@ const ForgotPassword = ({
     setconfirmpasswordError,
     setForgotPasswordState,
     setScreenStatus,
-    otp,
-    setOtp
+    setOtp,
 }: propsForgotPassword) => {
-
-
-    const handleSubmit = (pin: string) => {
-        setOtp(pin);
-    }
+    const handleOtpComplete = (pin: string) => setOtp(pin);
 
     const renderContent = () => {
         switch (forgotPasswordState) {
-            case 'Email':
+            case "Email":
                 return (
-                    <>
-                        <img src={require('../../../images/register/lock.png')} alt="Lock icon" className="w-12 h-12 md:w-14 md:h-14 mt-4 mb-4 border-true" />
+                    <div>
+                        <StepHeader
+                            Icon={HiOutlineLockClosed}
+                            eyebrow="Recovery"
+                            title="Forgot your password?"
+                            desc="No worries — enter your email or username and we'll send you a code to reset it."
+                            state="Email"
+                        />
 
-                        <h1 className="text-lg md:text-xl font-medium">Forgot Password?</h1>
-                        <p className="text-base md:text-sm font-medium pt-4 text-black opacity-50 pb-12">No worries we'll send you reset instructions</p>
-
-                        <CustomInput
+                        <FloatingInput
+                            label="Email or username"
                             value={userName}
                             setValue={setUserName}
                             error={userNameError}
                             setError={setUserNameError}
-                            required={false}
-                            placeholder="Enter Your Email or Username"
-                            outlined={true}
+                            autoComplete="username"
+                            required
                         />
-                    </>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setForgotPasswordState("Email");
+                                setScreenStatus("Signin");
+                            }}
+                            className="mt-5 inline-flex items-center gap-1.5 text-xs font-semibold text-secondary hover:underline"
+                        >
+                            <HiOutlineArrowLeft size={13} />
+                            Back to sign in
+                        </button>
+                    </div>
                 );
-            case 'Pin':
+
+            case "Pin":
                 return (
                     <div>
-                        <img src={require('../../../images/register/pin.png')} alt="Pin icon" className="w-12 h-12 md:w-14 md:h-14 mt-4 mb-4 border-true" />
+                        <StepHeader
+                            Icon={HiOutlineKey}
+                            eyebrow="Verify"
+                            title="Check your inbox"
+                            desc={
+                                <>
+                                    We sent a 6-digit code to{" "}
+                                    <span className="font-semibold text-secondary break-all">{userName}</span>.
+                                </>
+                            }
+                            state="Pin"
+                        />
 
-                        <h1 className="text-lg md:text-xl font-medium">Reset Password?</h1>
-                        <div className="pt-3 md:pt-4 pb-8 md:pb-12 flex flex-row justify-start items-center" >
-                            <p className="text-xs md:text-sm font-medium text-secondary opacity-50">We sent a code to </p>
-                            <p className="text-xs md:text-sm text-secondary font-bold opacity-50 ml-1">{userName}</p>
+                        <div className="rounded-2xl bg-mainBg/60 ring-1 ring-inputBorder/40 p-5">
+                            <p className="text-[10px] uppercase tracking-wider text-grey font-bold text-center mb-3">
+                                Enter the 6-digit code
+                            </p>
+                            <OtpInput length={6} onComplete={handleOtpComplete} />
                         </div>
 
-                        <OtpInput length={6} onComplete={handleSubmit} />
+                        <p className="mt-4 text-xs text-grey text-center">
+                            Didn't get the email?{" "}
+                            <button
+                                type="button"
+                                onClick={() => setForgotPasswordState("Email")}
+                                className="font-semibold text-secondary hover:underline"
+                            >
+                                Resend code
+                            </button>
+                        </p>
 
-                        <div className="pt-3 md:pt-4 pb-8 md:pb-12 flex flex-row justify-center items-center w-full" >
-                            <p className="text-xs md:text-sm font-medium text-black opacity-50">Didn`t received the email? </p>
-                            <p className="text-xs md:text-sm text-secondary font-bold opacity-50 ml-1 cursor-pointer" onClick={() => { setForgotPasswordState("Email") }}>Click to resend.</p>
+                        <button
+                            type="button"
+                            onClick={() => setForgotPasswordState("Email")}
+                            className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-grey hover:text-secondary"
+                        >
+                            <HiOutlineArrowLeft size={13} />
+                            Use a different email
+                        </button>
+                    </div>
+                );
+
+            case "Password":
+                return (
+                    <div>
+                        <StepHeader
+                            Icon={HiOutlineShieldCheck}
+                            eyebrow="Reset"
+                            title="Set a new password"
+                            desc="Use at least 8 characters with a mix of letters, numbers, and symbols."
+                            state="Password"
+                        />
+
+                        <div className="space-y-3">
+                            <FloatingInput
+                                label="New password"
+                                type="password"
+                                value={password}
+                                setValue={setpassword}
+                                error={passwordError}
+                                setError={setpasswordError}
+                                autoComplete="new-password"
+                                required
+                            />
+                            <FloatingInput
+                                label="Confirm new password"
+                                type="password"
+                                value={confirmpassword}
+                                setValue={setconfirmpassword}
+                                error={confirmpasswordError}
+                                setError={setconfirmpasswordError}
+                                autoComplete="new-password"
+                                required
+                            />
+                        </div>
+
+                        {/* Lightweight requirements row */}
+                        <div className="mt-4 flex flex-wrap gap-1.5">
+                            {[
+                                { ok: password.length >= 8, label: "8+ chars" },
+                                { ok: /[a-z]/.test(password) && /[A-Z]/.test(password), label: "Aa" },
+                                { ok: /\d/.test(password), label: "0–9" },
+                                { ok: /[^A-Za-z0-9]/.test(password), label: "!@#" },
+                                {
+                                    ok: password.length > 0 && password === confirmpassword,
+                                    label: "Match",
+                                },
+                            ].map(({ ok, label }) => (
+                                <span
+                                    key={label}
+                                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition ${
+                                        ok
+                                            ? "bg-lightGreen2/15 text-lightGreen2 ring-1 ring-lightGreen2/25"
+                                            : "bg-mainBg text-grey ring-1 ring-inputBorder/60"
+                                    }`}
+                                >
+                                    {ok ? "✓" : "·"} {label}
+                                </span>
+                            ))}
                         </div>
                     </div>
                 );
-            case 'Password':
+
+            case "Done":
                 return (
                     <div>
-                        <img src={require('../../../images/register/password.png')} alt="Password icon" className="w-12 h-12 md:w14 md:h14 mt-3 mb-3" />
-                        <h1 className="text-lg md:text-xl pt-3 font-medium ">Set new password</h1>
-                        <p className="text-xs md:text-sm font-normal pt-2 pb-7 text-black opacity-50 ">Must be at least 8 characters.</p>
-
-                        <CustomInput
-                            value={password}
-                            setValue={setpassword}
-                            error={passwordError}
-                            setError={setpasswordError}
-                            required={true}
-                            label="Password"
-                            placeholder="********"
-                            type='password'
-                            outlined={true}
-                        />
-                        <CustomInput
-                            value={confirmpassword}
-                            setValue={setconfirmpassword}
-                            error={confirmpasswordError}
-                            setError={setconfirmpasswordError}
-                            required={true}
-                            label="Confirm Password"
-                            placeholder="********"
-                            type='password'
-                            outlined={true}
-                        />
-                    </div>
-                );
-            case 'Done':
-                return (
-                    <div>
-                        <img src={require('../../../images/register/all done.png')} alt="Success icon" className="w-12 h-12 md:w-14 md:h-14 mt-4 mb-4 border-true" />
-
-
-                        <div>
-                            <h1 className="mb-2 mt-5 text-lg md:text-2xl font-medium">All done!</h1>
-                            <p className="text-base md:text-sm font-light">Your password has been reset.Would you like to setup <p className="bg-gradient-to-r from-primary to-secondary inline-block text-transparent bg-clip-text">recovery email</p> as well?</p>
-
-                            <div className="bg-gradient-to-r from-primary to-secondary h-10 w-full rounded-md mt-16 text-center pt-2 text-white cursor-pointer">
-                                <p className="font-normal text-sm md:base ">Set up recovery email</p>
+                        <div className="flex justify-center mb-5">
+                            <div className="relative">
+                                <span className="h-20 w-20 rounded-3xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                                    <HiOutlineCheckCircle size={40} />
+                                </span>
+                                <span className="absolute -top-1 -right-1 h-7 w-7 rounded-full bg-amber-300 text-amber-900 flex items-center justify-center text-base shadow-sm">
+                                    🎉
+                                </span>
                             </div>
-                            <div className="h-10 w-full rounded-md mt-4 text-center pt-2 border-black cursor-pointer border " onClick={() => {
-                                setForgotPasswordState('Email');
-                                setScreenStatus('Signin');
-                            }} >
-                                <p className="font-normal text-base text-black ">I'll do this later</p>
-                            </div>
+                        </div>
+                        <div className="text-center max-w-sm mx-auto">
+                            <p className="text-[10px] uppercase tracking-wider text-emerald-600 font-bold inline-flex items-center gap-1">
+                                <HiOutlineSparkles size={10} />
+                                All set
+                            </p>
+                            <h1 className="font-trykker text-2xl md:text-3xl text-black mt-1 leading-tight">
+                                Password reset!
+                            </h1>
+                            <p className="text-sm text-grey mt-2 leading-relaxed">
+                                Your password has been updated. Want to set up a{" "}
+                                <span className="bg-gradient-to-r from-primary to-secondary inline-block text-transparent bg-clip-text font-semibold">
+                                    recovery email
+                                </span>{" "}
+                                for next time?
+                            </p>
+                        </div>
+
+                        <div className="mt-6 space-y-2">
+                            <button
+                                type="button"
+                                className="w-full h-11 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary to-secondary hover:shadow-md hover:shadow-secondary/25 transition flex items-center justify-center gap-1.5"
+                            >
+                                <HiOutlineEnvelope size={15} />
+                                Set up recovery email
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setForgotPasswordState("Email");
+                                    setScreenStatus("Signin");
+                                }}
+                                className="w-full h-11 rounded-xl text-sm font-semibold text-greyBlack bg-mainBg ring-1 ring-inputBorder/60 hover:ring-secondary/40 transition flex items-center justify-center gap-1.5"
+                            >
+                                I'll do this later
+                                <HiOutlineArrowLeft size={13} className="rotate-180" />
+                            </button>
                         </div>
                     </div>
                 );
+
             default:
                 return null;
         }
     };
 
-    return (
-        <div className="w-11/12 h-full">
-            {renderContent()}
-        </div>
-    );
+    return <div className="w-full">{renderContent()}</div>;
 };
 
 export default ForgotPassword;

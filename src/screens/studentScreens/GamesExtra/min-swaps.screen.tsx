@@ -79,6 +79,7 @@ export const MinSwapsScreen = () => {
     } else {
       dispatch({ type: UPDATE_GAME_STATUS, payload: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isThresholdExceeded, areTilesAligned, dispatch]);
 
   return (

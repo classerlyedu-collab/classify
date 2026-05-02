@@ -39,7 +39,7 @@ module.exports = {
         navBg: '#4640E0',
         whiteTransparent: '#FFFFFF80',
         bluecolor: '#062FF0',
-        mainBg: '#ECF4F7',
+        mainBg: '#F5F6F8',
         greyBlack: '#4D4D4D',
         seagreen: '#4BBDBD',
         lightRed: '#FF4242',

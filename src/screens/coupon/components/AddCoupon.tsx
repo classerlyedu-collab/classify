@@ -2,10 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { Post } from "../../../config/apiMethods";
 import { RouteName } from "../../../routes/RouteNames";
-import { set } from "react-datepicker/dist/date_utils";
-// import { post } from "@/utils/axios"; // Import the post function
-// import toast from "react-hot-toast";
-// import endpoints from "@/utils/endpoints";
+import {
+  HiOutlinePlus,
+  HiOutlineArrowPath,
+  HiOutlineInformationCircle,
+  HiOutlineTicket,
+} from "react-icons/hi2";
+import { displayMessage } from "../../../config";
+import { FloatingInput } from "../../../components";
 
 const AddCoupon = ({ fetchCoupons, newCoupon }: any) => {
   const [couponCode, setCouponCode] = useState("");
@@ -13,150 +17,159 @@ const AddCoupon = ({ fetchCoupons, newCoupon }: any) => {
   const [loading, setLoading] = useState(false);
   const [teacherPremium, setTeacherPremium] = useState(false);
 
-  // Generate a random coupon code
   const generateCouponCode = () => {
-    const randomCode = Math.random()
-      .toString(36)
-      .substring(2, 10)
-      .toUpperCase();
+    const randomCode = Math.random().toString(36).substring(2, 10).toUpperCase();
     setCouponCode(randomCode);
   };
 
   useEffect(() => {
     const user: any = JSON.parse(localStorage.getItem("user") || "{}");
-    console.log(user.plan);
     if (user.plan === "allowToRegisterMultiStudents") {
       setTeacherPremium(true);
     }
   }, []);
 
-  // Handle Create Coupon
   const handleCreateCoupon = async () => {
-    if (!couponCode) {
-      // toast.error("Please enter or generate a coupon code.");
-      return;
-    }
-
+    if (!couponCode) return;
     setLoading(true);
     const user: any = JSON.parse(localStorage.getItem("user") || "{}");
-
     try {
       const payload = {
         userId: user._id,
         code: couponCode,
         oneTimeUse: oneTime,
       };
-
       const response = await Post(RouteName.CREATE_COUPON, payload);
-
-      setCouponCode(""); // Reset input field
+      setCouponCode("");
       if (response.message === "Coupon created successfully") {
-        // toast.success(response.data.message || "Coupon created successfully!");
+        displayMessage?.("Coupon created successfully!", "success");
         fetchCoupons();
       } else {
-        // toast.error(response.data.error || "Failed to create the coupon.");
+        displayMessage?.(response.error || response.message || "Failed to create coupon", "error");
       }
     } catch (error: any) {
       console.error("Error creating coupon:", error);
-      // toast.error("An error occurred while creating the coupon.");
+      displayMessage?.("An error occurred while creating the coupon.", "error");
     } finally {
       setLoading(false);
     }
   };
 
+  const isDisabled = loading || newCoupon || !couponCode.trim();
+
   return (
-    <div className="bg-white rounded-xl shadow-sm border max-w-md">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900">Create New Coupon</h2>
-        <p className="text-sm text-gray-600 mt-1">
-          Generate a coupon code to share with others
-        </p>
+    <div className="rounded-3xl bg-white ring-1 ring-inputBorder/50 overflow-hidden">
+      {/* Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-secondary via-primary to-fadeBlue p-5 text-white">
+        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+        <div className="relative flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+            <HiOutlineTicket size={20} />
+          </div>
+          <div>
+            <h2 className="font-trykker text-lg leading-tight">Create coupon</h2>
+            <p className="text-xs text-white/80 mt-0.5">Generate a code to share access</p>
+          </div>
+        </div>
       </div>
 
-      <div className="p-6 space-y-6">
+      <div className="p-5 space-y-5">
         {/* Coupon Code Input */}
         <div>
-          <label htmlFor="couponCode" className="block text-sm font-medium text-gray-700 mb-2">
-            Coupon Code
-          </label>
-          <div className="flex space-x-3">
-            <div className="flex-1">
-              <input
-                type="text"
-                id="couponCode"
+          <div className="flex gap-2 items-start">
+            <div className="flex-1 min-w-0">
+              <FloatingInput
+                label="Coupon code"
                 value={couponCode}
-                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                placeholder="Enter or generate a code"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
-                disabled={newCoupon}
+                setValue={(v) => setCouponCode(v.toUpperCase())}
+                required
               />
             </div>
             <button
+              type="button"
               onClick={generateCouponCode}
-              className="px-4 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed"
               disabled={newCoupon}
+              className="shrink-0 h-12 px-3.5 rounded-xl bg-mainBg ring-1 ring-inputBorder hover:ring-primary/40 transition flex items-center gap-1.5 text-xs font-semibold text-greyBlack disabled:opacity-50"
+              title="Generate random code"
             >
-              Generate
+              <HiOutlineArrowPath size={14} />
+              <span className="hidden sm:inline">Generate</span>
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-1">
-            Code will be automatically converted to uppercase
+          <p className="text-[11px] text-grey mt-1.5 ml-1">
+            Codes are auto-converted to uppercase
           </p>
         </div>
 
-        {/* One-Time Use Checkbox */}
+        {/* One-Time Use Toggle */}
         {teacherPremium && (
-          <div className="flex items-center space-x-3">
-            <input
-              type="checkbox"
-              id="oneTime"
-              checked={oneTime}
-              onChange={(e) => setOneTime(e.target.checked)}
-              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-            />
-            <label htmlFor="oneTime" className="text-sm text-gray-700">
-              Single-use coupon (can only be used once)
-            </label>
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => setOneTime(!oneTime)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setOneTime(!oneTime);
+              }
+            }}
+            className="flex items-center justify-between gap-3 px-3.5 py-3 rounded-xl bg-mainBg ring-1 ring-inputBorder/60 hover:ring-primary/30 cursor-pointer transition"
+          >
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-black">Single-use only</p>
+              <p className="text-[11px] text-grey mt-0.5">Code expires after one redemption.</p>
+            </div>
+            <span
+              role="switch"
+              aria-checked={oneTime}
+              className={`relative shrink-0 inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                oneTime ? "bg-gradient-to-r from-primary to-secondary" : "bg-inputBorder"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
+                  oneTime ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </span>
           </div>
         )}
 
         {/* Create Coupon Button */}
         <button
           onClick={handleCreateCoupon}
-          disabled={loading || newCoupon || !couponCode.trim()}
-          className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 ${loading || newCoupon || !couponCode.trim()
-            ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-            : "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            }`}
+          disabled={isDisabled}
+          className="w-full h-11 rounded-xl text-sm font-semibold text-white bg-gradient-to-r from-primary to-secondary hover:shadow-md hover:shadow-secondary/25 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {loading ? (
-            <div className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <>
+              <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Creating...
-            </div>
+              Creating…
+            </>
           ) : (
-            "Create Coupon"
+            <>
+              <HiOutlinePlus size={16} />
+              Create coupon
+            </>
           )}
         </button>
 
         {/* Info Box */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">How it works</h3>
-              <div className="mt-2 text-sm text-blue-700">
-                <p>• Share your coupon code with students or parents</p>
-                <p>• They can use it to get free access to the platform</p>
-                <p>• Track usage and manage your coupons below</p>
-              </div>
+        <div className="rounded-2xl bg-gradient-to-br from-fadeBlue/10 to-bluecolor/5 ring-1 ring-bluecolor/20 p-4">
+          <div className="flex gap-3">
+            <span className="h-8 w-8 rounded-lg bg-white ring-1 ring-bluecolor/15 text-bluecolor flex items-center justify-center flex-shrink-0">
+              <HiOutlineInformationCircle size={16} />
+            </span>
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-black">How coupons work</p>
+              <ul className="mt-1.5 space-y-1 text-[11px] text-greyBlack/80 leading-relaxed">
+                <li>· Share codes with students or parents</li>
+                <li>· They get free access to the platform</li>
+                <li>· Track redemptions in real time</li>
+              </ul>
             </div>
           </div>
         </div>

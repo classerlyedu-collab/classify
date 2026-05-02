@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { Get, Post } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
 import { IoClose } from "react-icons/io5";
-import { UseStateContext } from "../../../../context/ContextProvider";
 
 interface Comment {
   _id: string;
@@ -34,7 +33,6 @@ const MyTeachers = () => {
   const [studentSubjects, setStudentSubjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubjectsLoading, setIsSubjectsLoading] = useState(false);
-  const { role } = UseStateContext();
   const commentsEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {

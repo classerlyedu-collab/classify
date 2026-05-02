@@ -1,30 +1,7 @@
-import styled from "styled-components";
-
-import { DefaultNavContent } from "../../../components/studentComponents/GamesExtra/default-nav-content.component";
-import { Button } from "../../../components/studentComponents/GamesExtra/button.component";
 import { LayoutScreen } from "./layout.screen";
 import { DifficultyChooser } from "../../../components/studentComponents/GamesExtra/difficulty-chooser.component";
 import { NavbarGames } from "../../../components";
 import { useLocation } from "react-router-dom";
-
-
-const Heading = styled.h1`
-  text-align: center;
-  color: white;
-`;
-
-const ButtonsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-  margin: auto;
-  padding: 1em;
-  padding-bottom: 0;
-  justify-content: center;
-  border-radius: 7px;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.2);
-`;
 
 export const DifficultyLevelScreen = () => {
   const location = useLocation();

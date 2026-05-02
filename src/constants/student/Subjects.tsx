@@ -1,5 +1,3 @@
-import { Description } from "@mui/icons-material";
-import { Quizzes } from "../../components";
 
 export const featuredArray = [
     {

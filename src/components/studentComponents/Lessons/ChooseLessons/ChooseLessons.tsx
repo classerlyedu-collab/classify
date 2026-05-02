@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ChooseLessonsArray } from "../../../../constants/student/Lessons";
 import { getRandomColor } from "../../../../utils/randomColorGenerator";
 import { RouteName } from "../../../../routes/RouteNames";
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { Get } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
 import { useEffect, useState } from "react";
@@ -39,7 +40,7 @@ const ChooseLessons = () => {
     Get(`/topic/lesson`, topic).then((d) => {
 
       if (d.success) {
-        if (d.data?.length == 0) {
+        if (d.data?.length === 0) {
           displayMessage("No any lessons exist", "error")
 
         }
@@ -52,6 +53,7 @@ const ChooseLessons = () => {
 
     // Cleanup interval on component unmount
     // return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="w-full h-full py-5 px-4 rounded-2xl">

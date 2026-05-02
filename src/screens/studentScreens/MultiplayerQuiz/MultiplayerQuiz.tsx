@@ -24,6 +24,7 @@ const MultiplayerQuiz = () => {
         }, 1000);
 
         return () => clearInterval(timer); // Cleanup the timer
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentQuestion]);
 
     const handleSelectAnswer = (answer: string) => {

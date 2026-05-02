@@ -1,7 +1,7 @@
 import { QuizTopicsData } from "../../../../constants/student/Dashboard";
 import { getRandomColor } from "../../../../utils/randomColorGenerator";
 import { useEffect, useState } from "react";
-import { Get, ImageLink } from "../../../../config/apiMethods";
+import { Get } from "../../../../config/apiMethods";
 import { displayMessage } from "../../../../config";
 import { useNavigate } from "react-router-dom";
 import { RouteName } from "../../../../routes/RouteNames";
@@ -26,7 +26,7 @@ const QuizTopics = () => {
   const navigate = useNavigate();
   const [quizes, setQuizes] = useState<quiztypeORM[]>([]);
 
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   let user = JSON.parse(localStorage.getItem("user") || "");
   useEffect(() => {
@@ -45,6 +45,7 @@ const QuizTopics = () => {
         displayMessage(d.message, "error");
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="w-full h-full flex flex-col md:overflow-y-auto  max-h-96">

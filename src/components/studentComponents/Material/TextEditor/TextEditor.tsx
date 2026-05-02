@@ -2,7 +2,6 @@
 
 
 import { useSearchParams } from 'react-router-dom';
-import { ImageLink } from '../../../../config/apiMethods';
 const TextEditor = () => {
     const [searchParams] = useSearchParams();
     const content = searchParams.get('content');

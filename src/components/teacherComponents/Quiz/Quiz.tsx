@@ -1,9 +1,7 @@
-import { Navigate, useNavigate } from "react-router-dom";
 // import { quizData } from "../../../constants/student/Dashboard";
 import { getRandomColor } from "../../../utils/randomColorGenerator";
-import { RouteName } from "../../../routes/RouteNames";
 import { useEffect, useState } from "react";
-import { Get, ImageLink } from "../../../config/apiMethods";
+import { Get } from "../../../config/apiMethods";
 import { displayMessage } from "../../../config";
 
 // interface subjecttypeORM {
@@ -20,7 +18,7 @@ const Quiz = ({setIsEdit,setQuestions}:any) => {
   // const [quiz, setquiz] = useState([]);
   const [quiz, setQuiz] = useState<any[]>([]);
 
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
 
   let user = JSON.parse(localStorage.getItem("user") || "");
   useEffect(() => {
@@ -34,8 +32,8 @@ const Quiz = ({setIsEdit,setQuestions}:any) => {
         displayMessage(d.message, "error");
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const navigate = useNavigate();
 
   const headerArray = [
     "Subject",
@@ -72,7 +70,7 @@ const Quiz = ({setIsEdit,setQuestions}:any) => {
 
         {/* for body */}
         <div className="w-full grid grid-cols-7 min-w-[45rem]">
-          {quiz?.length == 0 && (
+          {quiz?.length === 0 && (
             <div className="col-span-5 flex items-center pl-2">
               <h4>No any topic Found</h4>
             </div>

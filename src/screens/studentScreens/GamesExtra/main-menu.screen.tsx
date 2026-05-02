@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "../../../components/studentComponents/GamesExtra/button.component";
 import { LayoutScreen } from "./layout.screen";

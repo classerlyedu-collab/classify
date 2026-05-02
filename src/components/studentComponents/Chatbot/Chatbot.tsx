@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IoClose, IoPaperPlane } from 'react-icons/io5';
 import { useSearchParams } from 'react-router-dom';
-import { Get, Post } from '../../../config/apiMethods';
+import { Post } from '../../../config/apiMethods';
 import { displayMessage } from '../../../config';
 import chatbotIcon from '../../../images/students/chatbot-icon.png';
 import './Chatbot.css';
@@ -28,7 +28,6 @@ const Chatbot: React.FC = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputMessage, setInputMessage] = useState('');
     const [chatSession, setChatSession] = useState<ChatSession | null>(null);
-    const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [searchParams] = useSearchParams();
@@ -55,6 +54,7 @@ const Chatbot: React.FC = () => {
         if (isOpen && content) {
             initializeChatSession();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, content]);
 
     const initializeChatSession = async () => {

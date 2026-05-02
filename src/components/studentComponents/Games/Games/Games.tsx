@@ -1,5 +1,4 @@
-import { useFetcher, useNavigate } from "react-router-dom";
-import { gamesResult } from "../../../../constants/parent/myChildren";
+import { useNavigate } from "react-router-dom";
 import { getRandomColor } from "../../../../utils/randomColorGenerator";
 import { RouteName } from "../../../../routes/RouteNames";
 import { useEffect, useState } from "react";
@@ -23,6 +22,7 @@ const Games = () => {
         }).catch((err) => {
             displayMessage(err.message, "error")
         })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (
