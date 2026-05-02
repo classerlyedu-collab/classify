@@ -27,6 +27,7 @@ const Material = () => {
     const [iframeLoading, setIframeLoading] = useState(true);
     const [marked, setMarked] = useState(false);
     const [fullscreen, setFullscreen] = useState(false);
+    const [hasQuiz, setHasQuiz] = useState<boolean | null>(null);
 
     const subject = useMemo(() => {
         try {
@@ -64,6 +65,20 @@ const Material = () => {
             .catch(() => displayMessage("Failed to load lesson", "error"))
             .finally(() => setLoadingMeta(false));
     }, []);
+
+    useEffect(() => {
+        const topicId = lesson?.topic?._id || lesson?.topic;
+        const lessonId = lesson?._id;
+        if (!topicId && !lessonId) return;
+        const params = new URLSearchParams();
+        if (lessonId) params.append("lesson", lessonId);
+        else if (topicId) params.append("topic", topicId);
+        Get(`/quiz?${params.toString()}`)
+            .then((d) => {
+                setHasQuiz(!!(d?.success && Array.isArray(d.data) && d.data.length > 0));
+            })
+            .catch(() => setHasQuiz(false));
+    }, [lesson]);
 
     const handleBack = () => {
         const topicId = lesson?.topic?._id || lesson?.topic;
@@ -263,12 +278,15 @@ const Material = () => {
                                     <HiOutlineCheckCircle size={14} />
                                     I'm done!
                                 </button>
-                            ) : (
+                            ) : hasQuiz ? (
                                 <button
                                     type="button"
                                     onClick={() => {
+                                        const lessonId = lesson?._id;
                                         const topicId = lesson?.topic?._id || lesson?.topic;
-                                        if (topicId) {
+                                        if (lessonId) {
+                                            navigate(`${RouteName.QUIZ_CONFIRMATION}?lesson=${lessonId}`);
+                                        } else if (topicId) {
                                             navigate(`${RouteName.QUIZ_CONFIRMATION}?topic=${topicId}`);
                                         } else {
                                             navigate(RouteName.LESSONS_STUDENT);
@@ -278,6 +296,15 @@ const Material = () => {
                                 >
                                     <HiOutlineRocketLaunch size={14} />
                                     Take a quiz
+                                    <HiOutlineArrowRight size={12} />
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={handleBack}
+                                    className="h-10 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:shadow-md hover:shadow-emerald-500/30 transition flex items-center gap-1.5"
+                                >
+                                    Back to lessons
                                     <HiOutlineArrowRight size={12} />
                                 </button>
                             )}

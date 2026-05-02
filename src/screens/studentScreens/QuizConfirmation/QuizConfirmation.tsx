@@ -73,17 +73,22 @@ const QuizConfirmation = () => {
     }, [quizdata]);
 
     useEffect(() => {
+        const params = new URLSearchParams();
         const quiz = searchParams.get("quiz");
         const topic = searchParams.get("topic");
         const lesson = searchParams.get("lesson");
+        if (quiz) params.append("_id", quiz);
+        if (topic) params.append("topic", topic);
+        if (lesson) params.append("lesson", lesson);
         setLoading(true);
-        Get(`/quiz?_id=${quiz}&topic=${topic}&lesson=${lesson}`)
+        Get(`/quiz?${params.toString()}`)
             .then((d) => {
                 if (d.success) {
                     setQuizes(d.data || []);
                     setQuizData(d.data?.[0] || {});
                 } else {
-                    displayMessage(d.message);
+                    setQuizes([]);
+                    setQuizData({});
                 }
             })
             .catch(() => displayMessage("Failed to load quiz", "error"))
@@ -354,6 +359,7 @@ const QuizConfirmation = () => {
                         type="button"
                         onClick={handleStart}
                         disabled={loading || starting || !quizdata?._id}
+                        title={!loading && !quizdata?._id ? "No quiz is available for this topic yet" : undefined}
                         className="relative w-full h-12 rounded-2xl bg-white text-fuchsia-600 text-base font-bold shadow-xl hover:scale-[1.03] transition-transform disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         {starting ? (
@@ -364,6 +370,16 @@ const QuizConfirmation = () => {
                                 </svg>
                                 Starting…
                             </>
+                        ) : loading ? (
+                            <>
+                                <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                </svg>
+                                Loading…
+                            </>
+                        ) : !quizdata?._id ? (
+                            <>No quiz available</>
                         ) : (
                             <>
                                 <HiOutlinePlay size={18} />
@@ -372,6 +388,11 @@ const QuizConfirmation = () => {
                             </>
                         )}
                     </button>
+                    {!loading && !quizdata?._id && (
+                        <p className="relative mt-2 text-[11px] text-white/90 leading-snug max-w-[22ch]">
+                            We couldn't find a quiz for this topic yet. Try a different lesson.
+                        </p>
+                    )}
 
                     <button
                         type="button"
