@@ -388,11 +388,6 @@ const QuizConfirmation = () => {
                             </>
                         )}
                     </button>
-                    {!loading && !quizdata?._id && (
-                        <p className="relative mt-2 text-[11px] text-white/90 leading-snug max-w-[22ch]">
-                            We couldn't find a quiz for this topic yet. Try a different lesson.
-                        </p>
-                    )}
 
                     <button
                         type="button"
